@@ -10,14 +10,14 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('review_replies', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('review_id')->constrained()->onDelete('cascade');
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->text('message');
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('review_replies', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('review_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->text('message');
+            $table->timestamps();
+        });
+    }
     public function down(): void { Schema::dropIfExists('review_replies'); }
 };

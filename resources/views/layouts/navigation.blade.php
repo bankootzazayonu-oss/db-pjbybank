@@ -11,8 +11,10 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+               <!-- Navigation Links -->
+                <!-- 🚨 แก้ไขตรงบรรทัดนี้: เปลี่ยน space-x-8 เป็น space-x-3, ms-10 เป็น ms-4 และเพิ่ม whitespace-nowrap -->
+                <div class="hidden space-x-3 lg:space-x-5 sm:-my-px sm:ms-4 sm:flex whitespace-nowrap overflow-x-auto">
+                    
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         🍿 คลังภาพยนตร์
                     </x-nav-link>
@@ -20,20 +22,34 @@
                     <x-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
                         🏆 จัดอันดับ
                     </x-nav-link>
+
                     <x-nav-link :href="route('activities.create')" :active="request()->routeIs('activities.create')">
-    ➕ เสนอหนังใหม่
-</x-nav-link>
+                        ➕ เสนอหนังใหม่
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('my.movies')" :active="request()->routeIs('my.movies')">
+                        📂 หนังที่ฉันเสนอ
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('collections.index')" :active="request()->routeIs('collections.index')">
+                        🏆 จัดเทียร์ลิสต์
+                    </x-nav-link>
+
                     <!-- แสดงเมนูพวกนี้เฉพาะ Admin เท่านั้น -->
                     @if(Auth::user()->role === 'admin')
-                       
-                    <x-nav-link :href="route('admin.movies.pending')" :active="request()->routeIs('admin.movies.pending')">
-    🛡️ รออนุมัติ
-</x-nav-link>
+                        <x-nav-link :href="route('admin.movies.pending')" :active="request()->routeIs('admin.movies.pending')">
+                            🛡️ รออนุมัติ
+                        </x-nav-link>
                         
                         <x-nav-link :href="route('admin.movies.search')" :active="request()->routeIs('admin.movies.search')">
                             🔍 นำเข้าหนัง
                         </x-nav-link>
+
+                        <x-nav-link :href="route('admin.types.index')" :active="request()->routeIs('admin.types.index')">
+                            📁 จัดการหมวดหมู่
+                        </x-nav-link>
                     @endif
+
                 </div>
             </div>
 

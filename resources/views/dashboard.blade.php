@@ -1,52 +1,55 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            🍿 คลังภาพยนตร์ทั้งหมดในระบบ
+            🍿 คลังภาพยนตร์ทั้งหมด
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            <!-- แสดงผลลัพธ์แบบ Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                @forelse($movies as $movie)
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:scale-105 transition duration-300">
-                        <!-- รูปโปสเตอร์ -->
-                        @if(!empty($movie->image))
-                            <img src="{{ $movie->image }}" alt="{{ $movie->name }}" class="w-full h-80 object-cover">
+    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!-- Grid แสดงหนัง -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            @forelse($movies as $movie)
+                <a href="{{ route('activities.show', $movie->id) }}" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:scale-105 hover:shadow-xl transition duration-300 border border-gray-200 dark:border-gray-700 block group relative">
+                    
+                    <!-- โซนรูปโปสเตอร์ -->
+                    <div class="h-64 bg-gray-100 dark:bg-gray-700 relative">
+                       @if($movie->image)
+                            @if(\Illuminate\Support\Str::startsWith($movie->image, ['http://', 'https://']))
+                                <img src="{{ $movie->image }}" class="w-full h-full object-cover">
+                            @else
+                                <img src="{{ asset('storage/' . $movie->image) }}" class="w-full h-full object-cover">
+                            @endif
                         @else
-                            <div class="w-full h-80 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">🎬 ไม่มีรูปโปสเตอร์</div>
+                            <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                                <span class="text-4xl mb-2">🎬</span>
+                                <span class="text-xs">ไม่มีรูปภาพ</span>
+                            </div>
                         @endif
                         
-                        <!-- รายละเอียด -->
-                        <div class="p-5">
-                            <h3 class="font-bold text-lg text-gray-900 dark:text-white truncate mb-1" title="{{ $movie->name }}">
-                                {{ $movie->name }}
-                            </h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                ปีที่ฉาย: {{ $movie->year ?? 'ไม่ระบุ' }}
-                            </p>
-                            
-                            <!-- ปุ่มเข้าไปดูรีวิว (เดี๋ยวเราทำหน้ารีวิวต่อใน EP หน้า) -->
-                            <a href="{{ route('activities.show', $movie->id) }}" class="block text-center w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md text-sm transition shadow-md">
-    ⭐ ดูรายละเอียด & รีวิว
-                            </a>
+                        <!-- ป้ายปีที่ฉาย -->
+                        <div class="absolute top-2 right-2 bg-indigo-600 text-white text-xs font-black px-2 py-1 rounded-md opacity-90 shadow-md">
+                            {{ $movie->year }}
                         </div>
                     </div>
-                @empty
-                    <!-- กรณีที่ยังไม่มีหนังในระบบเลย -->
-                    <div class="col-span-full text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                        <p class="text-gray-500 dark:text-gray-400 text-lg">ยังไม่มีภาพยนตร์ในระบบ</p>
-                        @if(Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.movies.search') }}" class="text-indigo-500 hover:text-indigo-400 mt-2 inline-block font-bold">
-                                + ไปค้นหาและนำเข้าภาพยนตร์เลย
-                            </a>
-                        @endif
-                    </div>
-                @endforelse
-            </div>
 
+                    <!-- โซนข้อความ -->
+                    <div class="p-4">
+                        <h3 class="text-gray-900 dark:text-white font-bold text-sm truncate group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition">
+                            {{ $movie->name }}
+                        </h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="text-gray-500 dark:text-gray-400 text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                                {{ $movie->type ? $movie->type->name : 'ไม่ระบุหมวดหมู่' }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <div class="col-span-full text-center text-gray-500 dark:text-gray-400 py-16 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600">
+                    <span class="text-5xl block mb-4">🍿</span>
+                    ยังไม่มีภาพยนตร์ในคลังหลัก (รอแอดมินอนุมัติ)
+                </div>
+            @endforelse
         </div>
     </div>
 </x-app-layout>

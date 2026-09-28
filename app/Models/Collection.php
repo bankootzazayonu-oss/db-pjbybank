@@ -6,6 +6,9 @@ class Collection extends Model
 {
     protected $fillable = ['user_id', 'name'];
 
-    public function user() { return $this->belongsTo(User::class); }
-    public function items() { return $this->hasMany(CollectionItem::class); }
+    // 1 กระดาน มีหนังหลายเรื่อง
+    public function items()
+    {
+        return $this->hasMany(CollectionItem::class);
+    }
 }

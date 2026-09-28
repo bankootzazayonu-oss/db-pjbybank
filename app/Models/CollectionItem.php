@@ -6,6 +6,9 @@ class CollectionItem extends Model
 {
     protected $fillable = ['collection_id', 'activity_id', 'tier_rank'];
 
-    public function collection() { return $this->belongsTo(Collection::class); }
-    public function activity() { return $this->belongsTo(Activity::class); }
+    // ไอเทมนี้ คือหนังเรื่องอะไร
+    public function movie()
+    {
+        return $this->belongsTo(Activity::class, 'activity_id');
+    }
 }

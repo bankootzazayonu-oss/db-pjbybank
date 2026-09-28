@@ -26,4 +26,18 @@ class ReviewController extends Controller
 
         return back()->with('success', '✅ บันทึกรีวิวและให้คะแนนภาพยนตร์เรียบร้อยแล้ว!');
     }
+    public function storeReply(Request $request, $reviewId)
+    {
+        $request->validate([
+            'message' => 'required|string|max:1000',
+        ]);
+
+        \App\Models\ReviewReply::create([
+            'review_id' => $reviewId,
+            'user_id' => auth()->id(),
+            'message' => $request->message,
+        ]);
+
+        return redirect()->back()->with('success', 'ตอบกลับความคิดเห็นเรียบร้อยแล้ว!');
+    }
 }

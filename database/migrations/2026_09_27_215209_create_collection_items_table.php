@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('collection_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('collection_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('activity_id')->constrained('activities')->cascadeOnDelete();
-            $table->string('tier_rank')->nullable(); // เลือกระดับ: S, A, B, C, D
+            $table->foreignId('activity_id')->constrained('activities')->cascadeOnDelete(); // ผูกกับไอดีหนัง
+            $table->enum('tier_rank', ['S', 'A', 'B', 'C', 'D'])->default('C'); // ระดับ Tier (S คือสูงสุด)
             $table->timestamps();
         });
     }
