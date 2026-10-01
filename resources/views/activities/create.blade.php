@@ -19,7 +19,7 @@
             @if($errors->any())
                 <div class="bg-red-500 text-white p-4 rounded-lg mb-6 text-sm shadow-md">
                     <ul class="list-disc pl-5 font-bold">
-                        @foreach($errors->all() as$error)
+                        @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
@@ -46,7 +46,7 @@
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">หมวดหมู่ <span class="text-red-500">*</span></label>
                     <select name="type_id" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">-- เลือกหมวดหมู่ --</option>
-                        @foreach($types as$type)
+                        @foreach ($types as $type)
                             <option value="{{ $type->id }}" {{ old('type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
                     </select>
@@ -95,7 +95,6 @@
                 return;
             }
 
-            // 🟢 เอา API Key ของคุณมาใส่ตรงนี้ 🟢
             const apiKey = '176ba27a57b132784892dc6b4c517753'; 
             
             try {

@@ -40,7 +40,12 @@
                         <x-nav-link :href="route('admin.movies.pending')" :active="request()->routeIs('admin.movies.pending')">
                             🛡️ รออนุมัติ
                         </x-nav-link>
-                        
+                        <!-- เมนูจัดการรีพอร์ต (เห็นเฉพาะ Admin) -->
+                        @if(Auth::user()->role === 'admin')
+    <x-nav-link   x-nav-link :href="route('admin.reports')" :active="request()->routeIs('admin.reports')">
+        🚩 จัดการรีพอร์ต
+    </x-nav-link>
+@endif
                         <x-nav-link :href="route('admin.movies.search')" :active="request()->routeIs('admin.movies.search')">
                             🔍 นำเข้าหนัง
                         </x-nav-link>

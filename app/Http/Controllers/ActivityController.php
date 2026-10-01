@@ -170,4 +170,26 @@ class ActivityController extends Controller
 
         return redirect()->route('my.movies')->with('success', '✅ อัปเดตข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }
+
+// 4. ฟังก์ชันลบภาพยนตร์ / ปัดตกรายการ
+    public function destroy($id)
+    {
+        $movie = Activity::findOrFail($id);
+
+        // ตรวจสอบสิทธิ์: อนุญาตเฉพาะ Admin หรือเจ้าของที่เสนอเรื่องนี้เข้ามา
+        if (auth()->user()->role !== 'admin' && $movie->user_id !== auth()->id()) {
+            return back()->with('error', '❌ คุณไม่มีสิทธิ์ลบรายการนี้');
+        }
+
+        // ลบไฟล์ภาพออกจาก Storage หากเป็นไฟล์ที่อัปโหลดเอง (ไม่ใช่ URL จาก TMDB)
+        if ($movie->image && !\Illuminate\Support\Str::startsWith($movie->image, ['http://', 'https://'])) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($movie->image);
+        }
+
+        $movie->delete();
+
+        return back()->with('success', '🗑️ ลบ/ปัดตกข้อมูลภาพยนตร์เรียบร้อยแล้ว');
+    }
+
+
 }
