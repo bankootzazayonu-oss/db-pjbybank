@@ -17,6 +17,7 @@ class Activity extends Model
         'hours',
         'type_id', 
         'is_approved',
+        'tmdb_id', // 🟢 เพิ่มบรรทัดนี้เข้าไป
     ];
     
     // เชื่อมแบบ 1-to-Many

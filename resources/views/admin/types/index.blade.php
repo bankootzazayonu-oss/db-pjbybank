@@ -10,6 +10,12 @@
         @if(session('success'))
             <div class="bg-green-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('success') }}</div>
         @endif
+        
+        <!-- 🟢 ดักจับข้อความแจ้งเตือนข้อผิดพลาด (เช่น เมื่อลบหมวดหมู่ที่มีหนังผูกอยู่) -->
+        @if(session('error'))
+            <div class="bg-red-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('error') }}</div>
+        @endif
+
         @if($errors->any())
             <div class="bg-red-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">{{ $errors->first() }}</div>
         @endif
@@ -38,24 +44,55 @@
                     <table class="w-full text-left text-gray-700 dark:text-gray-300">
                         <thead>
                             <tr class="border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                                <th class="pb-3 pl-2">ID</th>
+                                <th class="pb-3 pl-2 w-16">ID</th>
                                 <th class="pb-3">ชื่อหมวดหมู่</th>
-                                <th class="pb-3 text-right pr-2">การจัดการ</th>
+                                <th class="pb-3 text-right pr-2 w-48">การจัดการ</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($types as $type)
-                            <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                                <td class="py-4 pl-2">{{ $type->id }}</td>
-                                <td class="py-4 font-bold text-gray-900 dark:text-white">{{ $type->name }}</td>
-                                <td class="py-4 text-right pr-2">
-                                    <form action="{{ route('admin.types.destroy', $type->id) }}" method="POST" onsubmit="return confirm('ยืนยันลบหมวดหมู่นี้? หนังในหมวดนี้อาจได้รับผลกระทบ');">
+                            <!-- 🟢 ใช้ Alpine.js x-data สำหรับเปิด-ปิดโหมดแก้ไขในแต่ละแถว -->
+                            <tr x-data="{ editTypeMode: false }" class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                                <td class="py-4 pl-2 text-gray-400">{{ $type->id }}</td>
+                                
+                                <td class="py-4">
+                                    <!-- โหมดแสดงผลปกติ -->
+                                    <div x-show="!editTypeMode" class="font-bold text-gray-900 dark:text-white">
+                                        {{ $type->name }}
+                                    </div>
+
+                                    <!-- โหมดฟอร์มแก้ไขข้อความ -->
+                                    <form x-show="editTypeMode" style="display: none;" action="{{ route('admin.types.update', $type->id) }}" method="POST" class="flex items-center gap-2">
                                         @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-400 font-bold bg-red-100 dark:bg-red-900/30 px-3 py-1 rounded-md text-sm transition">
-                                            🗑️ ลบ
+                                        @method('PUT')
+                                        <input type="text" name="name" value="{{ $type->name }}" required
+                                               class="text-sm bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md px-2.5 py-1 focus:ring-indigo-500 focus:border-indigo-500 w-full max-w-xs">
+                                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-2.5 py-1.5 rounded transition shadow-sm">
+                                            บันทึก
+                                        </button>
+                                        <button type="button" @click="editTypeMode = false" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-xs font-bold px-2.5 py-1.5 rounded transition">
+                                            ยกเลิก
                                         </button>
                                     </form>
+                                </td>
+
+                                <td class="py-4 text-right pr-2">
+                                    <!-- ซ่อนปุ่มจัดการเมื่ออยู่ในโหมดแก้ไข -->
+                                    <div x-show="!editTypeMode" class="flex justify-end items-center gap-2">
+                                        <!-- ปุ่มแก้ไข -->
+                                        <button type="button" @click="editTypeMode = true" class="text-blue-600 hover:text-blue-400 font-bold bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-md text-sm transition">
+                                            ✏️ แก้ไข
+                                        </button>
+
+                                        <!-- ปุ่มลบ -->
+                                        <form action="{{ route('admin.types.destroy', $type->id) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหมวดหมู่นี้?');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-400 font-bold bg-red-100 dark:bg-red-900/30 px-3 py-1 rounded-md text-sm transition">
+                                                🗑️ ลบ
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             @empty

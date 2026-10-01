@@ -64,6 +64,39 @@ class ReviewController extends Controller
 
         return back()->with('success', '🚩 รายงานคอมเมนต์ไปยังผู้ดูแลระบบเรียบร้อยแล้ว');
     }
+    // 🟢 User กดอัปเดต/แก้ไขคอมเมนต์ตัวเอง
+    public function update(Request $request, $id)
+    {
+        $request->validate(['comment' => 'required|string|max:1000']);
+        
+        $review = Review::findOrFail($id);
+
+        // เช็กสิทธิ์: ต้องเป็นเจ้าของคอมเมนต์เท่านั้นถึงแก้ได้
+        if ($review->user_id !== auth()->id()) {
+            abort(403, 'คุณไม่มีสิทธิ์แก้ไขคอมเมนต์นี้');
+        }
+
+        $review->update(['comment' => $request->comment]);
+
+        return back()->with('success', '✅ แก้ไขคอมเมนต์เรียบร้อยแล้ว');
+    }
+
+    // 🟢 User กดลบคอมเมนต์ตัวเองทิ้ง
+    public function userDestroy($id)
+    {
+        $review = Review::findOrFail($id);
+
+        // เช็กสิทธิ์: ต้องเป็นเจ้าของคอมเมนต์เท่านั้นถึงลบได้
+        if ($review->user_id !== auth()->id()) {
+            abort(403, 'คุณไม่มีสิทธิ์ลบคอมเมนต์นี้');
+        }
+
+        // ลบ Report ที่อาจจะผูกอยู่ออกก่อน (กันฐานข้อมูลพัง)
+        CommentReport::where('review_id', $review->id)->delete();
+        $review->delete();
+
+        return back()->with('success', '🗑️ ลบคอมเมนต์ของคุณเรียบร้อยแล้ว');
+    }
 
     // ================= โซนของ ADMIN =================
 

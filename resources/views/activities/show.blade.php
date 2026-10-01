@@ -16,6 +16,9 @@
         @if(session('success'))
             <div class="bg-green-500 text-white p-4 rounded-lg mb-6 font-bold shadow-md">{{ session('success') }}</div>
         @endif
+        @if(session('error'))
+            <div class="bg-red-500 text-white p-4 rounded-lg mb-6 font-bold shadow-md">{{ session('error') }}</div>
+        @endif
 
         <!-- ส่วนแสดงรายละเอียดหนัง (แบบ Grid 2 คอลัมน์) -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-8">
@@ -137,7 +140,7 @@
                                     ⭐ {{ $review->rating }} / 10
                                 </div>
                                 
-                                <!-- ปุ่มรายงาน (โผล่ตอน Hover) -->
+                                <!-- ปุ่มรายงาน (โผล่ตอน Hover เฉพาะคอมเมนต์คนอื่น) -->
                                 @if(Auth::check() && Auth::id() !== $review->user_id)
                                     <form action="{{ route('reviews.report', $review->id) ?? '#' }}" method="POST">
                                         @csrf
@@ -149,37 +152,118 @@
                             </div>
                         </div>
 
-                        <!-- เช็กสปอยล์ (ใช้โค้ดเดิมของคุณที่ออกแบบมาดีแล้ว) -->
-                        @if($review->is_spoiler)
-                            <details class="group bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/50 rounded-md p-3">
-                                <summary class="cursor-pointer text-sm font-bold text-red-600 dark:text-red-400 list-none flex items-center gap-2">
-                                    <span>▶</span> ⚠️ รีวิวนี้มีสปอยล์ (คลิกเพื่ออ่าน)
-                                </summary>
-                                <p class="mt-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed border-t border-red-200 dark:border-red-800/50 pt-3 whitespace-pre-line">
-                                    {{ $review->comment }}
-                                </p>
-                            </details>
-                        @else
-                            <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line mt-2">
-                                {{ $review->comment }}
-                            </p>
-                        @endif
+                        <!-- 🟢 [ส่วนแทรกใหม่]: รองรับระบบแก้ไข (Update) และลบ (Delete) ของ User เจ้าของคอมเมนต์ ครอบด้วย Alpine.js -->
+                        <div x-data="{ editMode: false }">
+
+                            <!-- โหมดปกติ (แสดงผลตามปกติ หรือแบบสปอยล์) -->
+                            <div x-show="!editMode">
+                                @if($review->is_spoiler)
+                                    <details class="group bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/50 rounded-md p-3">
+                                        <summary class="cursor-pointer text-sm font-bold text-red-600 dark:text-red-400 list-none flex items-center gap-2">
+                                            <span>▶</span> ⚠️ รีวิวนี้มีสปอยล์ (คลิกเพื่ออ่าน)
+                                        </summary>
+                                        <p class="mt-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed border-t border-red-200 dark:border-red-800/50 pt-3 whitespace-pre-line">
+                                            {{ $review->comment }}
+                                        </p>
+                                    </details>
+                                @else
+                                    <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line mt-2">
+                                        {{ $review->comment }}
+                                    </p>
+                                @endif
+
+                                <!-- ปุ่มแก้ไข / ลบ สำหรับเจ้าของคอมเมนต์ -->
+                                @if(Auth::check() && Auth::id() === $review->user_id)
+                                    <div class="flex items-center gap-3 mt-3 pt-2 border-t border-gray-200 dark:border-gray-800">
+                                        <button type="button" @click="editMode = true" class="text-xs text-blue-500 hover:text-blue-700 font-bold flex items-center gap-1 transition">
+                                            ✏️ แก้ไขคอมเมนต์
+                                        </button>
+
+                                        <form action="{{ route('reviews.user_destroy', $review->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบคอมเมนต์นี้ของคุณทิ้ง?')" class="text-xs text-red-500 hover:text-red-700 font-bold flex items-center gap-1 transition">
+                                                🗑️ ลบคอมเมนต์
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- โหมดแก้ไขข้อความ (จะสลับมาแสดงเมื่อกดปุ่ม ✏️ แก้ไขคอมเมนต์) -->
+                            <div x-show="editMode" style="display: none;" class="mt-3 bg-white dark:bg-gray-800 p-4 rounded-lg border border-indigo-200 dark:border-indigo-900">
+                                <form action="{{ route('reviews.update', $review->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">แก้ไขข้อความรีวิวของคุณ:</label>
+                                    <textarea name="comment" rows="3" required class="w-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm mb-3">{{ $review->comment }}</textarea>
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition">
+                                            💾 บันทึกการแก้ไข
+                                        </button>
+                                        <button type="button" @click="editMode = false" class="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-xs font-bold py-1.5 px-3 rounded shadow transition">
+                                            ยกเลิก
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                        <!-- 🟢 [สิ้นสุดส่วนแทรกใหม่] -->
                         
                         <!-- ================= โซนตอบกลับ (Reply on Comment) ================= -->
                         <div class="ml-4 md:ml-10 mt-5 pl-4 border-l-2 border-indigo-200 dark:border-indigo-900/50 space-y-3">
                             
                             <!-- ลูปแสดงคอมเมนต์ย่อย -->
                             @foreach($review->replies as $reply)
-                                <div class="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-100 dark:border-gray-700 shadow-sm">
-                                    <div class="flex justify-between items-start mb-1">
-                                        <div class="flex items-center gap-2">
-                                            <span class="font-bold text-sm text-gray-900 dark:text-gray-200">{{ $reply->user->name }}</span>
-                                            <span class="text-xs text-gray-500">{{ $reply->created_at->diffForHumans() }}</span>
+                                <div x-data="{ editReplyMode: false }" class="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-100 dark:border-gray-700 shadow-sm">
+                                    
+                                    <!-- โหมด 1: แสดงผลปกติ -->
+                                    <div x-show="!editReplyMode">
+                                        <div class="flex justify-between items-start mb-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-bold text-sm text-gray-900 dark:text-gray-200">{{ $reply->user->name }}</span>
+                                                <span class="text-xs text-gray-500">{{ $reply->created_at->diffForHumans() }}</span>
+                                            </div>
                                         </div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{{ $reply->message }}</p>
+                                        
+                                        <!-- ปุ่มแก้ไข/ลบ จะโผล่เฉพาะข้อความของตัวเอง -->
+                                        @if(Auth::check() && Auth::id() === $reply->user_id)
+                                            <div class="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                <button type="button" @click="editReplyMode = true" class="text-xs text-blue-500 hover:text-blue-700 font-bold transition">
+                                                    ✏️ แก้ไข
+                                                </button>
+                                                <form action="{{ route('replies.destroy', $reply->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" onclick="return confirm('ลบการตอบกลับนี้ใช่หรือไม่?')" class="text-xs text-red-500 hover:text-red-700 font-bold transition">
+                                                        🗑️ ลบ
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @endif
                                     </div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{{ $reply->message }}</p>
+
+                                    <!-- โหมด 2: ฟอร์มแก้ไขข้อความ (จะโผล่ตอนกดปุ่มแก้ไข) -->
+                                    <div x-show="editReplyMode" style="display: none;" class="mt-2">
+                                        <form action="{{ route('replies.update', $reply->id) }}" method="POST" class="flex gap-2">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="text" name="message" value="{{ $reply->message }}" required class="flex-1 text-sm bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-500 rounded-md px-3 py-1.5 text-gray-900 dark:text-white transition">
+                                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition">
+                                                บันทึก
+                                            </button>
+                                            <button type="button" @click="editReplyMode = false" class="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-xs font-bold py-1.5 px-3 rounded shadow transition">
+                                                ยกเลิก
+                                            </button>
+                                        </form>
+                                    </div>
+
                                 </div>
                             @endforeach
+                            
 
                             <!-- ฟอร์มพิมพ์ตอบกลับ -->
                             @auth
