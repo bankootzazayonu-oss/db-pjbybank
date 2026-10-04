@@ -15,9 +15,12 @@ class Activity extends Model
         'image',
         'user_id',
         'hours',
-        'type_id', 
+        'type_id',
+        'director_id', 
         'is_approved',
         'tmdb_id', // 🟢 เพิ่มบรรทัดนี้เข้าไป
+        'status',
+        
     ];
     
     // เชื่อมแบบ 1-to-Many

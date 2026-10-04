@@ -1,13 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                กระดาน: <span class="text-indigo-400">{{ $collection->name }}</span>
-            </h2>
-            <button x-data @click="$dispatch('open-settings-modal')" class="text-sm bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-1 px-3 rounded shadow transition">
-                ⚙️ ตั้งค่าชื่อระดับ
-            </button>
-        </div>
+    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        กระดาน: <span class="text-indigo-400">{{ $collection->name }}</span>
+    </h2>
+
+    <div class="flex items-center gap-2">
+        <a href="{{ route('collections.index') }}"
+           class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded shadow transition">
+            ← กลับไป Tier Lists
+        </a>
+
+        <button x-data @click="$dispatch('open-settings-modal')"
+                class="text-sm bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-1 px-3 rounded shadow transition">
+            ⚙️ ตั้งค่าชื่อระดับ
+        </button>
+    </div>
+</div>
     </x-slot>
 
     <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -115,6 +124,12 @@
                                     
                                     <div class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200">
                                         <p class="text-xs text-white font-bold mb-2 text-center px-1 truncate w-full">{{ $item->movie->name }}</p>
+                                        <a href="{{ route('activities.show', $item->movie->id) }}"
+   class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded mb-1">
+    🎬 ดูหนัง
+</a>
+
+
                                         <form action="{{ route('collections.updateRank', $item->id) }}" method="POST" class="w-full px-2 mb-1">
                                             @csrf @method('PUT')
                                             <select name="tier_rank" onchange="this.form.submit()" class="w-full text-[10px] p-1 bg-gray-900 text-white border-0 rounded cursor-pointer truncate">

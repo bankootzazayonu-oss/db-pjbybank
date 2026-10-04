@@ -48,19 +48,70 @@
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                                     ปีที่ฉาย: {{ !empty($movie['release_date']) ? substr($movie['release_date'], 0, 4) : 'ไม่ระบุ' }}
                                 </p>
+
+                               <form action="{{ route('admin.movies.import') }}" method="POST">
+    @csrf
+
+    <input
+        type="hidden"
+        name="tmdb_id"
+        value="{{ $movie['id'] }}"
+    >
+
+    <input
+        type="hidden"
+        name="title"
+        value="{{ $movie['title'] }}"
+    >
+
+    <input
+        type="hidden"
+        name="year"
+        value="{{ substr($movie['release_date'], 0, 4) }}"
+    >
+
+    <input
+        type="hidden"
+        name="overview"
+        value="{{ $movie['overview'] }}"
+    >
+
+    <input
+        type="hidden"
+        name="poster_path"
+        value="{{ $movie['poster_path'] }}"
+
+
+    >
+    <div class="mt-3">
+    <label for="type_id" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+        🎬 ประเภทหนัง
+    </label>
+
+    <select
+        name="type_id"
+        id="type_id"
+        required
+        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-indigo-500 focus:ring-indigo-500"
+    >
+        <option value="">-- เลือกประเภทหนัง --</option>
+
+        @foreach($types as $type)
+            <option value="{{ $type->id }}">
+                {{ $type->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+    <button type="submit">
+        📥 นำเข้าฐานข้อมูล
+    </button>
+</form>
+
+
                                 
-                                <!-- ฟอร์มนำเข้าข้อมูล -->
-                                <form action="{{ route('admin.movies.import') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="title" value="{{ $movie['title'] }}">
-                                    <input type="hidden" name="year" value="{{ !empty($movie['release_date']) ? substr($movie['release_date'], 0, 4) : '' }}">
-                                    <input type="hidden" name="overview" value="{{ $movie['overview'] ?? 'ไม่มีเรื่องย่อ' }}">
-                                    <input type="hidden" name="poster_path" value="{{ $movie['poster_path'] ?? '' }}">
-                                    
-                                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md text-sm transition flex justify-center items-center gap-2 shadow-md">
-                                        📥 + นำเข้าสู่ระบบเรา
-                                    </button>
-                                </form>
+                               
                             </div>
                         </div>
                     @endforeach

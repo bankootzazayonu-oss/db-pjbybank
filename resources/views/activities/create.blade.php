@@ -29,6 +29,8 @@
             <form action="{{ route('activities.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
+                <input type="hidden" id="tmdb_id" name="tmdb_id">
+
                 <div class="mb-5">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ชื่อภาพยนตร์/ซีรีส์ <span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
@@ -41,6 +43,17 @@
                         </button>
                     </div>
                 </div>
+                <div id="tmdb_results" class="hidden mb-6">
+    <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-3">
+        🎬 เลือกภาพยนตร์ที่ต้องการ
+    </h4>
+
+    <div id="tmdb_results_list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    </div>
+</div>
+
+
+                
 
                 <div class="mb-5">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">หมวดหมู่ <span class="text-red-500">*</span></label>
@@ -89,42 +102,139 @@
     <!-- Script สำหรับดึงข้อมูล TMDB -->
     <script>
         async function fetchTMDB() {
-            const query = document.getElementById('movie_name').value;
-            if(!query) {
-                alert('กรุณาพิมพ์ชื่อภาพยนตร์ในช่องก่อนกดค้นหาครับ');
-                return;
-            }
+    const query = document.getElementById('movie_name').value.trim();
 
-            const apiKey = '176ba27a57b132784892dc6b4c517753'; 
-            
-            try {
-                const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=th-TH&query=${query}`);
-                const data = await res.json();
+    if (!query) {
+        alert('กรุณาพิมพ์ชื่อภาพยนตร์ก่อนค้นหา');
+        return;
+    }
 
-                if(data.results && data.results.length > 0) {
-                    const movie = data.results[0]; 
-                    
-                    if(movie.release_date) document.getElementById('movie_year').value = movie.release_date.substring(0, 4);
-                    if(movie.overview) {
-                        document.getElementById('movie_review').value = movie.overview;
-                    } else {
-                        document.getElementById('movie_review').value = "ไม่มีเรื่องย่อภาษาไทยสำหรับภาพยนตร์เรื่องนี้";
-                    }
+    const resultsContainer = document.getElementById('tmdb_results');
+    const resultsList = document.getElementById('tmdb_results_list');
 
-                    if(movie.poster_path) {
-                        const imgUrl = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
-                        document.getElementById('api_image').value = imgUrl; 
-                        document.getElementById('poster_preview_img').src = imgUrl; 
-                        document.getElementById('poster_preview_container').classList.remove('hidden');
-                    }
-                    alert('ดึงข้อมูลสำเร็จ! กรุณาตรวจสอบความถูกต้องก่อนกดส่ง');
-                } else {
-                    alert('ไม่พบข้อมูลภาพยนตร์เรื่องนี้ในระบบ TMDB ครับ ลองเปลี่ยนคำค้นหาดูนะ');
-                }
-            } catch (error) {
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับ TMDB');
-                console.error(error);
-            }
+    resultsContainer.classList.remove('hidden');
+
+    resultsList.innerHTML = `
+        <div class="col-span-full text-center text-gray-500 dark:text-gray-400 py-6">
+            🔄 กำลังค้นหาจาก TMDB...
+        </div>
+    `;
+
+    try {
+        const response = await fetch(
+            `{{ route('activities.tmdb_search') }}?query=${encodeURIComponent(query)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'ไม่สามารถค้นหา TMDB ได้');
         }
+
+        if (!data.results || data.results.length === 0) {
+            resultsList.innerHTML = `
+                <div class="col-span-full text-center text-red-500 py-6">
+                    ❌ ไม่พบภาพยนตร์ที่ค้นหา
+                </div>
+            `;
+            return;
+        }
+
+        resultsList.innerHTML = '';
+
+        data.results.slice(0, 8).forEach(movie => {
+            const year = movie.release_date
+                ? movie.release_date.substring(0, 4)
+                : 'ไม่ทราบปี';
+
+            const poster = movie.poster_path
+                ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+                : 'https://via.placeholder.com/300x450?text=No+Poster';
+
+            const card = document.createElement('div');
+
+            card.className =
+                'border border-gray-300 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 flex gap-3';
+
+            card.innerHTML = `
+                <img
+                    src="${poster}"
+                    class="w-20 h-28 object-cover rounded"
+                    alt="${escapeHtml(movie.title || 'Poster')}"
+                >
+
+                <div class="flex-1">
+                    <h5 class="font-bold text-gray-900 dark:text-white">
+                        ${escapeHtml(movie.title || 'ไม่ทราบชื่อ')}
+                    </h5>
+
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        ปี: ${year}
+                    </p>
+
+                    <button
+                        type="button"
+                        class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-3 py-2 rounded"
+                        onclick='selectTMDBMovie(${JSON.stringify(movie).replace(/'/g, "&#39;")})'
+                    >
+                        เลือกเรื่องนี้
+                    </button>
+                </div>
+            `;
+
+            resultsList.appendChild(card);
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        resultsList.innerHTML = `
+            <div class="col-span-full text-center text-red-500 py-6">
+                ❌ ${escapeHtml(error.message)}
+            </div>
+        `;
+    }
+}
+function selectTMDBMovie(movie) {
+    const year = movie.release_date
+        ? movie.release_date.substring(0, 4)
+        : '';
+
+    document.getElementById('tmdb_id').value = movie.id || '';
+
+    document.getElementById('movie_name').value =
+        movie.title || '';
+
+    document.getElementById('movie_year').value =
+        year;
+
+    document.getElementById('movie_review').value =
+        movie.overview || 'ไม่มีเรื่องย่อสำหรับภาพยนตร์เรื่องนี้';
+
+    if (movie.poster_path) {
+        const imgUrl =
+            'https://image.tmdb.org/t/p/w500' + movie.poster_path;
+
+        document.getElementById('api_image').value = imgUrl;
+
+        document.getElementById('poster_preview_img').src = imgUrl;
+
+        document
+            .getElementById('poster_preview_container')
+            .classList.remove('hidden');
+    }
+
+    document.getElementById('tmdb_results').classList.add('hidden');
+
+    alert(
+        `เลือก "${movie.title}" เรียบร้อยแล้ว\nกรุณาตรวจสอบข้อมูลก่อนส่ง`
+    );
+}
+
+function escapeHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = value ?? '';
+    return div.innerHTML;
+}
     </script>
 </x-app-layout>

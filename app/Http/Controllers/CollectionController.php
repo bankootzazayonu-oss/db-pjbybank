@@ -35,47 +35,73 @@ class CollectionController extends Controller
         $items = $collection->items()->with('movie')->get()->groupBy('tier_rank');
         
         // ดึงรายชื่อหนังทั้งหมดที่อนุมัติแล้วมาเป็นตัวเลือกให้กดเพิ่มเข้ากระดาน
-        $allMovies = Activity::where('is_approved', 1)->orderBy('name')->get();
+        $allMovies = Activity::where('status', 'approved')->orderBy('name')->get();
 
         return view('collections.show', compact('collection', 'items', 'allMovies'));
     }
 
     // 4. เพิ่มหนังเข้ากระดาน
     public function addMovie(Request $request, $id)
-    {
-        $request->validate([
-            'activity_id' => 'required|exists:activities,id',
-            'tier_rank' => 'required|in:S,A,B,C,D'
-        ]);
+{
+    $request->validate([
+        'activity_id' => 'required|exists:activities,id',
+        'tier_rank' => 'required|in:S,A,B,C,D'
+    ]);
 
-        $exists = CollectionItem::where('collection_id', $id)->where('activity_id', $request->activity_id)->first();
-        if ($exists) {
-            return back()->with('error', '❌ หนังเรื่องนี้อยู่ในกระดานแล้ว!');
-        }
+    // ตรวจสอบว่ากระดานนี้เป็นของผู้ใช้ปัจจุบัน
+    $collection = Collection::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
 
-        CollectionItem::create([
-            'collection_id' => $id,
-            'activity_id' => $request->activity_id,
-            'tier_rank' => $request->tier_rank
-        ]);
-        return back()->with('success', '✅ เพิ่มหนังลงกระดานสำเร็จ!');
+    $exists = CollectionItem::where('collection_id', $collection->id)
+        ->where('activity_id', $request->activity_id)
+        ->first();
+
+    if ($exists) {
+        return back()->with('error', '❌ หนังเรื่องนี้อยู่ในกระดานแล้ว!');
     }
+
+    CollectionItem::create([
+        'collection_id' => $collection->id,
+        'activity_id' => $request->activity_id,
+        'tier_rank' => $request->tier_rank
+    ]);
+
+    return back()->with('success', '✅ เพิ่มหนังลงกระดานสำเร็จ!');
+}
 
     // 5. อัปเดตระดับ (ย้าย Tier)
-    public function updateRank(Request $request, $id)
-    {
-        $item = CollectionItem::findOrFail($id);
-        $item->update(['tier_rank' => $request->tier_rank]);
-        return back()->with('success', '🔄 เปลี่ยนระดับสำเร็จ!');
-    }
+  public function updateRank(Request $request, $id)
+{
+    $request->validate([
+        'tier_rank' => 'required|in:S,A,B,C,D'
+    ]);
 
+    $item = CollectionItem::findOrFail($id);
+
+    Collection::where('id', $item->collection_id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
+
+    $item->update([
+        'tier_rank' => $request->tier_rank
+    ]);
+
+    return back()->with('success', '🔄 เปลี่ยนระดับสำเร็จ!');
+}
     // 6. ลบหนังออกจากกระดาน
-    public function destroyItem($id)
-    {
-        $item = CollectionItem::findOrFail($id);
-        $item->delete();
-        return back()->with('success', '🗑️ ลบหนังออกจากกระดานสำเร็จ!');
-    }
+  public function destroyItem($id)
+{
+    $item = CollectionItem::findOrFail($id);
+
+    Collection::where('id', $item->collection_id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
+
+    $item->delete();
+
+    return back()->with('success', '🗑️ ลบหนังออกจากกระดานสำเร็จ!');
+}
 
     // 🟢 User กดบันทึกแก้ไขชื่อกระดาน
     public function update(Request $request, $id)
@@ -185,16 +211,23 @@ class CollectionController extends Controller
             $tmdbData = $response->json();
             
             $movie = Activity::create([
-                'name' => $tmdbData['title'] ?? $tmdbData['original_title'],
-                'year' => isset($tmdbData['release_date']) ? substr($tmdbData['release_date'], 0, 4) : date('Y'),
-                'review' => $tmdbData['overview'] ?? 'ไม่มีเรื่องย่อ',
-                'hours' => isset($tmdbData['runtime']) ? round($tmdbData['runtime'] / 60, 1) : 2,
-                'image' => $tmdbData['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $tmdbData['poster_path'] : null,
-                'user_id' => auth()->id(), 
-                'is_approved' => 1, // ✅ อนุมัติให้อัตโนมัติ เพราะมาจาก TMDB โดยตรง
-                'type_id' => null,  // อาจจะเว้นว่างหมวดหมู่ไว้ก่อน
-                'tmdb_id' => $tmdbId // บันทึก TMDB ID ไว้ คราวหน้าจะได้ไม่ต้องดึงซ้ำ
-            ]);
+    'name' => $tmdbData['title'] ?? $tmdbData['original_title'],
+    'year' => isset($tmdbData['release_date'])
+        ? substr($tmdbData['release_date'], 0, 4)
+        : date('Y'),
+    'review' => $tmdbData['overview'] ?? 'ไม่มีเรื่องย่อ',
+    'hours' => isset($tmdbData['runtime'])
+        ? round($tmdbData['runtime'] / 60, 1)
+        : 2,
+    'image' => $tmdbData['poster_path']
+        ? 'https://image.tmdb.org/t/p/w500' . $tmdbData['poster_path']
+        : null,
+    'user_id' => auth()->id(),
+    'is_approved' => 1,
+    'status' => 'approved',
+    'type_id' => null,
+    'tmdb_id' => $tmdbId,
+]);
         }
 
         // 3. เพิ่มหนังลงในกระดาน
@@ -203,11 +236,11 @@ class CollectionController extends Controller
             return back()->with('error', '⚠️ หนังเรื่องนี้อยู่ในกระดานของคุณแล้ว!');
         }
 
-        CollectionItem::create([
-            'collection_id' => $collection->id,
-            'activity_id' => $movie->id,
-            'tier_rank' => $request->tier_rank
-        ]);
+       CollectionItem::create([
+    'collection_id' => $collection->id,
+    'activity_id' => $movie->id,
+    'tier_rank' => $request->tier_rank
+]);
 
         return back()->with('success', "✨ นำเข้าหนัง '{$movie->name}' ลงกระดานเรียบร้อย!");
     }

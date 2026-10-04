@@ -23,6 +23,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('type_id')->nullable()->constrained('types')->nullOnDelete();
             
+
+            $table->foreignId('director_id')->nullable()->constrained('directors')->nullOnDelete();
+            
             // ใช้เก็บสถานะ: 0 = รออนุมัติ, 1 = อนุมัติแล้ว
             $table->boolean('is_approved')->default(0); 
             $table->timestamps();

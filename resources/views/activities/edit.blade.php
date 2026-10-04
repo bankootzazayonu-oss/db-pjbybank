@@ -33,16 +33,51 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">หมวดหมู่ภาพยนตร์ *</label>
-                    <select name="type_id" required class="w-full bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md focus:border-indigo-500 focus:ring-indigo-500">
-                        <option value="">-- เลือกหมวดหมู่ --</option>
-                        @foreach($types as $type)
-                            <option value="{{ $type->id }}" {{ $activity->type_id == $type->id ? 'selected' : '' }}>
-                                {{ $type->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+        หมวดหมู่ภาพยนตร์ *
+    </label>
+
+    <select
+        name="type_id"
+        required
+        class="w-full bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md focus:border-indigo-500 focus:ring-indigo-500"
+    >
+        <option value="">-- เลือกหมวดหมู่ --</option>
+
+        @foreach($types as $type)
+            <option
+                value="{{ $type->id }}"
+                {{ $activity->type_id == $type->id ? 'selected' : '' }}
+            >
+                {{ $type->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+
+{{-- ผู้กำกับ --}}
+<div class="mb-5">
+    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+        ผู้กำกับ
+    </label>
+
+    <select
+        name="director_id"
+        class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md focus:border-indigo-500 focus:ring-indigo-500"
+    >
+        <option value="">-- ไม่ระบุผู้กำกับ --</option>
+
+        @foreach($directors as $director)
+            <option
+                value="{{ $director->id }}"
+                {{ old('director_id', $activity->director_id) == $director->id ? 'selected' : '' }}
+            >
+                {{ $director->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">เรื่องย่อ / คำอธิบาย *</label>

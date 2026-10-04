@@ -54,21 +54,30 @@
 
                         <!-- ปุ่มจัดการ -->
                         <div class="grid grid-cols-2 gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
-                            <form action="{{ route('admin.movies.approve', $movie->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" onclick="return confirm('ยืนยันการอนุมัติภาพยนตร์เรื่องนี้?')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-md text-sm transition">
-                                    ✅ อนุมัติ
-                                </button>
-                            </form>
 
-                            <form action="{{ route('activities.destroy', $movie->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('ต้องการปัดตกและลบรายการนี้ใช่หรือไม่?')" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm transition">
-                                    🗑️ ปัดตก
-                                </button>
-                            </form>
-                        </div>
+    <form action="{{ route('admin.movies.approve', $movie->id) }}" method="POST">
+        @csrf
+        <button
+            type="submit"
+            onclick="return confirm('ยืนยันการอนุมัติภาพยนตร์เรื่องนี้?')"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-md text-sm transition"
+        >
+            ✅ อนุมัติ
+        </button>
+    </form>
+
+    <form action="{{ route('admin.movies.reject', $movie->id) }}" method="POST">
+        @csrf
+        <button
+            type="submit"
+            onclick="return confirm('ต้องการปฏิเสธภาพยนตร์เรื่องนี้หรือไม่?')"
+            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm transition"
+        >
+            ❌ ปฏิเสธ
+        </button>
+    </form>
+
+</div>
                     </div>
 
                 </div>

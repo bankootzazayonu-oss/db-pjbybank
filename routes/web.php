@@ -10,6 +10,9 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Middleware\IsAdmin;
+use App\Models\Review;
+use App\Models\Type;
+use Illuminate\Support\Facades\DB;
 
 // =====================================
 // โซน PUBLIC (ใครๆ ก็เข้าได้ ไม่ต้องล็อกอิน)
@@ -28,10 +31,58 @@ Route::get('/leaderboard', [ActivityController::class, 'leaderboard'])->name('le
 Route::middleware(['auth'])->group(function () {
     
     // หน้า Dashboard ของระบบ (หนังที่อนุมัติแล้ว)
-    Route::get('/dashboard', function () {
-        $movies = Activity::where('is_approved', true)->latest()->get(); 
-        return view('dashboard', compact('movies'));
-    })->name('dashboard');
+   Route::get('/dashboard', function () {
+
+    // หนังที่อนุมัติแล้วเท่านั้น
+    $movies = Activity::where('is_approved', true)
+        ->where('status', 'approved')
+        ->latest()
+        ->get();
+
+    // จำนวนหนังทั้งหมด
+    $totalMovies = Activity::where('is_approved', true)
+        ->where('status', 'approved')
+        ->count();
+
+    // จำนวนรีวิวทั้งหมดของหนังที่อนุมัติแล้ว
+    $totalReviews = Review::whereHas('activity', function ($query) {
+        $query->where('is_approved', true)
+            ->where('status', 'approved');
+    })->count();
+
+    // คะแนนเฉลี่ยรวม
+    $overallAverageRating = Review::whereHas('activity', function ($query) {
+        $query->where('is_approved', true)
+            ->where('status', 'approved');
+    })->avg('rating');
+
+    // Top 5 Genre ตามคะแนนเฉลี่ย
+    $topGenres = Type::query()
+        ->select(
+            'types.id',
+            'types.name',
+            DB::raw('AVG(reviews.rating) as average_rating'),
+            DB::raw('COUNT(reviews.id) as review_count')
+        )
+        ->join('activities', 'activities.type_id', '=', 'types.id')
+        ->join('reviews', 'reviews.activity_id', '=', 'activities.id')
+        ->where('activities.is_approved', true)
+        ->where('activities.status', 'approved')
+        ->groupBy('types.id', 'types.name')
+        ->orderByDesc('average_rating')
+        ->orderByDesc('review_count')
+        ->limit(5)
+        ->get();
+
+    return view('dashboard', compact(
+        'movies',
+        'totalMovies',
+        'totalReviews',
+        'overallAverageRating',
+        'topGenres'
+    ));
+
+})->name('dashboard');
 
     // ระบบ Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,6 +91,10 @@ Route::middleware(['auth'])->group(function () {
 
     // ระบบ จัดการภาพยนตร์ (ฝั่ง User)
     Route::get('/movies/create', [ActivityController::class, 'create'])->name('activities.create');
+
+    Route::get('/movies/tmdb-search', [ActivityController::class, 'tmdbSearch'])
+    ->name('activities.tmdb_search');
+
     Route::post('/movies/store', [ActivityController::class, 'store'])->name('activities.store');
     Route::get('/my-movies', [ActivityController::class, 'myMovies'])->name('my.movies');
     Route::get('/movies/{id}/edit', [ActivityController::class, 'edit'])->name('activities.edit');
@@ -94,11 +149,17 @@ Route::middleware(['auth'])->group(function () {
 // =====================================
 Route::middleware(['auth', IsAdmin::class])->group(function () {
     
-    // ระบบจัดการหมวดหมู่และผู้กำกับ (Resource Controllers)
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::resource('types', TypeController::class);
-        // Route::resource('directors', DirectorController::class);
-    });
+   // ระบบจัดการหมวดหมู่และผู้กำกับ (Resource Controllers)
+Route::resource('types', TypeController::class);
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('directors', DirectorController::class)->only([
+        'index',
+        'store',
+        'update',
+        'destroy',
+    ]);
+});
 
     // ระบบจัดการหมวดหมู่แบบเจาะจง (ซ้ำกับ Resource ข้างบน แต่อาจใช้สำหรับฟอร์มเฉพาะ)
     Route::get('/admin/types', [TypeController::class, 'index'])->name('admin.types.index');
@@ -114,6 +175,8 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     // ระบบจัดการ อนุมัติภาพยนตร์
     Route::get('/admin/pending-movies', [ActivityController::class, 'pending'])->name('admin.movies.pending');
     Route::post('/admin/approve-movie/{id}', [ActivityController::class, 'approve'])->name('admin.movies.approve');
+
+    Route::post('/admin/reject-movie/{id}', [ActivityController::class, 'reject'])->name('admin.movies.reject');
     Route::delete('/movies/{id}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
     // ระบบจัดการ รายงานคอมเมนต์สแปม/ไม่เหมาะสม

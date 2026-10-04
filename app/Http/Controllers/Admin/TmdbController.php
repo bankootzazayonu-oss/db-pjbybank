@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use App\Models\Type;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -10,48 +10,106 @@ use App\Models\Activity; // ดึง Model หนังมาใช้
 class TmdbController extends Controller
 {
     public function search(Request $request)
-    {
-        $query = $request->input('query');
-        $movies = [];
+{
+    $query = $request->input('query');
+    $movies = [];
 
-        if ($query) {
-            $apiKey = env('TMDB_API_KEY');
-            
-            $response = Http::get("https://api.themoviedb.org/3/search/movie", [
+    if ($query) {
+        $apiKey = env('TMDB_API_KEY');
+
+        $response = Http::get(
+            "https://api.themoviedb.org/3/search/movie",
+            [
                 'api_key' => $apiKey,
                 'query' => $query,
                 'language' => 'th-TH',
-            ]);
+            ]
+        );
 
-            if ($response->successful()) {
-                $movies = $response->json()['results'];
-            }
+        if ($response->successful()) {
+            $movies = $response->json()['results'] ?? [];
         }
-
-        return view('admin.movies.search', compact('movies', 'query'));
     }
+
+    // ดึง Genre/Type จากฐานข้อมูล
+    $types = Type::orderBy('name')->get();
+
+    return view(
+        'admin.movies.search',
+        compact('movies', 'query', 'types')
+    );
+}
 
     // ฟังก์ชันใหม่สำหรับบันทึกลงฐานข้อมูล
     public function import(Request $request)
-    {
-        // 1. ระบบเช็กหนังซ้ำ (ตามที่อาจารย์สั่ง)
-        $exists = Activity::where('name', $request->title)->where('year', $request->year)->first();
-        if ($exists) {
-            return back()->with('error', '⚠️ หนังเรื่อง "' . $request->title . '" มีอยู่ในระบบแล้ว!');
-        }
+{
+    $request->validate([
+        'tmdb_id' => 'required|integer',
+        'title' => 'required|string|max:255',
+        'year' => 'required|integer',
+        'overview' => 'nullable|string',
+        'poster_path' => 'nullable|string',
+        'type_id' => 'required|exists:types,id',
+    ]);
 
-        // 2. บันทึกลงฐานข้อมูล
-        Activity::create([
-            'name' => $request->title,
-            'year' => $request->year,
-            'review' => $request->overview,
-            'image' => $request->poster_path ? 'https://image.tmdb.org/t/p/w500' . $request->poster_path : null,
-            'hours' => 2.0, // ใส่ค่าเริ่มต้นไปก่อน (แอดมินค่อยไปแก้ทีหลังได้)
-            'category' => 'รอระบุหมวดหมู่', // ใส่ค่าเริ่มต้น
-            'is_approved' => 1,
-            'user_id' => auth()->id(),
-        ]);
+    $isTmdbDuplicate = Activity::where(
+        'tmdb_id',
+        $request->tmdb_id
+    )->exists();
 
-        return back()->with('success', '✅ นำเข้า "' . $request->title . '" เข้าสู่คลังภาพยนตร์สำเร็จ!');
+    if ($isTmdbDuplicate) {
+        return back()->with(
+            'error',
+            '⚠️ หนังเรื่อง "' .
+            $request->title .
+            '" มีอยู่ในระบบแล้ว (TMDB ID ซ้ำ)'
+        );
     }
+
+    $isDuplicate = Activity::whereRaw(
+        'LOWER(name) = ?',
+        [strtolower($request->title)]
+    )
+        ->where('year', $request->year)
+        ->exists();
+
+    if ($isDuplicate) {
+        return back()->with(
+            'error',
+            '⚠️ หนังเรื่อง "' .
+            $request->title .
+            '" ปี ' .
+            $request->year .
+            ' มีอยู่ในระบบแล้ว'
+        );
+    }
+
+    $imagePath = null;
+
+    if ($request->filled('poster_path')) {
+        $imagePath =
+            'https://image.tmdb.org/t/p/w500' .
+            $request->poster_path;
+    }
+
+    Activity::create([
+        'name' => $request->title,
+        'year' => $request->year,
+        'review' => $request->overview,
+        'image' => $imagePath,
+        'hours' => 2.0,
+        'type_id' => $request->type_id,
+        'tmdb_id' => $request->tmdb_id,
+        'is_approved' => 1,
+        'status' => 'approved',
+        'user_id' => auth()->id(),
+    ]);
+
+    return back()->with(
+        'success',
+        '✅ นำเข้า "' .
+        $request->title .
+        '" เข้าสู่คลังภาพยนตร์สำเร็จ!'
+    );
+}
 }

@@ -9,17 +9,41 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
+use App\Models\Activity;
+use App\Models\Review;
+use App\Models\Collection;
 class ProfileController extends Controller
 {
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
-    {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
-    }
+{
+    $user = $request->user();
+
+    // หนังที่ User เคยรีวิว
+    $reviews = Review::with('activity')
+        ->where('user_id', $user->id)
+        ->latest()
+        ->get();
+
+    // Tier List ที่ User สร้าง
+    $collections = Collection::where('user_id', $user->id)
+        ->latest()
+        ->get();
+
+    // หนังที่ User เป็นคนเสนอเข้าระบบ
+    $submittedMovies = Activity::where('user_id', $user->id)
+        ->latest()
+        ->get();
+
+    return view('profile.edit', [
+        'user' => $user,
+        'reviews' => $reviews,
+        'collections' => $collections,
+        'submittedMovies' => $submittedMovies,
+    ]);
+}
 
     /**
      * Update the user's profile information.
