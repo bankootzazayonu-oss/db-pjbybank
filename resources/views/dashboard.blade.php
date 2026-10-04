@@ -203,7 +203,7 @@
 
 
         {{-- Grid หนัง --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-6">
 
             @forelse($movies as $movie)
 
@@ -223,7 +223,7 @@
                 >
 
                     {{-- Poster --}}
-                    <div class="h-64 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                    <div class="aspect-[2/3] bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
 
                         @if($movie->image)
 
@@ -264,15 +264,15 @@
 
 
                     {{-- ข้อมูลหนัง --}}
-                    <div class="p-4 flex flex-col flex-grow">
+                    <div class="p-4 flex flex-col flex-1">
 
                         {{-- ชื่อหนัง --}}
-                        <h3 class="text-gray-900 dark:text-white font-bold text-sm line-clamp-2 leading-tight group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition mb-3">
+                        <h3 class="text-gray-900 dark:text-white font-bold text-sm line-clamp-2 min-h-[2.5rem] leading-tight group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition mb-3">
                             {{ $movie->name }}
                         </h3>
 
 
-                        <div class="mt-auto space-y-2">
+                        <div class="mt-auto space-y-3">
 
                             {{-- คะแนน --}}
                             <div class="flex items-center justify-between">
@@ -290,13 +290,13 @@
                                 </div>
 
 
-                                @if($reviewCount > 0)
+                                <!-- @if($reviewCount > 0) -->
 
                                     <span class="text-[10px] text-gray-500 dark:text-gray-400">
                                         👤 {{ $reviewCount }} รีวิว
                                     </span>
 
-                                @endif
+                                <!-- @endif -->
 
                             </div>
 
