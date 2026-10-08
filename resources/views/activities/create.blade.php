@@ -30,6 +30,7 @@
                 @csrf
 
                 <input type="hidden" id="tmdb_id" name="tmdb_id">
+                <input type="hidden" id="original_title" name="original_title">
 
                 <div class="mb-5">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ชื่อภาพยนตร์/ซีรีส์ <span class="text-red-500">*</span></label>
@@ -201,6 +202,8 @@ function selectTMDBMovie(movie) {
         : '';
 
     document.getElementById('tmdb_id').value = movie.id || '';
+
+    document.getElementById('original_title').value = movie.original_title || '';
 
     document.getElementById('movie_name').value =
         movie.title || '';

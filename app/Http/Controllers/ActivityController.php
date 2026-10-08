@@ -129,6 +129,7 @@ public function reject($id)
 {
     $request->validate([
         'name' => 'required|string|max:255',
+        'original_title' => 'nullable|string|max:255',
         'year' => 'required|integer',
         'review' => 'required|string',
         'type_id' => 'required|exists:types,id',
@@ -159,10 +160,14 @@ public function reject($id)
     // ==========================================
     // 2. ตรวจสอบชื่อ + ปี ซ้ำ
     // ==========================================
-    $isDuplicate = Activity::whereRaw(
-        'LOWER(name) = ?',
-        [strtolower($request->name)]
-    )
+    $isDuplicate = Activity::where(function($query) use ($request) {
+            $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)])
+                  ->orWhere(function($sub) use ($request) {
+                      if ($request->filled('original_title')) {
+                          $sub->whereRaw('LOWER(original_title) = ?', [strtolower($request->original_title)]);
+                      }
+                  });
+        })
         ->where('year', $request->year)
         ->exists();
 
@@ -194,6 +199,7 @@ public function reject($id)
     // ==========================================
    Activity::create([
     'name' => $request->name,
+    'original_title' => $request->original_title ?: null,
     'year' => $request->year,
     'review' => $request->review,
     'image' => $imagePath,
@@ -234,14 +240,12 @@ public function reject($id)
             }
         }
 
-       $types = \App\Models\Type::orderBy('name')->get();
-$directors = \App\Models\Director::orderBy('name')->get();
+        $types = \App\Models\Type::orderBy('name')->get();
 
-return view('activities.edit', compact(
-    'activity',
-    'types',
-    'directors'
-));
+        return view('activities.edit', compact(
+            'activity',
+            'types'
+        ));
     }
 
     // 3. ฟังก์ชันอัปเดตข้อมูล
@@ -278,13 +282,12 @@ return view('activities.edit', compact(
             return back()->withInput()->withErrors(['name' => '❌ ไม่สามารถเปลี่ยนชื่อเป็นเรื่องนี้ได้ เพราะมีอยู่ในคลังแล้วครับ!']);
         }
 
-       $updateData = [
-    'name' => $request->name,
-    'year' => $request->year,
-    'review' => $request->review,
-    'type_id' => $request->type_id,
-    'director_id' => $request->director_id,
-];
+        $updateData = [
+            'name' => $request->name,
+            'year' => $request->year,
+            'review' => $request->review,
+            'type_id' => $request->type_id,
+        ];
 // ถ้า User แก้หนังที่ถูกปฏิเสธ
 // ให้ส่งกลับเข้าสู่ขั้นตอนตรวจสอบอีกครั้ง
 if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {

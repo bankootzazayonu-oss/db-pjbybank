@@ -210,9 +210,14 @@
                         {{-- Details --}}
                         <div class="p-3 flex flex-col flex-1 justify-between">
                             <div>
-                                <h3 class="font-bold text-sm text-slate-100 group-hover:text-rose-400 transition line-clamp-1 leading-snug">
+                                <h3 class="font-bold text-sm text-slate-100 group-hover:text-rose-400 transition line-clamp-1 leading-snug" title="{{ $movie->name }}">
                                     {{ $movie->name }}
                                 </h3>
+                                @if(!empty($movie->original_title) && $movie->original_title !== $movie->name)
+                                    <p class="text-[11px] text-slate-400 font-normal truncate italic" title="{{ $movie->original_title }}">
+                                        {{ $movie->original_title }}
+                                    </p>
+                                @endif
                                 <p class="text-[11px] text-slate-500 mt-0.5">
                                     {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
                                 </p>

@@ -34,9 +34,13 @@ class TmdbController extends Controller
         // ดึง Genre/Type จากฐานข้อมูล
         $types = Type::orderBy('name')->get();
 
-        // ตรวจสอบ TMDB ID และชื่อที่มีในระบบแล้ว
+        // ตรวจสอบ TMDB ID และชื่อที่มีในระบบแล้ว ทั้งชื่อไทยและชื่ออังกฤษ
         $existingTmdbIds = Activity::whereNotNull('tmdb_id')->pluck('tmdb_id')->toArray();
-        $existingNames = Activity::pluck('name')->map(fn($n) => strtolower(trim($n)))->toArray();
+        $existingNames = Activity::pluck('name')
+            ->concat(Activity::whereNotNull('original_title')->pluck('original_title'))
+            ->map(fn($n) => strtolower(trim($n)))
+            ->unique()
+            ->toArray();
 
         return view(
             'admin.movies.search',
@@ -50,6 +54,7 @@ class TmdbController extends Controller
     $request->validate([
         'tmdb_id' => 'required|integer',
         'title' => 'required|string|max:255',
+        'original_title' => 'nullable|string|max:255',
         'year' => 'required|integer',
         'overview' => 'nullable|string',
         'poster_path' => 'nullable|string',
@@ -70,10 +75,14 @@ class TmdbController extends Controller
         );
     }
 
-    $isDuplicate = Activity::whereRaw(
-        'LOWER(name) = ?',
-        [strtolower($request->title)]
-    )
+    $isDuplicate = Activity::where(function($query) use ($request) {
+            $query->whereRaw('LOWER(name) = ?', [strtolower($request->title)])
+                  ->orWhere(function($sub) use ($request) {
+                      if ($request->filled('original_title')) {
+                          $sub->whereRaw('LOWER(original_title) = ?', [strtolower($request->original_title)]);
+                      }
+                  });
+        })
         ->where('year', $request->year)
         ->exists();
 
@@ -98,6 +107,7 @@ class TmdbController extends Controller
 
     Activity::create([
         'name' => $request->title,
+        'original_title' => $request->original_title ?: null,
         'year' => $request->year,
         'review' => $request->overview,
         'image' => $imagePath,

@@ -25,7 +25,10 @@ Route::get('/', function (Request $request) {
     $query = Activity::where('is_approved', true)->where('status', 'approved');
 
     if ($search) {
-        $query->where('name', 'like', '%' . $search . '%');
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', '%' . $search . '%')
+              ->orWhere('original_title', 'like', '%' . $search . '%');
+        });
     }
 
     if ($typeId) {
@@ -72,7 +75,10 @@ Route::middleware(['auth'])->group(function () {
         ->where('status', 'approved');
 
     if ($search) {
-        $movieQuery->where('name', 'like', '%' . $search . '%');
+        $movieQuery->where(function ($q) use ($search) {
+            $q->where('name', 'like', '%' . $search . '%')
+              ->orWhere('original_title', 'like', '%' . $search . '%');
+        });
     }
 
     if ($typeId) {
@@ -198,14 +204,8 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
    // ระบบจัดการหมวดหมู่และผู้กำกับ (Resource Controllers)
 Route::resource('types', TypeController::class);
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('directors', DirectorController::class)->only([
-        'index',
-        'store',
-        'update',
-        'destroy',
-    ]);
-});
+// ปิดระบบจัดการผู้กำกับ (Redirect ไปยังจัดการหมวดหมู่)
+Route::redirect('/admin/directors', '/admin/types');
 
     // ระบบจัดการหมวดหมู่แบบเจาะจง (ซ้ำกับ Resource ข้างบน แต่อาจใช้สำหรับฟอร์มเฉพาะ)
     Route::get('/admin/types', [TypeController::class, 'index'])->name('admin.types.index');

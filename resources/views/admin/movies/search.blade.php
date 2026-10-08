@@ -57,7 +57,9 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                     @foreach($movies as $movie)
                         @php
-                            $isImported = in_array($movie['id'], $existingTmdbIds ?? []) || in_array(strtolower(trim($movie['title'])), $existingNames ?? []);
+                            $isImported = in_array($movie['id'], $existingTmdbIds ?? []) 
+                                || in_array(strtolower(trim($movie['title'])), $existingNames ?? [])
+                                || (!empty($movie['original_title']) && in_array(strtolower(trim($movie['original_title'])), $existingNames ?? []));
                             $year = !empty($movie['release_date']) ? substr($movie['release_date'], 0, 4) : 'ไม่ระบุ';
                         @endphp
 
@@ -93,9 +95,16 @@
                                 
                                 <!-- รายละเอียด -->
                                 <div class="p-4">
-                                    <h3 class="font-bold text-sm text-white truncate mb-1" title="{{ $movie['title'] }}">
+                                    <h3 class="font-bold text-sm text-white truncate mb-0.5" title="{{ $movie['title'] }}">
                                         {{ $movie['title'] }}
                                     </h3>
+                                    @if(!empty($movie['original_title']) && $movie['original_title'] !== $movie['title'])
+                                        <p class="text-[11px] text-slate-400 truncate font-normal mb-2 italic" title="{{ $movie['original_title'] }}">
+                                            {{ $movie['original_title'] }}
+                                        </p>
+                                    @else
+                                        <div class="mb-2"></div>
+                                    @endif
                                     
                                     <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed font-light mb-3">
                                         {{ !empty($movie['overview']) ? $movie['overview'] : 'ไม่มีเรื่องย่อจาก TMDB' }}
@@ -114,6 +123,7 @@
                                         @csrf
                                         <input type="hidden" name="tmdb_id" value="{{ $movie['id'] }}">
                                         <input type="hidden" name="title" value="{{ $movie['title'] }}">
+                                        <input type="hidden" name="original_title" value="{{ $movie['original_title'] ?? '' }}">
                                         <input type="hidden" name="year" value="{{ $year != 'ไม่ระบุ' ? $year : date('Y') }}">
                                         <input type="hidden" name="overview" value="{{ $movie['overview'] ?? '' }}">
                                         <input type="hidden" name="poster_path" value="{{ $movie['poster_path'] ?? '' }}">

@@ -65,9 +65,16 @@
                             @endif
                         </div>
                         
-                        <h2 class="text-3xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">
+                        <h2 class="text-3xl md:text-5xl font-black text-white mb-2 leading-tight tracking-tight">
                             {{ $movie->name }}
                         </h2>
+                        @if(!empty($movie->original_title) && $movie->original_title !== $movie->name)
+                            <p class="text-base sm:text-lg text-slate-400 font-medium italic mb-6">
+                                {{ $movie->original_title }}
+                            </p>
+                        @else
+                            <div class="mb-6"></div>
+                        @endif
                         
                         <div class="mb-8">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">เรื่องย่อ / Synopsis</h3>
@@ -92,14 +99,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- ผู้กำกับถ้ามี -->
-                        @if($movie->director)
-                            <div class="text-right">
-                                <p class="text-xs text-slate-400 uppercase tracking-wider">ผู้กำกับ</p>
-                                <p class="text-base font-bold text-slate-200 mt-0.5">{{ $movie->director->name }}</p>
-                            </div>
-                        @endif
                     </div>
                     
                 </div>

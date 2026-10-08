@@ -10,6 +10,7 @@ class Activity extends Model
     
     protected $fillable = [
         'name',
+        'original_title',
         'year',
         'review',
         'image',
@@ -18,9 +19,8 @@ class Activity extends Model
         'type_id',
         'director_id', 
         'is_approved',
-        'tmdb_id', // 🟢 เพิ่มบรรทัดนี้เข้าไป
+        'tmdb_id',
         'status',
-        
     ];
     
     // เชื่อมแบบ 1-to-Many
