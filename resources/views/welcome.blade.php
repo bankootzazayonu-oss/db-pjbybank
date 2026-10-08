@@ -3,51 +3,48 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CineReview - คอมมูนิตี้รีวิวและจัด Tier List ภาพยนตร์</title>
+    <title>CineReview - บันทึก รีวิว และจัดอันดับภาพยนตร์</title>
 
     <!-- Google Fonts: Prompt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-rose-500 selection:text-white">
+<body class="bg-[#0b0f17] text-slate-200 min-h-screen antialiased selection:bg-rose-500 selection:text-white">
 
-    <!-- Ambient Glow Top -->
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-indigo-900/20 via-rose-900/10 to-transparent blur-3xl pointer-events-none -z-10"></div>
-
-    <!-- Navigation Bar -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80">
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800/80 bg-[#0b0f17]/95 backdrop-blur sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-500 flex items-center justify-center text-xl shadow-lg shadow-rose-950/50 group-hover:scale-105 transition duration-200">
+                <span class="w-9 h-9 rounded-lg bg-rose-600 text-white flex items-center justify-center font-black text-lg shadow-sm">
                     🎬
                 </span>
-                <div>
-                    <span class="text-lg font-bold tracking-tight text-white group-hover:text-rose-400 transition">CineReview</span>
-                    <span class="hidden sm:inline-block text-[11px] px-2 py-0.5 ml-1.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium">Community</span>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-lg font-black tracking-tight text-white group-hover:text-rose-400 transition">CineReview</span>
+                    <span class="text-xs text-slate-500 font-medium">คลังรีวิวหนัง</span>
                 </div>
             </a>
 
-            <!-- Nav Actions -->
-            <nav class="flex items-center gap-3">
-                <a href="{{ route('leaderboard') }}" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
-                    🏆 จัดอันดับ
+            <!-- Navigation Links -->
+            <nav class="flex items-center gap-2 sm:gap-3">
+                <a href="{{ route('leaderboard') }}" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800/80 transition">
+                    🏆 10 อันดับยอดนิยม
                 </a>
 
                 @if (Route::has('login'))
                     @auth
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl shadow-lg shadow-rose-900/30 transition hover:scale-[1.02]">
+                        <a href="{{ route('dashboard') }}" class="text-xs sm:text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white px-3.5 py-1.5 rounded-lg transition">
                             เข้าสู่แดชบอร์ด →
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
+                        <a href="{{ route('login') }}" class="text-xs sm:text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition">
                             เข้าสู่ระบบ
                         </a>
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="inline-flex items-center text-sm font-semibold bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white px-4 py-2 rounded-xl shadow-lg shadow-rose-900/30 transition hover:scale-[1.02]">
+                            <a href="{{ route('register') }}" class="text-xs sm:text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white px-3.5 py-1.5 rounded-lg transition">
                                 สมัครสมาชิก
                             </a>
                         @endif
@@ -57,187 +54,222 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="relative pt-16 pb-20 overflow-hidden">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <!-- Hero / Content-First Header -->
+    <section class="border-b border-slate-800/80 bg-gradient-to-b from-slate-900/50 to-transparent py-12 sm:py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             
-            <!-- Pill Tag -->
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-xs text-rose-400 font-medium mb-6 backdrop-blur-sm">
-                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                พื้นที่แลกเปลี่ยนมุมมองคนรักหนัง & จัด Tier List ในแบบคุณ
-            </div>
-
-            <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
-                รวมทุกเสียงวิจารณ์ <br class="hidden sm:inline">
-                <span class="bg-gradient-to-r from-rose-400 via-fuchsia-300 to-indigo-400 bg-clip-text text-transparent">
-                    จัดอันดับภาพยนตร์ที่ใช่สำหรับคุณ
-                </span>
+            <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+                ดูเรื่องไหนมา? <br class="hidden sm:inline">
+                มารีวิว ป้ายยา และจัด Tier หนังในใจกัน
             </h1>
 
-            <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
-                สำรวจคลังภาพยนตร์ อ่านรีวิวจริงใจจากเพื่อนคอหนัง และสร้างกระดานจัดอันดับ Tier List ส่วนตัวได้ง่ายๆ ด้วยข้อมูลครบครันระดับสากล
+            <p class="mt-4 text-sm sm:text-base text-slate-400 font-light max-w-xl mx-auto leading-relaxed">
+                คอมมูนิตี้สำหรับคนชอบดูหนัง บันทึกภาพยนตร์ที่ดูแล้ว อ่านรีวิวจริงใจจากเพื่อนๆ และสร้างกระดานจัดอันดับแบบฉบับของคุณเอง
             </p>
 
-            <!-- CTA Buttons -->
-            <div class="mt-8 flex flex-wrap justify-center gap-4">
-                <a href="{{ route('leaderboard') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white font-semibold shadow-xl shadow-rose-950/40 transition hover:scale-[1.02]">
-                    <span>🏆 ดู 10 อันดับหนังยอดนิยม</span>
-                </a>
-                @auth
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-semibold transition hover:scale-[1.02]">
-                        <span>🍿 ไปยังคลังหนัง</span>
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-semibold transition hover:scale-[1.02]">
-                        <span>🔑 เริ่มเขียนรีวิวของคุณ</span>
-                    </a>
-                @endauth
-            </div>
+            <!-- Search Form -->
+            <form action="{{ route('home') }}" method="GET" class="mt-8 max-w-xl mx-auto">
+                <div class="relative flex items-center">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ $search ?? '' }}" 
+                           placeholder="ค้นหาชื่อภาพยนตร์ที่ต้องการดู..." 
+                           class="w-full bg-slate-900 border border-slate-700/80 focus:border-rose-500 text-white placeholder:text-slate-500 rounded-xl pl-11 pr-24 py-3 text-sm focus:outline-none transition">
+                    
+                    <span class="absolute left-3.5 text-slate-400 text-base">🔍</span>
 
-            <!-- Stats Bar -->
-            <div class="mt-14 pt-8 border-t border-slate-800/80 grid grid-cols-2 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
-                <div class="p-3">
-                    <p class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{{ $totalMovies }}</p>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider">ภาพยนตร์ในคลัง</p>
+                    <button type="submit" class="absolute right-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                        ค้นหา
+                    </button>
                 </div>
-                <div class="p-3">
-                    <p class="text-2xl sm:text-3xl font-extrabold text-rose-400 tracking-tight">{{ $totalReviews }}</p>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider">รีวิวจากชุมชน</p>
+            </form>
+
+            <!-- Quick Genre Filter Chips -->
+            @if($types->count() > 0)
+                <div class="mt-6 flex flex-wrap justify-center items-center gap-2">
+                    <a href="{{ route('home') }}" 
+                       class="text-xs font-medium px-3 py-1 rounded-full border transition {{ empty($typeId) && empty($search) ? 'bg-white text-slate-900 border-white font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
+                        ทั้งหมด
+                    </a>
+                    @foreach($types as $type)
+                        <a href="{{ route('home', ['type' => $type->id]) }}" 
+                           class="text-xs font-medium px-3 py-1 rounded-full border transition {{ ($typeId == $type->id) ? 'bg-rose-600 text-white border-rose-600 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
+                            {{ $type->name }}
+                        </a>
+                    @endforeach
                 </div>
-                <div class="p-3 col-span-2 md:col-span-1">
-                    <p class="text-2xl sm:text-3xl font-extrabold text-amber-400 tracking-tight">100%</p>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider">ระบบคัดกรองโปร่งใส</p>
-                </div>
+            @endif
+
+            <!-- Mini Summary Counter -->
+            <div class="mt-8 flex items-center justify-center gap-6 text-xs text-slate-500">
+                <span>🎬 คลังภาพยนตร์: <strong class="text-slate-300">{{ $totalMovies }}</strong> เรื่อง</span>
+                <span>•</span>
+                <span>💬 รีวิวทั้งหมด: <strong class="text-slate-300">{{ $totalReviews }}</strong> รายการ</span>
             </div>
 
         </div>
     </section>
 
-    <!-- Featured Movies Grid -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="flex items-center justify-between mb-8">
+    <!-- Main Content: Movie Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- Grid Header -->
+        <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                    <span class="text-rose-500">🍿</span> ภาพยนตร์ล่าสุดในระบบ
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span>🍿</span> 
+                    @if($search)
+                        ผลการค้นหาสำหรับ "{{ $search }}"
+                    @elseif($typeId)
+                        หมวดหมู่: {{ $types->firstWhere('id', $typeId)?->name ?? 'ที่เลือก' }}
+                    @else
+                        ภาพยนตร์ล่าสุดที่เปิดให้รีวิว
+                    @endif
                 </h2>
-                <p class="text-sm text-slate-400 mt-1">อัปเดตและผ่านการรับรองจากทีมดูแลชุมชนแล้ว</p>
+                <p class="text-xs text-slate-400 mt-0.5">เลือกภาพยนตร์เพื่ออ่านบทวิจารณ์ หรือร่วมแสดงความคิดเห็น</p>
             </div>
-            <a href="{{ route('leaderboard') }}" class="text-sm font-medium text-rose-400 hover:text-rose-300 transition">
-                ดูอันดับคะแนนสูงสุด →
-            </a>
+
+            @if($search || $typeId)
+                <a href="{{ route('home') }}" class="text-xs font-semibold text-rose-400 hover:text-rose-300 transition">
+                    ล้างตัวกรอง ✕
+                </a>
+            @else
+                <a href="{{ route('leaderboard') }}" class="text-xs font-semibold text-slate-400 hover:text-white transition">
+                    ดู 10 อันดับคะแนนสูงสุด →
+                </a>
+            @endif
         </div>
 
+        <!-- Movie Cards -->
         @if($featuredMovies->count() > 0)
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5">
                 @foreach($featuredMovies as $movie)
-                    <div class="group bg-slate-900/60 rounded-2xl border border-slate-800/90 overflow-hidden flex flex-col hover:border-slate-700 hover:shadow-2xl hover:shadow-slate-950 transition duration-300">
-                        <!-- Poster Container -->
-                        <div class="relative aspect-[2/3] overflow-hidden bg-slate-950">
+                    <div class="group bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex flex-col hover:border-slate-700 transition duration-200">
+                        
+                        <!-- Poster -->
+                        <div class="relative aspect-[2/3] bg-slate-950 overflow-hidden">
                             @if($movie->image)
                                 <img src="{{ Str::startsWith($movie->image, ['http://', 'https://']) ? $movie->image : asset('storage/' . $movie->image) }}" 
                                      alt="{{ $movie->name }}" 
-                                     class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                     class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                     loading="lazy">
                             @else
                                 <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 bg-slate-900">
-                                    <span class="text-4xl">🎬</span>
-                                    <span class="text-xs mt-2">ไม่มีภาพโปสเตอร์</span>
+                                    <span class="text-3xl">🎬</span>
+                                    <span class="text-[10px] mt-1 text-slate-500">ไม่มีรูป</span>
                                 </div>
                             @endif
 
-                            <!-- Floating Rating Badge -->
-                            <div class="absolute top-3 right-3 px-2.5 py-1 rounded-xl bg-slate-950/80 backdrop-blur-md border border-white/10 flex items-center gap-1.5 shadow-lg">
-                                <span class="text-amber-400 text-xs">⭐</span>
-                                <span class="text-xs font-bold text-white">
-                                    {{ $movie->reviews_avg_rating ? number_format($movie->reviews_avg_rating, 1) : 'ใหม่' }}
-                                </span>
+                            <!-- Floating Rating -->
+                            <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-slate-950/85 backdrop-blur text-[11px] font-bold text-amber-400 flex items-center gap-1 border border-white/10 shadow">
+                                <span>⭐</span>
+                                <span class="text-white">{{ $movie->reviews_avg_rating ? number_format($movie->reviews_avg_rating, 1) : '-' }}</span>
                             </div>
 
-                            <!-- Year Chip -->
-                            <div class="absolute bottom-3 left-3 px-2 py-0.5 rounded-lg bg-slate-950/80 backdrop-blur-md border border-white/10 text-[11px] font-medium text-slate-300">
+                            <!-- Year -->
+                            <div class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-slate-950/80 text-[10px] text-slate-300 font-medium">
                                 {{ $movie->year }}
                             </div>
                         </div>
 
-                        <!-- Card Content -->
-                        <div class="p-4 flex flex-col flex-1 justify-between">
+                        <!-- Info -->
+                        <div class="p-3 flex flex-col flex-1 justify-between">
                             <div>
-                                <h3 class="font-bold text-slate-100 group-hover:text-rose-400 transition line-clamp-1 text-base">
+                                <h3 class="font-bold text-sm text-slate-100 group-hover:text-rose-400 transition line-clamp-1 leading-snug">
                                     {{ $movie->name }}
                                 </h3>
-                                <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                                    {{ $movie->review }}
+                                <p class="text-[11px] text-slate-500 mt-0.5">
+                                    {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
                                 </p>
                             </div>
 
-                            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                                <span class="text-slate-400">
-                                    💬 {{ $movie->reviews_count }} รีวิว
-                                </span>
-                                @auth
-                                    <a href="{{ route('activities.show', $movie->id) }}" class="text-rose-400 font-semibold hover:text-rose-300 transition">
-                                        ดูรายละเอียด →
-                                    </a>
-                                @else
-                                    <a href="{{ route('login') }}" class="text-rose-400 font-semibold hover:text-rose-300 transition">
-                                        เข้าสู่ระบบเพื่อรีวิว →
-                                    </a>
-                                @endauth
+                            <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
+                                <span class="text-slate-500">💬 {{ $movie->reviews_count }} รีวิว</span>
+                                <a href="{{ route('activities.show', $movie->id) }}" class="text-rose-400 font-semibold hover:underline">
+                                    ดูรีวิว
+                                </a>
                             </div>
                         </div>
+
                     </div>
                 @endforeach
             </div>
         @else
-            <div class="text-center py-16 bg-slate-900/40 rounded-2xl border border-slate-800">
-                <span class="text-4xl">🎬</span>
-                <p class="text-slate-400 mt-3">ยังไม่มีภาพยนตร์ในคลัง</p>
+            <div class="text-center py-16 bg-slate-900/40 rounded-xl border border-slate-800">
+                <span class="text-4xl block mb-2">🔍</span>
+                <p class="text-slate-300 font-medium text-sm">ไม่พบภาพยนตร์ที่ตรงกับเงื่อนไข</p>
+                <a href="{{ route('home') }}" class="inline-block mt-3 text-xs text-rose-400 hover:underline">
+                    ดูภาพยนตร์ทั้งหมด
+                </a>
             </div>
         @endif
-    </section>
 
-    <!-- Highlights Features -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-800/80">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-rose-500/30 transition">
-                <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-2xl mb-4">
-                    ⭐
+        <!-- Recent Real Community Reviews -->
+        @if($recentReviews->count() > 0)
+            <section class="mt-16 pt-10 border-t border-slate-800">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <span>💬</span> รีวิวล่าสุดจากสมาชิก
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">ความเห็นสดๆ ร้อนๆ จากคนดูหนังในคอมมูนิตี้</p>
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold text-white mb-2">รีวิวและคะแนนจริงใจ</h3>
-                <p class="text-sm text-slate-400 leading-relaxed">
-                    ระบบรีวิว 1-10 พร้อมระบบตอบกลับแลกเปลี่ยนความเห็น และรายงานสแปมเพื่อสร้างสังคมคอหนังที่มีคุณภาพ
-                </p>
-            </div>
 
-            <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-indigo-500/30 transition">
-                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mb-4">
-                    🏆
-                </div>
-                <h3 class="text-lg font-bold text-white mb-2">จัด Tier List ตามใจชอบ</h3>
-                <p class="text-sm text-slate-400 leading-relaxed">
-                    สร้างกระดานจัดอันดับระดับ S, A, B, C, D พร้อมตั้งชื่อระดับสุดสร้างสรรค์ บันทึกและแชร์ให้เพื่อนดูได้ทันที
-                </p>
-            </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    @foreach($recentReviews as $review)
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
+                            <div>
+                                <!-- Author & Rating -->
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-7 h-7 rounded-full bg-slate-800 text-slate-200 flex items-center justify-center text-xs font-bold border border-slate-700">
+                                            {{ strtoupper(substr($review->user->name ?? 'U', 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-white leading-none">{{ $review->user->name ?? 'สมาชิก' }}</p>
+                                            <p class="text-[10px] text-slate-500 mt-0.5">{{ $review->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-bold text-amber-400">
+                                        ⭐ {{ $review->rating }}/10
+                                    </span>
+                                </div>
 
-            <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-emerald-500/30 transition">
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl mb-4">
-                    ⚡
+                                <!-- Movie Link -->
+                                <a href="{{ route('activities.show', $review->activity_id) }}" class="text-xs font-bold text-rose-400 hover:underline block mb-2 truncate">
+                                    🎬 {{ $review->activity->name ?? 'ภาพยนตร์' }}
+                                </a>
+
+                                <!-- Comment Snippet -->
+                                <p class="text-xs text-slate-300 font-light leading-relaxed line-clamp-3">
+                                    {{ $review->comment }}
+                                </p>
+                            </div>
+
+                            <div class="mt-4 pt-2.5 border-t border-slate-800/80 text-right">
+                                <a href="{{ route('activities.show', $review->activity_id) }}" class="text-[11px] font-semibold text-slate-400 hover:text-white transition">
+                                    อ่านรีวิวเต็ม →
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-                <h3 class="text-lg font-bold text-white mb-2">เชื่อมต่อฐานข้อมูล TMDB</h3>
-                <p class="text-sm text-slate-400 leading-relaxed">
-                    ค้นหาและนำเข้าข้อมูลภาพยนตร์ โปสเตอร์ความละเอียดสูง และเรื่องย่ออย่างแม่นยำ พร้อมระบบป้องกันข้อมูลซ้ำซ้อน
-                </p>
-            </div>
-        </div>
-    </section>
+            </section>
+        @endif
+
+    </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800/80 py-8 bg-slate-950/80 text-center text-xs text-slate-500">
+    <footer class="border-t border-slate-800 mt-16 py-8 text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 CineReview Project. พัฒนาสำหรับวิชา Database & Web Application</p>
+            <p>© 2026 CineReview. โปรเจกต์วิชา Database & Web Application</p>
             <div class="flex items-center gap-4 text-slate-400">
-                <a href="{{ route('leaderboard') }}" class="hover:text-white transition">Leaderboard</a>
+                <a href="{{ route('leaderboard') }}" class="hover:text-white transition">จัดอันดับ</a>
                 <span>•</span>
                 <a href="{{ route('login') }}" class="hover:text-white transition">เข้าสู่ระบบ</a>
+                <span>•</span>
+                <a href="{{ route('register') }}" class="hover:text-white transition">สมัครสมาชิก</a>
             </div>
         </div>
     </footer>

@@ -12,24 +12,46 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Middleware\IsAdmin;
 use App\Models\Review;
 use App\Models\Type;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 // =====================================
 // โซน PUBLIC (ใครๆ ก็เข้าได้ ไม่ต้องล็อกอิน)
 // =====================================
-Route::get('/', function () {
-    $featuredMovies = Activity::where('is_approved', true)
-        ->where('status', 'approved')
-        ->withAvg('reviews', 'rating')
+Route::get('/', function (Request $request) {
+    $search = $request->query('q');
+    $typeId = $request->query('type');
+
+    $query = Activity::where('is_approved', true)->where('status', 'approved');
+
+    if ($search) {
+        $query->where('name', 'like', '%' . $search . '%');
+    }
+
+    if ($typeId) {
+        $query->where('type_id', $typeId);
+    }
+
+    $featuredMovies = $query->withAvg('reviews', 'rating')
         ->withCount('reviews')
+        ->with('type')
         ->latest()
-        ->take(8)
+        ->take(12)
         ->get();
 
+    $recentReviews = Review::with(['user', 'activity'])
+        ->whereHas('activity', function ($q) {
+            $q->where('is_approved', true)->where('status', 'approved');
+        })
+        ->latest()
+        ->take(3)
+        ->get();
+
+    $types = Type::orderBy('name')->get();
     $totalMovies = Activity::where('is_approved', true)->where('status', 'approved')->count();
     $totalReviews = Review::count();
 
-    return view('welcome', compact('featuredMovies', 'totalMovies', 'totalReviews'));
+    return view('welcome', compact('featuredMovies', 'recentReviews', 'types', 'totalMovies', 'totalReviews', 'search', 'typeId'));
 })->name('home');
 
 // หน้า Leaderboard แบบไม่ต้องล็อกอิน
