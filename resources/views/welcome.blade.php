@@ -54,31 +54,30 @@
         </div>
     </header>
 
-    <!-- Hero / Content-First Header -->
-    <section class="border-b border-slate-800/80 bg-gradient-to-b from-slate-900/50 to-transparent py-12 sm:py-16">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <!-- Compact & Clean Hero Header -->
+    <section class="border-b border-slate-800/80 bg-slate-900/40 py-7 sm:py-9">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
             
-            <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-                ดูเรื่องไหนมา? <br class="hidden sm:inline">
-                มารีวิว ป้ายยา และจัด Tier หนังในใจกัน
+            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                ค้นหาและรีวิวภาพยนตร์
             </h1>
 
-            <p class="mt-4 text-sm sm:text-base text-slate-400 font-light max-w-xl mx-auto leading-relaxed">
-                คอมมูนิตี้สำหรับคนชอบดูหนัง บันทึกภาพยนตร์ที่ดูแล้ว อ่านรีวิวจริงใจจากเพื่อนๆ และสร้างกระดานจัดอันดับแบบฉบับของคุณเอง
+            <p class="mt-1.5 text-xs sm:text-sm text-slate-400 font-light">
+                บันทึกเรื่องที่ดู แบ่งปันมุมมองกับเพื่อนคอหนัง และสร้างกระดานจัดอันดับ Tier List
             </p>
 
             <!-- Search Form -->
-            <form action="{{ route('home') }}" method="GET" class="mt-8 max-w-xl mx-auto">
+            <form action="{{ route('home') }}" method="GET" class="mt-5 max-w-xl mx-auto">
                 <div class="relative flex items-center">
                     <input type="text" 
                            name="q" 
                            value="{{ $search ?? '' }}" 
-                           placeholder="ค้นหาชื่อภาพยนตร์ที่ต้องการดู..." 
-                           class="w-full bg-slate-900 border border-slate-700/80 focus:border-rose-500 text-white placeholder:text-slate-500 rounded-xl pl-11 pr-24 py-3 text-sm focus:outline-none transition">
+                           placeholder="พิมพ์ชื่อภาพยนตร์ที่ต้องการค้นหา..." 
+                           class="w-full bg-slate-950 border border-slate-700/80 focus:border-rose-500 text-white placeholder:text-slate-500 rounded-xl pl-10 pr-24 py-2.5 text-xs sm:text-sm focus:outline-none transition shadow-sm">
                     
-                    <span class="absolute left-3.5 text-slate-400 text-base">🔍</span>
+                    <span class="absolute left-3 text-slate-400 text-sm">🔍</span>
 
-                    <button type="submit" class="absolute right-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                    <button type="submit" class="absolute right-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg transition">
                         ค้นหา
                     </button>
                 </div>
@@ -86,26 +85,19 @@
 
             <!-- Quick Genre Filter Chips -->
             @if($types->count() > 0)
-                <div class="mt-6 flex flex-wrap justify-center items-center gap-2">
+                <div class="mt-4 flex flex-wrap justify-center items-center gap-1.5">
                     <a href="{{ route('home') }}" 
-                       class="text-xs font-medium px-3 py-1 rounded-full border transition {{ empty($typeId) && empty($search) ? 'bg-white text-slate-900 border-white font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
+                       class="text-[11px] font-medium px-2.5 py-1 rounded-lg border transition {{ empty($typeId) && empty($search) ? 'bg-white text-slate-900 border-white font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
                         ทั้งหมด
                     </a>
                     @foreach($types as $type)
                         <a href="{{ route('home', ['type' => $type->id]) }}" 
-                           class="text-xs font-medium px-3 py-1 rounded-full border transition {{ ($typeId == $type->id) ? 'bg-rose-600 text-white border-rose-600 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
+                           class="text-[11px] font-medium px-2.5 py-1 rounded-lg border transition {{ ($typeId == $type->id) ? 'bg-rose-600 text-white border-rose-600 font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
                             {{ $type->name }}
                         </a>
                     @endforeach
                 </div>
             @endif
-
-            <!-- Mini Summary Counter -->
-            <div class="mt-8 flex items-center justify-center gap-6 text-xs text-slate-500">
-                <span>🎬 คลังภาพยนตร์: <strong class="text-slate-300">{{ $totalMovies }}</strong> เรื่อง</span>
-                <span>•</span>
-                <span>💬 รีวิวทั้งหมด: <strong class="text-slate-300">{{ $totalReviews }}</strong> รายการ</span>
-            </div>
 
         </div>
     </section>
