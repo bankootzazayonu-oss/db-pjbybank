@@ -31,14 +31,18 @@ class TmdbController extends Controller
         }
     }
 
-    // ดึง Genre/Type จากฐานข้อมูล
-    $types = Type::orderBy('name')->get();
+        // ดึง Genre/Type จากฐานข้อมูล
+        $types = Type::orderBy('name')->get();
 
-    return view(
-        'admin.movies.search',
-        compact('movies', 'query', 'types')
-    );
-}
+        // ตรวจสอบ TMDB ID และชื่อที่มีในระบบแล้ว
+        $existingTmdbIds = Activity::whereNotNull('tmdb_id')->pluck('tmdb_id')->toArray();
+        $existingNames = Activity::pluck('name')->map(fn($n) => strtolower(trim($n)))->toArray();
+
+        return view(
+            'admin.movies.search',
+            compact('movies', 'query', 'types', 'existingTmdbIds', 'existingNames')
+        );
+    }
 
     // ฟังก์ชันใหม่สำหรับบันทึกลงฐานข้อมูล
     public function import(Request $request)

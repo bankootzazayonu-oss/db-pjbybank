@@ -113,18 +113,62 @@
              คลังภาพยนตร์ทั้งหมด
         ========================================== --}}
         <div>
-            <div class="flex items-center justify-between mb-5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
                         <span>🍿</span> คลังภาพยนตร์ทั้งหมด
                     </h2>
-                    <p class="text-xs text-slate-400 mt-0.5">คลิกที่ภาพยนตร์เพื่อดูเรื่องย่อและอ่านรีวิวทั้งหมด</p>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        @if($search)
+                            ผลการค้นหาสำหรับ "{{ $search }}" (พบ {{ $movies->count() }} เรื่อง)
+                        @elseif($typeId)
+                            หมวดหมู่: {{ $types->firstWhere('id', $typeId)?->name ?? 'ที่เลือก' }} (พบ {{ $movies->count() }} เรื่อง)
+                        @else
+                            คลิกที่ภาพยนตร์เพื่อดูเรื่องย่อและอ่านรีวิวทั้งหมด (มี {{ $movies->count() }} เรื่อง)
+                        @endif
+                    </p>
                 </div>
 
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-800 text-slate-300">
-                    {{ $movies->count() }} เรื่อง
-                </span>
+                <!-- Search form on dashboard -->
+                <form action="{{ route('dashboard') }}" method="GET" class="flex items-center gap-2 max-w-sm w-full">
+                    @if($typeId)
+                        <input type="hidden" name="type" value="{{ $typeId }}">
+                    @endif
+                    <div class="relative flex-1">
+                        <input type="text" 
+                               name="q" 
+                               value="{{ $search ?? '' }}" 
+                               placeholder="ค้นหาชื่อภาพยนตร์..." 
+                               class="w-full bg-slate-950 border border-slate-700/80 focus:border-rose-500 text-white placeholder:text-slate-500 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none transition">
+                        <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
+                    </div>
+                    <button type="submit" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex-shrink-0">
+                        ค้นหา
+                    </button>
+                    @if($search || $typeId)
+                        <a href="{{ route('dashboard') }}" class="text-xs text-slate-400 hover:text-white px-2 py-1.5 rounded-lg bg-slate-800 transition flex-shrink-0" title="ล้างตัวกรอง">
+                            ✕ ล้าง
+                        </a>
+                    @endif
+                </form>
             </div>
+
+            <!-- Quick Genre Filter Chips on Dashboard -->
+            @if(isset($types) && $types->count() > 0)
+                <div class="mb-5 flex flex-wrap items-center gap-1.5">
+                    <span class="text-xs text-slate-500 mr-1 font-medium">หมวดหมู่:</span>
+                    <a href="{{ route('dashboard', $search ? ['q' => $search] : []) }}" 
+                       class="text-[11px] font-medium px-2.5 py-1 rounded-lg border transition {{ empty($typeId) ? 'bg-white text-slate-900 border-white font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
+                        ทั้งหมด
+                    </a>
+                    @foreach($types as $type)
+                        <a href="{{ route('dashboard', array_merge($search ? ['q' => $search] : [], ['type' => $type->id])) }}" 
+                           class="text-[11px] font-medium px-2.5 py-1 rounded-lg border transition {{ ($typeId == $type->id) ? 'bg-rose-600 text-white border-rose-600 font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
+                            {{ $type->name }}
+                        </a>
+                    @endforeach
+                </div>
+            @endif
 
             {{-- Grid หนัง --}}
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5">

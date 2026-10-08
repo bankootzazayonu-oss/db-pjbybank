@@ -1,127 +1,157 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            🔍 ค้นหาหนังจากฐานข้อมูลโลก (TMDB)
-        </h2>
+        <div class="flex items-center justify-between">
+            <h1 class="font-black text-xl text-white tracking-tight flex items-center gap-2">
+                <span>🔍</span> นำเข้าภาพยนตร์จากฐานข้อมูลโลก (TMDB)
+            </h1>
+            <a href="{{ route('dashboard') }}" class="text-xs font-semibold bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white py-1.5 px-3.5 rounded-xl transition">
+                ← กลับหน้าคลังหนัง
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- แจ้งเตือนเมื่อนำเข้าสำเร็จ หรือ ซ้ำ -->
-            @if(session('success'))
-                <div class="bg-green-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">
-                    {{ session('success') }}
+    <div class="py-10 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        
+        <!-- แจ้งเตือนเมื่อนำเข้าสำเร็จ หรือ ซ้ำ -->
+        @if(session('success'))
+            <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-2xl font-semibold shadow-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-2xl font-semibold shadow-lg">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <!-- กล่องค้นหา -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-xl">
+            <form action="{{ route('admin.movies.search') }}" method="GET" class="max-w-2xl mx-auto">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">
+                    ค้นหาชื่อภาพยนตร์จาก The Movie Database (TMDB)
+                </label>
+                <div class="relative flex items-center gap-2">
+                    <input type="text" 
+                           name="query" 
+                           value="{{ $query ?? '' }}" 
+                           placeholder="พิมพ์ชื่อหนังภาษาไทยหรืออังกฤษ เช่น Avatar, Resident Evil, สัปเหร่อ..." 
+                           required 
+                           class="w-full bg-slate-950 border border-slate-700/80 focus:border-rose-500 text-white placeholder:text-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none transition shadow-sm">
+                    <button type="submit" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 px-6 rounded-xl text-sm transition flex-shrink-0 shadow-lg shadow-rose-950/40">
+                        🔍 ค้นหา
+                    </button>
                 </div>
-            @endif
-            @if(session('error'))
-                <div class="bg-red-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">
-                    {{ session('error') }}
-                </div>
-            @endif
-            
-            <!-- กล่องค้นหา -->
-            <form action="{{ route('admin.movies.search') }}" method="GET" class="mb-8 flex gap-4">
-                <input type="text" name="query" value="{{ $query ?? '' }}" placeholder="พิมพ์ชื่อหนังที่ต้องการหา (เช่น Avatar, สัปเหร่อ)..." required 
-                       class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm text-lg py-3">
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-md transition">
-                    ค้นหา
-                </button>
             </form>
+        </div>
 
-            <!-- แสดงผลลัพธ์แบบ Grid -->
-            @if(isset($movies) && count($movies) > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- แสดงผลลัพธ์แบบ Grid -->
+        @if(isset($movies) && count($movies) > 0)
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-base font-bold text-white">
+                        ผลการค้นหาสำหรับ "{{ $query }}" (พบ {{ count($movies) }} เรื่อง)
+                    </h2>
+                    <span class="text-xs text-slate-400">เลือกประเภทแล้วกดนำเข้าได้ทันที</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                     @foreach($movies as $movie)
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:scale-105 transition duration-300">
-                            <!-- รูปโปสเตอร์ -->
-                            @if(!empty($movie['poster_path']))
-                                <img src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}" alt="{{ $movie['title'] }}" class="w-full h-80 object-cover">
-                            @else
-                                <div class="w-full h-80 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">🎬 ไม่มีรูปโปสเตอร์</div>
-                            @endif
+                        @php
+                            $isImported = in_array($movie['id'], $existingTmdbIds ?? []) || in_array(strtolower(trim($movie['title'])), $existingNames ?? []);
+                            $year = !empty($movie['release_date']) ? substr($movie['release_date'], 0, 4) : 'ไม่ระบุ';
+                        @endphp
+
+                        <div class="bg-slate-900 rounded-xl border {{ $isImported ? 'border-emerald-500/40 bg-slate-900/50' : 'border-slate-800 hover:border-slate-700' }} overflow-hidden flex flex-col justify-between shadow-lg transition duration-200">
                             
-                            <!-- รายละเอียด -->
-                            <div class="p-5">
-                                <h3 class="font-bold text-lg text-gray-900 dark:text-white truncate mb-1" title="{{ $movie['title'] }}">
-                                    {{ $movie['title'] }}
-                                </h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                    ปีที่ฉาย: {{ !empty($movie['release_date']) ? substr($movie['release_date'], 0, 4) : 'ไม่ระบุ' }}
-                                </p>
+                            <div>
+                                <!-- รูปโปสเตอร์ -->
+                                <div class="relative aspect-[2/3] bg-slate-950 overflow-hidden">
+                                    @if(!empty($movie['poster_path']))
+                                        <img src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}" 
+                                             alt="{{ $movie['title'] }}" 
+                                             class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 bg-slate-950">
+                                            <span class="text-4xl mb-1">🎬</span>
+                                            <span class="text-xs">ไม่มีรูปโปสเตอร์</span>
+                                        </div>
+                                    @endif
 
-                               <form action="{{ route('admin.movies.import') }}" method="POST">
-    @csrf
+                                    <!-- ป้ายปี -->
+                                    <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-slate-950/80 backdrop-blur text-[11px] text-slate-300 font-medium border border-white/10">
+                                        {{ $year }}
+                                    </div>
 
-    <input
-        type="hidden"
-        name="tmdb_id"
-        value="{{ $movie['id'] }}"
-    >
-
-    <input
-        type="hidden"
-        name="title"
-        value="{{ $movie['title'] }}"
-    >
-
-    <input
-        type="hidden"
-        name="year"
-        value="{{ substr($movie['release_date'], 0, 4) }}"
-    >
-
-    <input
-        type="hidden"
-        name="overview"
-        value="{{ $movie['overview'] }}"
-    >
-
-    <input
-        type="hidden"
-        name="poster_path"
-        value="{{ $movie['poster_path'] }}"
-
-
-    >
-    <div class="mt-3">
-    <label for="type_id" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-        🎬 ประเภทหนัง
-    </label>
-
-    <select
-        name="type_id"
-        id="type_id"
-        required
-        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-indigo-500 focus:ring-indigo-500"
-    >
-        <option value="">-- เลือกประเภทหนัง --</option>
-
-        @foreach($types as $type)
-            <option value="{{ $type->id }}">
-                {{ $type->name }}
-            </option>
-        @endforeach
-    </select>
-</div>
-
-    <button type="submit">
-        📥 นำเข้าฐานข้อมูล
-    </button>
-</form>
-
-
+                                    <!-- ป้ายเรตติ้ง TMDB -->
+                                    @if(!empty($movie['vote_average']))
+                                        <div class="absolute top-2 right-2 px-2 py-0.5 rounded bg-slate-950/80 backdrop-blur text-[11px] font-bold text-amber-400 border border-white/10 flex items-center gap-1 shadow">
+                                            <span>⭐</span>
+                                            <span class="text-white">{{ number_format($movie['vote_average'], 1) }}</span>
+                                        </div>
+                                    @endif
+                                </div>
                                 
-                               
+                                <!-- รายละเอียด -->
+                                <div class="p-4">
+                                    <h3 class="font-bold text-sm text-white truncate mb-1" title="{{ $movie['title'] }}">
+                                        {{ $movie['title'] }}
+                                    </h3>
+                                    
+                                    <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed font-light mb-3">
+                                        {{ !empty($movie['overview']) ? $movie['overview'] : 'ไม่มีเรื่องย่อจาก TMDB' }}
+                                    </p>
+                                </div>
                             </div>
+
+                            <!-- ส่วนจัดการนำเข้า -->
+                            <div class="p-4 pt-0">
+                                @if($isImported)
+                                    <div class="w-full py-2.5 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold text-center flex items-center justify-center gap-1.5">
+                                        <span>✓</span> มีในคลังภาพยนตร์แล้ว
+                                    </div>
+                                @else
+                                    <form action="{{ route('admin.movies.import') }}" method="POST" class="space-y-2.5">
+                                        @csrf
+                                        <input type="hidden" name="tmdb_id" value="{{ $movie['id'] }}">
+                                        <input type="hidden" name="title" value="{{ $movie['title'] }}">
+                                        <input type="hidden" name="year" value="{{ $year != 'ไม่ระบุ' ? $year : date('Y') }}">
+                                        <input type="hidden" name="overview" value="{{ $movie['overview'] ?? '' }}">
+                                        <input type="hidden" name="poster_path" value="{{ $movie['poster_path'] ?? '' }}">
+
+                                        <div>
+                                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">
+                                                📁 เลือกหมวดหมู่ภาพยนตร์:
+                                            </label>
+                                            <select name="type_id" required 
+                                                    class="w-full rounded-lg border border-slate-700 bg-slate-950 text-slate-200 text-xs py-2 px-2.5 focus:border-rose-500 focus:outline-none transition">
+                                                <option value="">-- เลือกประเภทหนัง --</option>
+                                                @foreach($types as $type)
+                                                    <option value="{{ $type->id }}">
+                                                        {{ $type->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <button type="submit" 
+                                                class="w-full bg-rose-600 hover:bg-rose-500 active:scale-[0.98] text-white font-bold py-2.5 px-4 rounded-lg text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-rose-950/50 transition duration-150">
+                                            <span>📥</span> นำเข้าสู่ระบบทันที
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+
                         </div>
                     @endforeach
                 </div>
-            @elseif(isset($query))
-                <div class="text-center py-10 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg">
-                    ไม่พบข้อมูลหนังชื่อ "{{ $query }}"
-                </div>
-            @endif
+            </div>
+        @elseif(isset($query))
+            <div class="text-center py-16 text-slate-500 bg-slate-900 rounded-2xl border border-slate-800">
+                <span class="text-4xl block mb-2">🎬</span>
+                <p class="font-medium text-slate-300 text-sm">ไม่พบข้อมูลหนังชื่อ "{{ $query }}" ใน TMDB</p>
+                <p class="text-xs text-slate-500 mt-1">ลองค้นหาด้วยชื่อภาษาอังกฤษ หรือตรวจสอบตัวสะกดอีกครั้ง</p>
+            </div>
+        @endif
 
-        </div>
     </div>
 </x-app-layout>

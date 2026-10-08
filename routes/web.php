@@ -64,13 +64,23 @@ Route::get('/leaderboard', [ActivityController::class, 'leaderboard'])->name('le
 Route::middleware(['auth'])->group(function () {
     
     // หน้า Dashboard ของระบบ (หนังที่อนุมัติแล้ว)
-   Route::get('/dashboard', function () {
+   Route::get('/dashboard', function (Request $request) {
+    $search = $request->query('q');
+    $typeId = $request->query('type');
 
-    // หนังที่อนุมัติแล้วเท่านั้น
-    $movies = Activity::where('is_approved', true)
-        ->where('status', 'approved')
-        ->latest()
-        ->get();
+    $movieQuery = Activity::where('is_approved', true)
+        ->where('status', 'approved');
+
+    if ($search) {
+        $movieQuery->where('name', 'like', '%' . $search . '%');
+    }
+
+    if ($typeId) {
+        $movieQuery->where('type_id', $typeId);
+    }
+
+    $movies = $movieQuery->latest()->get();
+    $types = Type::orderBy('name')->get();
 
     // จำนวนหนังทั้งหมด
     $totalMovies = Activity::where('is_approved', true)
@@ -109,6 +119,9 @@ Route::middleware(['auth'])->group(function () {
 
     return view('dashboard', compact(
         'movies',
+        'types',
+        'search',
+        'typeId',
         'totalMovies',
         'totalReviews',
         'overallAverageRating',
