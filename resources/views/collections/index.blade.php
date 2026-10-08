@@ -1,74 +1,91 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            🏆 กระดานจัดอันดับของฉัน (My Tier Lists)
-        </h2>
+        <div class="flex items-center justify-between">
+            <h1 class="font-black text-xl text-white tracking-tight flex items-center gap-2">
+                <span>🎖️</span> กระดานจัดอันดับของฉัน (My Tier Lists)
+            </h1>
+            <a href="{{ route('dashboard') }}" class="text-xs font-semibold bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white py-1.5 px-3.5 rounded-xl transition">
+                ← กลับหน้าคลังหนัง
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-10 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         @if(session('success'))
-            <div class="bg-green-500 text-white p-4 rounded-lg mb-6 font-bold shadow-md">{{ session('success') }}</div>
+            <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-2xl font-semibold shadow-lg">
+                {{ session('success') }}
+            </div>
         @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- ฟอร์มสร้างกระดาน (ซ้าย) -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 h-fit">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">➕ สร้างกระดานใหม่</h3>
+            <div class="bg-slate-900/60 p-6 rounded-3xl shadow-xl border border-slate-800/90 h-fit backdrop-blur-sm">
+                <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                    <span>➕</span> สร้างกระดานใหม่
+                </h2>
+                <p class="text-xs text-slate-400 mb-4">กำหนดหัวข้อ เช่น "หนังโนแลนในดวงใจ" หรือ "หนังซอมบี้ห้ามพลาด"</p>
+
                 <form action="{{ route('collections.store') }}" method="POST">
                     @csrf
-                    <input type="text" name="name" required placeholder="เช่น หนังซอมบี้ห้ามพลาด" class="w-full mb-4 bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md">
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-md transition">สร้างเลย</button>
+                    <div class="mb-4">
+                        <input type="text" name="name" required placeholder="พิมพ์ชื่อกระดาน..." 
+                               class="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 text-white rounded-xl px-4 py-2.5 text-sm placeholder:text-slate-600">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white font-semibold text-sm py-2.5 rounded-xl shadow-lg shadow-rose-950/40 transition hover:scale-[1.01]">
+                        สร้างกระดานเลย
+                    </button>
                 </form>
             </div>
 
             <!-- แสดงกระดานที่มีอยู่ (ขวา) -->
             <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @forelse($collections as $collection)
-                    
-                    <!-- 🟢 เปลี่ยนจากแท็ก a เป็น div และใส่ Alpine.js x-data ให้แต่ละการ์ด -->
-                    <div x-data="{ editCollectionMode: false }" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 hover:border-indigo-500 transition group relative">
+                    <div x-data="{ editCollectionMode: false }" class="bg-slate-900/60 p-6 rounded-3xl shadow-xl border border-slate-800/90 hover:border-slate-700 transition group relative backdrop-blur-sm">
                         
                         <!-- โหมด 1: แสดงผลปกติ -->
                         <div x-show="!editCollectionMode">
                             
-                            <!-- แถบปุ่มจัดการ (แสดงตอน Hover) -->
-                            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 z-10">
-                                <button type="button" @click="editCollectionMode = true" class="text-blue-600 hover:text-blue-400 font-bold bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded text-xs transition shadow-sm">
+                            <!-- แถบปุ่มจัดการ -->
+                            <div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition flex gap-1.5 z-10">
+                                <button type="button" @click="editCollectionMode = true" class="text-indigo-400 hover:text-white font-semibold bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs transition">
                                     ✏️ แก้ไข
                                 </button>
                                 <form action="{{ route('collections.destroy', $collection->id) }}" method="POST" onsubmit="return confirm('ยืนยันลบกระดานนี้? (หนังที่จัดอันดับไว้จะหายไปทั้งหมด)');" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-400 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded text-xs transition shadow-sm">
+                                    <button type="submit" class="text-rose-400 hover:text-white font-semibold bg-rose-500/20 border border-rose-500/30 px-2.5 py-1 rounded-lg text-xs transition">
                                         🗑️ ลบ
                                     </button>
                                 </form>
                             </div>
 
-                            <!-- เนื้อหาในการ์ด (คลิกเพื่อเข้าไปดูหนังข้างในกระดาน) -->
+                            <!-- ลิงก์คลิกเข้ากระดาน -->
                             <a href="{{ route('collections.show', $collection->id) }}" class="block">
-                                <div class="text-indigo-500 mb-2">
-                                    <svg class="w-8 h-8 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 20 20"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm1 4h10v2H5V7zm0 4h10v2H5v-2z"></path></svg>
+                                <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-xl mb-3 group-hover:scale-105 transition">
+                                    🎖️
                                 </div>
-                                <h4 class="text-lg font-bold text-gray-900 dark:text-white pr-16 truncate">{{ $collection->name }}</h4>
-                                <p class="text-sm text-gray-500 mt-1">อัปเดตล่าสุด: {{ $collection->updated_at->diffForHumans() }}</p>
+                                <h3 class="text-lg font-bold text-white pr-14 truncate group-hover:text-rose-400 transition">{{ $collection->name }}</h3>
+                                <p class="text-xs text-slate-400 mt-1">อัปเดต: {{ $collection->updated_at->diffForHumans() }}</p>
+                                <span class="inline-block mt-4 text-xs font-semibold text-rose-400 group-hover:translate-x-1 transition">
+                                    เปิดกระดานจัดอันดับ →
+                                </span>
                             </a>
 
                         </div>
 
-                        <!-- โหมด 2: ฟอร์มแก้ไขชื่อกระดาน (สลับมาแสดงตอนกดปุ่มแก้ไข) -->
+                        <!-- โหมด 2: ฟอร์มแก้ไขชื่อกระดาน -->
                         <div x-show="editCollectionMode" style="display: none;">
                             <form action="{{ route('collections.update', $collection->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">แก้ไขชื่อกระดาน:</label>
-                                <input type="text" name="name" value="{{ $collection->name }}" required class="w-full text-sm bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md px-3 py-2 mb-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <label class="block text-xs font-bold text-slate-400 mb-1">แก้ไขชื่อกระดาน:</label>
+                                <input type="text" name="name" value="{{ $collection->name }}" required class="w-full text-sm bg-slate-950 border border-slate-800 focus:border-rose-500 text-white rounded-xl px-3 py-2 mb-3">
                                 
                                 <div class="flex gap-2">
-                                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition">
+                                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition">
                                         บันทึก
                                     </button>
-                                    <button type="button" @click="editCollectionMode = false" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-xs font-bold py-1.5 px-3 rounded shadow transition">
+                                    <button type="button" @click="editCollectionMode = false" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold py-1.5 px-3 rounded-lg transition">
                                         ยกเลิก
                                     </button>
                                 </div>
@@ -77,8 +94,10 @@
 
                     </div>
                 @empty
-                    <div class="col-span-2 text-center text-gray-500 py-10 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-600">
-                        ยังไม่มีกระดานจัดอันดับ ลองสร้างทางซ้ายมือดูสิ!
+                    <div class="col-span-2 text-center text-slate-500 py-16 bg-slate-900/40 rounded-3xl border border-dashed border-slate-800">
+                        <span class="text-4xl block mb-2">🎖️</span>
+                        <p class="text-slate-300 font-semibold text-sm">ยังไม่มีกระดานจัดอันดับ</p>
+                        <p class="text-xs text-slate-500 mt-1">สร้างกระดานแรกของคุณจากฟอร์มด้านซ้ายมือได้เลย</p>
                     </div>
                 @endforelse
             </div>

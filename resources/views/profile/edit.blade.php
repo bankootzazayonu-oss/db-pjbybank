@@ -1,48 +1,51 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+        <h1 class="font-black text-xl text-white tracking-tight flex items-center gap-2">
+            <span>👤</span> โปรไฟล์และประวัติการใช้งาน
+        </h1>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-10">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
             {{-- ==========================================
                  สรุปข้อมูลผู้ใช้
             ========================================== --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
                 {{-- จำนวนรีวิว --}}
-                <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        🎬 หนังที่รีวิว
+                <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">หนังที่ฉันรีวิว</p>
+                        <p class="mt-2 text-3xl font-black text-white">{{ $reviews->count() }}</p>
+                        <p class="text-xs text-rose-400 mt-1">บทวิจารณ์</p>
                     </div>
-
-                    <div class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-                        {{ $reviews->count() }}
+                    <div class="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-2xl">
+                        🎬
                     </div>
                 </div>
 
                 {{-- จำนวน Tier List --}}
-                <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        🏆 Tier List
+                <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">Tier List ของฉัน</p>
+                        <p class="mt-2 text-3xl font-black text-white">{{ $collections->count() }}</p>
+                        <p class="text-xs text-indigo-400 mt-1">กระดานจัดอันดับ</p>
                     </div>
-
-                    <div class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-                        {{ $collections->count() }}
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl">
+                        🏆
                     </div>
                 </div>
 
                 {{-- จำนวนหนังที่เสนอ --}}
-                <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        📋 หนังที่เสนอ
+                <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">หนังที่เสนอเข้าระบบ</p>
+                        <p class="mt-2 text-3xl font-black text-white">{{ $submittedMovies->count() }}</p>
+                        <p class="text-xs text-emerald-400 mt-1">คำขอเสนอหนัง</p>
                     </div>
-
-                    <div class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-                        {{ $submittedMovies->count() }}
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
+                        📋
                     </div>
                 </div>
 
@@ -52,188 +55,131 @@
             {{-- ==========================================
                  หนังที่ฉันรีวิว
             ========================================== --}}
-            <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                    🎬 หนังที่ฉันรีวิว
-                </h3>
+            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
+                <h2 class="text-xl font-bold text-white mb-5 flex items-center gap-2">
+                    <span>🎬</span> หนังที่ฉันรีวิว ({{ $reviews->count() }})
+                </h2>
 
                 @if($reviews->count() > 0)
-
                     <div class="space-y-3">
-
                         @foreach($reviews as $review)
-
-                            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-
+                            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-950/70 border border-slate-800/90 hover:border-slate-700 transition">
                                 <div>
-                                    <div class="font-semibold text-gray-900 dark:text-white">
+                                    <div class="font-bold text-white text-base">
                                         {{ $review->activity->name ?? 'ไม่พบชื่อภาพยนตร์' }}
                                     </div>
-
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                                        ⭐ {{ $review->rating }}/10
+                                    <div class="text-xs text-amber-400 mt-1 font-semibold flex items-center gap-1">
+                                        <span>⭐</span> {{ $review->rating }} / 10 ดาว
+                                        <span class="text-slate-500 ml-2">({{ $review->created_at->diffForHumans() }})</span>
                                     </div>
                                 </div>
 
                                 @if($review->activity)
-                                    <a
-                                        href="{{ route('activities.show', $review->activity_id) }}"
-                                        class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400"
-                                    >
+                                    <a href="{{ route('activities.show', $review->activity_id) }}"
+                                       class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-600 text-slate-200 hover:text-white transition">
                                         ดูหนัง →
                                     </a>
                                 @endif
-
                             </div>
-
                         @endforeach
-
                     </div>
-
                 @else
-
-                    <p class="text-gray-500 dark:text-gray-400">
-                        คุณยังไม่มีรีวิว
-                    </p>
-
+                    <p class="text-slate-500 text-sm py-4">คุณยังไม่เคยเขียนรีวิวภาพยนตร์</p>
                 @endif
-
             </div>
 
 
             {{-- ==========================================
                  Tier List ของฉัน
             ========================================== --}}
-            <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                    🏆 Tier List ของฉัน
-                </h3>
+            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
+                <h2 class="text-xl font-bold text-white mb-5 flex items-center gap-2">
+                    <span>🏆</span> Tier List ของฉัน ({{ $collections->count() }})
+                </h2>
 
                 @if($collections->count() > 0)
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                         @foreach($collections as $collection)
-
-                            <a
-                                href="{{ route('collections.show', $collection->id) }}"
-                                class="block p-4 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition"
-                            >
-
-                                <div class="font-semibold text-gray-900 dark:text-white">
+                            <a href="{{ route('collections.show', $collection->id) }}"
+                               class="block p-5 rounded-2xl bg-slate-950/70 border border-slate-800/90 hover:border-indigo-500/50 hover:shadow-lg transition group">
+                                <div class="font-bold text-white text-base group-hover:text-indigo-400 transition">
                                     {{ $collection->name }}
                                 </div>
-
-                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                    เปิด Tier List →
+                                <div class="text-xs text-slate-400 mt-2 flex items-center justify-between">
+                                    <span>อัปเดต: {{ $collection->updated_at->diffForHumans() }}</span>
+                                    <span class="text-indigo-400 font-semibold group-hover:translate-x-1 transition">เปิดดู →</span>
                                 </div>
-
                             </a>
-
                         @endforeach
-
                     </div>
-
                 @else
-
-                    <p class="text-gray-500 dark:text-gray-400">
-                        คุณยังไม่มี Tier List
-                    </p>
-
+                    <p class="text-slate-500 text-sm py-4">คุณยังไม่มีกระดานจัดอันดับ Tier List</p>
                 @endif
-
             </div>
 
 
             {{-- ==========================================
                  หนังที่ฉันเสนอเข้าระบบ
             ========================================== --}}
-          
-<div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
+                <h2 class="text-xl font-bold text-white mb-5 flex items-center gap-2">
+                    <span>📋</span> หนังที่ฉันเสนอเข้าระบบ ({{ $submittedMovies->count() }})
+                </h2>
 
-    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
-        📋 หนังที่ฉันเสนอเข้าระบบ
-    </h3>
+                @if($submittedMovies->count() > 0)
+                    <div class="space-y-3">
+                        @foreach($submittedMovies as $movie)
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-950/70 border border-slate-800/90">
+                                <div>
+                                    <div class="font-bold text-white text-base">
+                                        {{ $movie->name }}
+                                    </div>
+                                    <div class="text-xs text-slate-400 mt-0.5">
+                                        ปี {{ $movie->year }} • {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
+                                    </div>
+                                </div>
 
-    @if($submittedMovies->count() > 0)
-
-        <div class="space-y-3">
-
-            @foreach($submittedMovies as $movie)
-
-                <div class="flex items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-
-                    <div>
-                        <div class="font-semibold text-gray-900 dark:text-white">
-                            {{ $movie->name }}
-                        </div>
-
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                            ปี {{ $movie->year }}
-                        </div>
+                                {{-- สถานะ --}}
+                                @if($movie->status === 'approved')
+                                    <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold whitespace-nowrap">
+                                        🟢 อนุมัติแล้ว
+                                    </span>
+                                @elseif($movie->status === 'rejected')
+                                    <span class="px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold whitespace-nowrap">
+                                        🔴 ปฏิเสธแล้ว
+                                    </span>
+                                @else
+                                    <span class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold whitespace-nowrap">
+                                        🟡 รอตรวจสอบ
+                                    </span>
+                                @endif
+                            </div>
+                        @endforeach
                     </div>
-
-                    {{-- สถานะ --}}
-                    @if($movie->status === 'approved')
-
-                        <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-sm font-semibold whitespace-nowrap">
-                            🟢 อนุมัติแล้ว
-                        </span>
-
-                    @elseif($movie->status === 'rejected')
-
-                        <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 text-sm font-semibold whitespace-nowrap">
-                            🔴 ปฏิเสธแล้ว
-                        </span>
-
-                    @else
-
-                        <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300 text-sm font-semibold whitespace-nowrap">
-                            🟡 รอตรวจสอบ
-                        </span>
-
-                    @endif
-
-                </div>
-
-            @endforeach
-
-        </div>
-
-    @else
-
-        <p class="text-gray-500 dark:text-gray-400">
-            คุณยังไม่มีภาพยนตร์ที่เสนอเข้าระบบ
-        </p>
-
-    @endif
-
-</div>
+                @else
+                    <p class="text-slate-500 text-sm py-4">คุณยังไม่มีภาพยนตร์ที่เสนอเข้าระบบ</p>
+                @endif
+            </div>
 
 
             {{-- ==========================================
-                 ตั้งค่า Profile เดิมของ Laravel
+                 ตั้งค่า Profile บัญชี
             ========================================== --}}
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
                 <div class="max-w-xl">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
 
-
             {{-- เปลี่ยนรหัสผ่าน --}}
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
 
-
             {{-- ลบบัญชี --}}
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
                 <div class="max-w-xl">
                     @include('profile.partials.delete-user-form')
                 </div>

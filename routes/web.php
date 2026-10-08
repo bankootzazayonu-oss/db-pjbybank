@@ -18,7 +18,18 @@ use Illuminate\Support\Facades\DB;
 // โซน PUBLIC (ใครๆ ก็เข้าได้ ไม่ต้องล็อกอิน)
 // =====================================
 Route::get('/', function () {
-    return view('welcome');
+    $featuredMovies = Activity::where('is_approved', true)
+        ->where('status', 'approved')
+        ->withAvg('reviews', 'rating')
+        ->withCount('reviews')
+        ->latest()
+        ->take(8)
+        ->get();
+
+    $totalMovies = Activity::where('is_approved', true)->where('status', 'approved')->count();
+    $totalReviews = Review::count();
+
+    return view('welcome', compact('featuredMovies', 'totalMovies', 'totalReviews'));
 })->name('home');
 
 // หน้า Leaderboard แบบไม่ต้องล็อกอิน
