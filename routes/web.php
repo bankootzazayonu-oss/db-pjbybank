@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\DirectorController;
 use App\Http\Controllers\Admin\TmdbController;
+use App\Http\Controllers\Admin\PlatformController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CollectionController;
@@ -233,6 +234,12 @@ Route::redirect('/admin/directors', '/admin/types');
     // ระบบนำเข้าหนังจาก TMDB
     Route::get('/admin/movies/search', [TmdbController::class, 'search'])->name('admin.movies.search');
     Route::post('/admin/movies/import', [TmdbController::class, 'import'])->name('admin.movies.import');
+
+    // ระบบจัดการแพลตฟอร์มรับชม (Admin Platform Management)
+    Route::get('/admin/platforms', [PlatformController::class, 'index'])->name('admin.platforms.index');
+    Route::post('/admin/platforms', [PlatformController::class, 'store'])->name('admin.platforms.store');
+    Route::put('/admin/platforms/{platform}', [PlatformController::class, 'update'])->name('admin.platforms.update');
+    Route::delete('/admin/platforms/{platform}', [PlatformController::class, 'destroy'])->name('admin.platforms.destroy');
 });
 
 require __DIR__.'/auth.php';

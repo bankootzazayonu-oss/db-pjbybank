@@ -143,6 +143,33 @@
                                             </select>
                                         </div>
 
+                                        <!-- 📺 เลือกช่องทางการรับชม (Platforms) -->
+                                        @if(!empty($platforms) && $platforms->isNotEmpty())
+                                            <div class="pt-0.5" x-data="{ selectedPlatforms: [] }">
+                                                <label class="block text-[11px] font-semibold text-slate-400 mb-1 flex items-center justify-between">
+                                                    <span>📺 ช่องทางรับชม (ถ้ามี):</span>
+                                                    <span class="text-[10px] text-slate-500">คลิกเลือกได้หลายช่องทาง</span>
+                                                </label>
+                                                <div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-0.5 p-1 rounded-lg bg-slate-950/70 border border-slate-800/80">
+                                                    @foreach($platforms as $platform)
+                                                        <label class="cursor-pointer select-none">
+                                                            <input type="checkbox" name="platforms[]" value="{{ $platform->id }}" x-model="selectedPlatforms" class="sr-only">
+                                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium border transition cursor-pointer select-none"
+                                                                  :class="selectedPlatforms.includes('{{ $platform->id }}')
+                                                                    ? 'bg-rose-600 text-white border-rose-500 shadow-sm font-semibold'
+                                                                    : 'bg-slate-900 border-slate-700/80 text-slate-300 hover:border-slate-500 hover:text-white'">
+                                                                <span class="w-3 h-3 rounded flex items-center justify-center text-[9px] font-black transition"
+                                                                      :class="selectedPlatforms.includes('{{ $platform->id }}') ? 'bg-white text-rose-600' : 'bg-slate-800 text-transparent'">
+                                                                    ✓
+                                                                </span>
+                                                                <span>{{ $platform->name }}</span>
+                                                            </span>
+                                                        </label>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         <button type="submit" 
                                                 class="w-full bg-rose-600 hover:bg-rose-500 active:scale-[0.98] text-white font-bold py-2.5 px-4 rounded-lg text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-rose-950/50 transition duration-150">
                                             <span>📥</span> นำเข้าสู่ระบบทันที

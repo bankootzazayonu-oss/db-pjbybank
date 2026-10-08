@@ -76,12 +76,29 @@
                             <div class="mb-6"></div>
                         @endif
                         
-                        <div class="mb-8">
+                        <div class="mb-6">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">เรื่องย่อ / Synopsis</h3>
                             <p class="text-slate-300 leading-relaxed whitespace-pre-line text-base sm:text-lg font-light">
                                 {{ $movie->review }}
                             </p>
                         </div>
+
+                        <!-- 📺 ช่องทางการรับชม (Platforms) -->
+                        @if($movie->platforms->isNotEmpty())
+                            <div class="mb-6 pt-4 border-t border-slate-800/60">
+                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                    <span>📺</span> รับชมได้ที่ / Available On
+                                </h3>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    @foreach($movie->platforms as $platform)
+                                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-950 border border-slate-700/80 hover:border-rose-500/50 text-slate-200 text-xs font-semibold shadow-sm transition">
+                                            <span class="w-2 h-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50"></span>
+                                            <span>{{ $platform->name }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- คะแนนเฉลี่ย -->

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Models\Type;
+use App\Models\Platform;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Models\Activity; // ดึง Model หนังมาใช้
+use App\Models\Activity;
 
 class TmdbController extends Controller
 {
@@ -31,8 +32,9 @@ class TmdbController extends Controller
         }
     }
 
-        // ดึง Genre/Type จากฐานข้อมูล
+        // ดึง Genre/Type และ Platform จากฐานข้อมูล
         $types = Type::orderBy('name')->get();
+        $platforms = Platform::orderBy('name')->get();
 
         // ตรวจสอบ TMDB ID และชื่อที่มีในระบบแล้ว ทั้งชื่อไทยและชื่ออังกฤษ
         $existingTmdbIds = Activity::whereNotNull('tmdb_id')->pluck('tmdb_id')->toArray();
@@ -44,7 +46,7 @@ class TmdbController extends Controller
 
         return view(
             'admin.movies.search',
-            compact('movies', 'query', 'types', 'existingTmdbIds', 'existingNames')
+            compact('movies', 'query', 'types', 'existingTmdbIds', 'existingNames', 'platforms')
         );
     }
 
@@ -59,6 +61,8 @@ class TmdbController extends Controller
         'overview' => 'nullable|string',
         'poster_path' => 'nullable|string',
         'type_id' => 'required|exists:types,id',
+        'platforms' => 'nullable|array',
+        'platforms.*' => 'exists:platforms,id',
     ]);
 
     $isTmdbDuplicate = Activity::where(
@@ -105,7 +109,7 @@ class TmdbController extends Controller
             $request->poster_path;
     }
 
-    Activity::create([
+    $activity = Activity::create([
         'name' => $request->title,
         'original_title' => $request->original_title ?: null,
         'year' => $request->year,
@@ -118,6 +122,10 @@ class TmdbController extends Controller
         'status' => 'approved',
         'user_id' => auth()->id(),
     ]);
+
+    if ($request->filled('platforms')) {
+        $activity->platforms()->sync($request->platforms);
+    }
 
     return back()->with(
         'success',

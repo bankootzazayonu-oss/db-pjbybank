@@ -10,8 +10,8 @@ class ActivityController extends Controller
 {
     public function show($id)
     {
-        // ดึงข้อมูลหนัง พร้อมหมวดหมู่ และรีวิว (เรียงจากใหม่ไปเก่า)
-        $movie = \App\Models\Activity::with(['type', 'reviews.user'])->findOrFail($id);
+        // ดึงข้อมูลหนัง พร้อมหมวดหมู่, แพลตฟอร์ม และรีวิว (เรียงจากใหม่ไปเก่า)
+        $movie = \App\Models\Activity::with(['type', 'reviews.user', 'platforms'])->findOrFail($id);
         
         // เช็กว่า User คนนี้เคยรีวิวเรื่องนี้ไปหรือยัง (จะได้ไม่ให้รีวิวซ้ำ)
         $userReview = auth()->check() ? $movie->reviews()->where('user_id', auth()->id())->first() : null;
@@ -120,9 +120,11 @@ public function reject($id)
 }
    public function create()
     {
-        // ดึงหมวดหมู่ทั้งหมดจากฐานข้อมูลเพื่อไปแสดงเป็น Dropdown
+        // ดึงหมวดหมู่และแพลตฟอร์มทั้งหมดจากฐานข้อมูล
         $types = \App\Models\Type::orderBy('name')->get(); 
-        return view('activities.create', compact('types'));
+        $platforms = \App\Models\Platform::orderBy('name')->get();
+
+        return view('activities.create', compact('types', 'platforms'));
     }
 
     public function store(Request $request)
@@ -133,10 +135,11 @@ public function reject($id)
         'year' => 'required|integer',
         'review' => 'required|string',
         'type_id' => 'required|exists:types,id',
-        'director_id' => 'nullable|exists:directors,id',
         'image' => 'nullable|image|max:5120',
         'api_image' => 'nullable|string',
         'tmdb_id' => 'nullable|integer',
+        'platforms' => 'nullable|array',
+        'platforms.*' => 'exists:platforms,id',
     ]);
 
     // ==========================================
@@ -197,19 +200,24 @@ public function reject($id)
     // ==========================================
     // 4. บันทึกภาพยนตร์
     // ==========================================
-   Activity::create([
-    'name' => $request->name,
-    'original_title' => $request->original_title ?: null,
-    'year' => $request->year,
-    'review' => $request->review,
-    'image' => $imagePath,
-    'user_id' => auth()->id(),
-    'hours' => 0,
-    'type_id' => $request->type_id,
-    'tmdb_id' => $request->tmdb_id,
-    'is_approved' => 0,
-    'status' => 'pending',
-]);
+    $activity = Activity::create([
+        'name' => $request->name,
+        'original_title' => $request->original_title ?: null,
+        'year' => $request->year,
+        'review' => $request->review,
+        'image' => $imagePath,
+        'user_id' => auth()->id(),
+        'hours' => 0,
+        'type_id' => $request->type_id,
+        'tmdb_id' => $request->tmdb_id,
+        'is_approved' => 0,
+        'status' => 'pending',
+    ]);
+
+    // ผูกช่องทางการรับชม (Platforms)
+    if ($request->filled('platforms')) {
+        $activity->platforms()->sync($request->platforms);
+    }
 
     return redirect()
         ->route('dashboard')
@@ -241,10 +249,13 @@ public function reject($id)
         }
 
         $types = \App\Models\Type::orderBy('name')->get();
+        $platforms = \App\Models\Platform::orderBy('name')->get();
+        $activity->load('platforms');
 
         return view('activities.edit', compact(
             'activity',
-            'types'
+            'types',
+            'platforms'
         ));
     }
 
@@ -270,6 +281,8 @@ public function reject($id)
             'type_id' => 'required|exists:types,id',
             'image' => 'nullable|image|max:5120',
             'api_image' => 'nullable|string', // 🟢 เพิ่มการรองรับลิงก์รูปจาก API
+            'platforms' => 'nullable|array',
+            'platforms.*' => 'exists:platforms,id',
         ]);
         
         // 🚨 ระบบเช็คหนังซ้ำสำหรับการแก้ไข (ต้องยกเว้น ID ของตัวเองด้วย)
@@ -303,6 +316,9 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
         }
 
         $activity->update($updateData);
+
+        // ผูกช่องทางการรับชม (Platforms)
+        $activity->platforms()->sync($request->platforms ?? []);
 
         return redirect()->route('my.movies')->with('success', '✅ อัปเดตข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }

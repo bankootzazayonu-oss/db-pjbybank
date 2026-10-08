@@ -55,6 +55,45 @@
     </select>
 </div>
 
+                <!-- ช่องทางการรับชม (Platforms) -->
+                @php
+                    $selectedPlatforms = array_map('strval', old('platforms', $activity->platforms->pluck('id')->toArray()));
+                @endphp
+                <div class="mb-6" x-data="{ selected: {{ json_encode($selectedPlatforms) }} }">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
+                        <span class="flex items-center gap-1.5">
+                            <span>📺</span> ช่องทางการรับชม (Streaming Platforms)
+                        </span>
+                        <span class="text-xs text-indigo-400 font-normal">คลิกเลือกเพื่อเปิด/ปิด</span>
+                    </label>
+
+                    @if($platforms->isNotEmpty())
+                        <div class="flex flex-wrap gap-2.5 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700">
+                            @foreach($platforms as $platform)
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" 
+                                           name="platforms[]" 
+                                           value="{{ $platform->id }}"
+                                           x-model="selected"
+                                           class="sr-only">
+                                    <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition duration-150 border shadow-sm cursor-pointer select-none"
+                                          :class="selected.includes('{{ $platform->id }}') 
+                                            ? 'bg-indigo-600 text-white border-indigo-500 shadow-indigo-950/50 scale-[1.02]' 
+                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'">
+                                        <span class="w-4 h-4 rounded flex items-center justify-center text-[10px] font-black transition"
+                                              :class="selected.includes('{{ $platform->id }}') ? 'bg-white text-indigo-600' : 'bg-gray-200 dark:bg-gray-700 text-transparent'">
+                                            ✓
+                                        </span>
+                                        <span>{{ $platform->name }}</span>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-xs text-gray-400 mt-1">ยังไม่มีรายการแพลตฟอร์มในระบบ</p>
+                    @endif
+                </div>
+
                 <div class="mb-6">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">เรื่องย่อ / คำอธิบาย *</label>
                     <textarea name="review" rows="4" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-indigo-500 focus:border-indigo-500">{{ old('review', $activity->review) }}</textarea>

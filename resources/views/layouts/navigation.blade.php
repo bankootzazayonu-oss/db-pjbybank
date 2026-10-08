@@ -55,6 +55,10 @@
                         <x-nav-link :href="route('admin.types.index')" :active="request()->routeIs('admin.types.index')">
                             📁 จัดการหมวดหมู่
                         </x-nav-link>
+
+                        <x-nav-link :href="route('admin.platforms.index')" :active="request()->routeIs('admin.platforms.*')">
+                            📺 จัดการแพลตฟอร์ม
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -142,6 +146,9 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.types.index')" :active="request()->routeIs('admin.types.index')">
                         📁 จัดการหมวดหมู่
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.platforms.index')" :active="request()->routeIs('admin.platforms.*')">
+                        📺 จัดการแพลตฟอร์ม
                     </x-responsive-nav-link>
                 </div>
             @endif
