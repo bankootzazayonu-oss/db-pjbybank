@@ -1,52 +1,69 @@
 @echo off
-chcp 65001 >nul
+title Setup - Movie Review Web App
+
 echo ===================================================
-echo      ระบบติดตั้งอัตโนมัติ - Movie Review Web App
+echo     Auto Setup - Movie Review Web App
 echo ===================================================
 echo.
 
-echo [1/7] กำลังติดตั้ง PHP Dependencies (Composer)...
-call composer install
-echo.
-
-echo [2/7] กำลังติดตั้ง Node.js Dependencies (NPM)...
-call npm install
-echo.
-
-echo [3/7] กำลังตั้งค่าไฟล์ Environment (.env)...
-IF NOT EXIST .env (
-    copy .env.example .env
-    echo คัดลอก .env.example เป็น .env เรียบร้อย
-) ELSE (
-    echo พบไฟล์ .env อยู่แล้ว ข้ามขั้นตอนนี้
+where php >nul 2>nul
+if %errorlevel% neq 0 (
+    echo [ERROR] PHP is not found!
+    echo Please install Laravel Herd: https://herd.laravel.com
+    echo or install PHP and add it to your PATH.
+    pause
+    exit /b
 )
-echo.
 
-echo [4/7] กำลังสร้าง App Key...
+echo [1/5] Setting up .env file...
+if not exist .env (
+    copy .env.example .env >nul
+    echo Created .env file.
+) else (
+    echo .env already exists.
+)
 call php artisan key:generate
 echo.
 
-echo [5/7] กำลังเตรียมฐานข้อมูล SQLite และตาราง...
-IF NOT EXIST database\database.sqlite (
+echo [2/5] Installing Composer Dependencies...
+where composer >nul 2>nul
+if %errorlevel% equ 0 (
+    call composer install
+) else (
+    echo [SKIP] composer not found, using existing vendor directory.
+)
+echo.
+
+echo [3/5] Preparing SQLite Database and Tables...
+if not exist database\database.sqlite (
     type NUL > database\database.sqlite
-    echo สร้างไฟล์ database.sqlite เรียบร้อย
+    echo Created database.sqlite.
 )
 call php artisan migrate:fresh --seed
 echo.
 
-echo [6/7] กำลังเชื่อมต่อโฟลเดอร์รูปภาพ (Storage Link)...
+echo [4/5] Linking Storage...
 call php artisan storage:link
 echo.
 
-echo [7/7] กำลังคอมไพล์ CSS/JS (Tailwind)...
-call npm run build
+echo [5/5] Building Frontend Assets...
+where npm >nul 2>nul
+if %errorlevel% equ 0 (
+    call npm install
+    call npm run build
+) else (
+    echo [SKIP] npm not found, using existing build.
+)
 echo.
 
 echo ===================================================
-echo   ติดตั้งสำเร็จ! โปรเจกต์พร้อมใช้งานแล้ว 🎉
+echo   Setup Complete!
 echo ===================================================
+echo Test Accounts:
+echo - Admin: admin@admin.com / password
+echo - User:  user@user.com  / password
 echo.
-echo *** สิ่งที่ต้องทำต่อไป ***
-echo พิมพ์คำสั่ง: php artisan serve เพื่อเปิดเว็บ
-echo.
+echo Starting server and opening browser...
+start http://localhost:8000
+call php artisan serve --port=8000
 pause
