@@ -1,8 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-bold text-xl text-white flex items-center gap-2">
-                <span>📺</span> จัดการแพลตฟอร์มรับชม (Streaming Platforms)
+            <h2 class="font-bold text-xl text-white flex items-center gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                จัดการแพลตฟอร์มรับชม (Streaming Platforms)
             </h2>
             <span class="text-xs text-slate-400 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
                 สำหรับผูกช่องทางการดูให้กับภาพยนตร์
@@ -15,13 +16,15 @@
         <!-- Alerts -->
         @if(session('success'))
             <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-xl mb-6 font-semibold flex items-center gap-2 text-sm shadow-md">
-                <span>✓</span> {{ session('success') }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                {{ session('success') }}
             </div>
         @endif
 
         @if(session('error'))
             <div class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl mb-6 font-semibold flex items-center gap-2 text-sm shadow-md">
-                <span>✕</span> {{ session('error') }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                {{ session('error') }}
             </div>
         @endif
 
@@ -36,7 +39,7 @@
             <!-- ฝั่งซ้าย: ฟอร์มเพิ่มแพลตฟอร์มใหม่ -->
             <div class="lg:col-span-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-xl backdrop-blur-sm sticky top-24">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-800">
-                    <span class="text-xl">➕</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                     <div>
                         <h3 class="font-bold text-white text-base">เพิ่มแพลตฟอร์มใหม่</h3>
                         <p class="text-xs text-slate-400">ระบุชื่อช่องทางสำหรับดูภาพยนตร์</p>
@@ -54,7 +57,7 @@
                                value="{{ old('name') }}" 
                                required 
                                placeholder="เช่น Netflix, Disney+ Hotstar, Prime Video..." 
-                               class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500 transition">
+                               class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition">
                     </div>
 
                     <div>
@@ -65,19 +68,20 @@
                                name="logo" 
                                value="{{ old('logo') }}" 
                                placeholder="เช่น https://... หรือเว้นว่างไว้" 
-                               class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500 transition">
+                               class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition">
                     </div>
 
                     <button type="submit" 
-                            class="w-full bg-rose-600 hover:bg-rose-500 active:scale-[0.98] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-950/40 transition">
-                        <span>💾 บันทึกแพลตฟอร์ม</span>
+                            class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-indigo-950/40 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        บันทึกแพลตฟอร์ม
                     </button>
                 </form>
 
                 <!-- คำแนะนำการใช้งาน -->
                 <div class="mt-6 pt-5 border-t border-slate-800/80">
                     <p class="text-[11px] text-slate-400 leading-relaxed font-light flex items-start gap-1.5">
-                        <span class="text-amber-400">💡</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400 mt-0.5 flex-shrink-0"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                         <span>แพลตฟอร์มที่เพิ่มที่นี่ จะไปแสดงเป็นตัวเลือกให้ User และ Admin ติ๊กเลือกตอนเพิ่ม/แก้ไขภาพยนตร์ทันที</span>
                     </p>
                 </div>
@@ -89,7 +93,8 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-800">
                     <div>
                         <h3 class="font-bold text-white text-base flex items-center gap-2">
-                            <span>📋</span> รายการแพลตฟอร์มทั้งหมด 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                            รายการแพลตฟอร์มทั้งหมด 
                             <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-normal">
                                 {{ $platforms->count() }} ช่องทาง
                             </span>
@@ -103,11 +108,13 @@
                                    name="q" 
                                    value="{{ $search ?? '' }}" 
                                    placeholder="ค้นหาชื่อแพลตฟอร์ม..." 
-                                   class="bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500 transition w-48 sm:w-56">
-                            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">🔍</span>
+                                   class="bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition w-48 sm:w-56">
+                            <span class="absolute left-2.5 top-1.5 text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            </span>
                         </div>
                         @if($search)
-                            <a href="{{ route('admin.platforms.index') }}" class="text-xs text-rose-400 hover:text-rose-300 font-medium">ล้าง</a>
+                            <a href="{{ route('admin.platforms.index') }}" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">ล้าง</a>
                         @endif
                     </form>
                 </div>
@@ -134,8 +141,8 @@
                                     <td class="py-3.5 pr-3">
                                         <!-- โหมดปกติ -->
                                         <div x-show="!isEditing" class="flex items-center gap-2.5">
-                                            <div class="w-7 h-7 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-xs font-bold text-rose-400 flex-shrink-0">
-                                                📺
+                                            <div class="w-7 h-7 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-xs font-bold text-indigo-400 flex-shrink-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
                                             </div>
                                             <div>
                                                 <span class="font-bold text-white text-sm">
@@ -156,7 +163,7 @@
                                                    name="name" 
                                                    x-model="newName" 
                                                    required 
-                                                   class="bg-slate-950 border border-rose-500/80 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none w-48">
+                                                   class="bg-slate-950 border border-indigo-500/80 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none w-48">
                                             <button type="submit" 
                                                     class="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition shadow">
                                                 บันทึก
@@ -171,8 +178,8 @@
 
                                     <!-- จำนวนหนังที่ผูกอยู่ -->
                                     <td class="py-3.5 text-center">
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold {{ $platform->activities_count > 0 ? 'bg-rose-500/10 text-rose-300 border border-rose-500/20' : 'bg-slate-800 text-slate-500' }}">
-                                            <span>🍿</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $platform->activities_count > 0 ? 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20' : 'bg-slate-800 text-slate-500' }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.82 2c-.78 0-1.52.2-2.17.55L8 8.35C4.21 10.21 1 12 1 16c0 3.86 3.14 7 7 7 3.96 0 6.64-2.81 8.54-6.6l5.77-11.53c.48-1 .69-2.07.69-3.13 0-1.5-.78-2.74-2.18-2.74z"/></svg>
                                             <span>{{ $platform->activities_count }} เรื่อง</span>
                                         </span>
                                     </td>
@@ -185,7 +192,7 @@
                                                     @click="isEditing = true" 
                                                     class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition" 
                                                     title="แก้ไขชื่อ">
-                                                ✏️
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                                             </button>
 
                                             <!-- ปุ่มลบ -->
@@ -198,7 +205,7 @@
                                                 <button type="submit" 
                                                         class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition" 
                                                         title="ลบแพลตฟอร์ม">
-                                                    🗑️
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                                                 </button>
                                             </form>
                                         </div>
@@ -208,7 +215,7 @@
                             @empty
                                 <tr>
                                     <td colspan="4" class="py-12 text-center text-slate-500">
-                                        <span class="text-3xl block mb-2">📺</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-slate-600"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
                                         <p class="font-medium text-slate-400 text-sm">ยังไม่มีข้อมูลแพลตฟอร์ม</p>
                                         <p class="text-xs text-slate-600 mt-1">สามารถเพิ่มแพลตฟอร์ม เช่น Netflix, Disney+, Prime Video ได้จากฟอร์มด้านซ้าย</p>
                                     </td>

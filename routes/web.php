@@ -183,6 +183,11 @@ Route::middleware(['auth'])->group(function () {
     // เส้นทางสำหรับเซฟชื่อ Tier แบบปั่นๆ
     Route::put('/collections/{id}/labels', [\App\Http\Controllers\CollectionController::class, 'updateLabels'])->name('collections.updateLabels');
 
+        // ระบบถังขยะ Tier List (My Trash)
+    Route::get('/collections-trash/view', [\App\Http\Controllers\CollectionController::class, 'trash'])->name('collections.trash');
+    Route::post('/collections/{id}/restore', [\App\Http\Controllers\CollectionController::class, 'restore'])->name('collections.restore');
+    Route::delete('/collections/{id}/force-delete', [\App\Http\Controllers\CollectionController::class, 'forceDelete'])->name('collections.forceDelete');
+
     // ระบบแก้ไข และ ลบ รีวิวของตัวเอง (User)
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{id}/user', [ReviewController::class, 'userDestroy'])->name('reviews.user_destroy');
@@ -219,11 +224,17 @@ Route::redirect('/admin/directors', '/admin/types');
     Route::put('/admin/types/{type}', [\App\Http\Controllers\Admin\TypeController::class, 'update'])->name('admin.types.update');
     Route::delete('/admin/types/{type}', [\App\Http\Controllers\Admin\TypeController::class, 'destroy'])->name('admin.types.destroy');
 
-    // ระบบจัดการ อนุมัติภาพยนตร์
+        // ระบบจัดการ อนุมัติภาพยนตร์
+    Route::get('/admin/movies/trash', [\App\Http\Controllers\ActivityController::class, 'trash'])->name('admin.movies.trash');
+    Route::post('/admin/movies/{id}/restore', [\App\Http\Controllers\ActivityController::class, 'restore'])->name('admin.movies.restore');
+    Route::delete('/admin/movies/{id}/force-delete', [\App\Http\Controllers\ActivityController::class, 'forceDelete'])->name('admin.movies.forceDelete');
+
     Route::get('/admin/pending-movies', [ActivityController::class, 'pending'])->name('admin.movies.pending');
     Route::post('/admin/approve-movie/{id}', [ActivityController::class, 'approve'])->name('admin.movies.approve');
 
-    Route::post('/admin/reject-movie/{id}', [ActivityController::class, 'reject'])->name('admin.movies.reject');
+        Route::post('/admin/reject-movie/{id}', [\App\Http\Controllers\ActivityController::class, 'reject'])->name('admin.movies.reject');
+    Route::get('/admin/movies/{id}/edit', [\App\Http\Controllers\ActivityController::class, 'edit'])->name('admin.movies.edit');
+    Route::put('/admin/movies/{id}', [\App\Http\Controllers\ActivityController::class, 'update'])->name('admin.movies.update');
     Route::delete('/movies/{id}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
     // ระบบจัดการ รายงานคอมเมนต์สแปม/ไม่เหมาะสม

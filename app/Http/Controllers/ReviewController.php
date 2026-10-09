@@ -86,8 +86,8 @@ class ReviewController extends Controller
     {
         $review = Review::findOrFail($id);
 
-        // เช็กสิทธิ์: ต้องเป็นเจ้าของคอมเมนต์เท่านั้นถึงลบได้
-        if ($review->user_id !== auth()->id()) {
+        // เช็กสิทธิ์: ต้องเป็นเจ้าของคอมเมนต์ หรือเป็น Admin เท่านั้นถึงลบได้
+        if ($review->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
             abort(403, 'คุณไม่มีสิทธิ์ลบคอมเมนต์นี้');
         }
 

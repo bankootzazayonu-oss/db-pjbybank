@@ -244,4 +244,25 @@ class CollectionController extends Controller
 
         return back()->with('success', "✨ นำเข้าหนัง '{$movie->name}' ลงกระดานเรียบร้อย!");
     }
+
+    // --- ระบบถังขยะ (My Trash) ---
+    public function trash()
+    {
+        $collections = Collection::onlyTrashed()->where('user_id', auth()->id())->latest()->get();
+        return view('collections.trash', compact('collections'));
+    }
+
+    public function restore($id)
+    {
+        $collection = Collection::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+        $collection->restore();
+        return back()->with('success', 'กู้คืนกระดาน ' . $collection->name . ' สำเร็จ!');
+    }
+
+    public function forceDelete($id)
+    {
+        $collection = Collection::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+        $collection->forceDelete();
+        return back()->with('success', 'ลบกระดาน ' . $collection->name . ' ถาวรสำเร็จ!');
+    }
 }

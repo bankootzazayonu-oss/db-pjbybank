@@ -334,12 +334,14 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
         }
 
         // ลบไฟล์ภาพออกจาก Storage หากเป็นไฟล์ที่อัปโหลดเอง (ไม่ใช่ URL จาก TMDB)
-        if ($movie->image && !\Illuminate\Support\Str::startsWith($movie->image, ['http://', 'https://'])) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($movie->image);
-        }
+        
 
         $movie->delete();
 
+                $previousUrl = url()->previous();
+        if (str_contains($previousUrl, '/movies/' . $id)) {
+            return redirect()->route('dashboard')->with('success', '🗑️ ลบภาพยนตร์เข้าถังขยะเรียบร้อยแล้ว');
+        }
         return back()->with('success', '🗑️ ลบ/ปัดตกข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }
 
@@ -374,4 +376,31 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
 }
 
 
+
+    // --- ระบบถังขยะส่วนกลาง (System Trash) ---
+    public function trash()
+    {
+        $movies = Activity::onlyTrashed()->latest()->paginate(20);
+        return view('admin.movies.trash', compact('movies'));
+    }
+
+    public function restore($id)
+    {
+        $movie = Activity::onlyTrashed()->findOrFail($id);
+        $movie->restore();
+        return back()->with('success', 'กู้คืนภาพยนตร์ ' . $movie->name . ' สำเร็จ!');
+    }
+
+    public function forceDelete($id)
+    {
+        $movie = Activity::onlyTrashed()->findOrFail($id);
+        
+        // ลบรูปภาพทิ้งจริงๆ เมื่อ Force Delete
+        if ($movie->image && !str_starts_with($movie->image, 'http')) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($movie->image);
+        }
+        
+        $movie->forceDelete();
+        return back()->with('success', 'ลบภาพยนตร์ ' . $movie->name . ' ถาวรสำเร็จ!');
+    }
 }

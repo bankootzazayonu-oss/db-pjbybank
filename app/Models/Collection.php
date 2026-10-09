@@ -2,10 +2,11 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Collection extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // 🟢 1. เพิ่ม 'tier_labels' เข้าไปใน $fillable
     protected $fillable = ['user_id', 'name', 'tier_labels'];

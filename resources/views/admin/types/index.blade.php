@@ -1,63 +1,70 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            📁 จัดการหมวดหมู่ภาพยนตร์ (Admin)
+        <h2 class="font-bold text-xl text-white flex items-center gap-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+            จัดการหมวดหมู่ภาพยนตร์ (Admin)
         </h2>
     </x-slot>
 
     <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- แจ้งเตือนข้อความต่างๆ -->
         @if(session('success'))
-            <div class="bg-green-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('success') }}</div>
+            <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('success') }}</div>
         @endif
         
         <!-- 🟢 ดักจับข้อความแจ้งเตือนข้อผิดพลาด (เช่น เมื่อลบหมวดหมู่ที่มีหนังผูกอยู่) -->
         @if(session('error'))
-            <div class="bg-red-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('error') }}</div>
+            <div class="bg-rose-500/10 border border-rose-500/30 text-rose-400 font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('error') }}</div>
         @endif
 
         @if($errors->any())
-            <div class="bg-red-500 text-white font-bold p-4 rounded-lg mb-6 shadow-md">{{ $errors->first() }}</div>
+            <div class="bg-rose-500/10 border border-rose-500/30 text-rose-400 font-bold p-4 rounded-lg mb-6 shadow-md">{{ $errors->first() }}</div>
         @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- ส่วนที่ 1: ฟอร์มเพิ่มหมวดหมู่ (ซ้าย) -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 h-fit">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">➕ เพิ่มหมวดหมู่ใหม่</h3>
+            <div class="bg-slate-900/90 p-6 rounded-2xl shadow-xl border border-slate-800 backdrop-blur-sm h-fit">
+                <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    เพิ่มหมวดหมู่ใหม่
+                </h3>
                 <form action="{{ route('admin.types.store') }}" method="POST">
                     @csrf
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ชื่อหมวดหมู่</label>
+                    <div class="mb-5">
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">ชื่อหมวดหมู่</label>
                         <input type="text" name="name" required placeholder="เช่น Action, Comedy, Sci-Fi..." 
-                               class="w-full bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md focus:border-indigo-500 focus:ring-indigo-500">
+                               class="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-indigo-500 transition">
                     </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-950/40 transition">
                         บันทึกข้อมูล
                     </button>
                 </form>
             </div>
 
             <!-- ส่วนที่ 2: ตารางแสดงหมวดหมู่ (ขวา) -->
-            <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">📋 รายการหมวดหมู่ทั้งหมด</h3>
+            <div class="md:col-span-2 bg-slate-900/90 p-6 rounded-2xl shadow-xl border border-slate-800 backdrop-blur-sm overflow-hidden">
+                <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                    รายการหมวดหมู่ทั้งหมด
+                </h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-gray-700 dark:text-gray-300">
+                    <table class="w-full text-left text-sm text-slate-300">
                         <thead>
-                            <tr class="border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                                <th class="pb-3 pl-2 w-16">ID</th>
+                            <tr class="border-b border-slate-800/80 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <th class="pb-3 pl-3 w-16">ID</th>
                                 <th class="pb-3">ชื่อหมวดหมู่</th>
-                                <th class="pb-3 text-right pr-2 w-48">การจัดการ</th>
+                                <th class="pb-3 text-right pr-3 w-48">การจัดการ</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-800/60">
                             @forelse($types as $type)
                             <!-- 🟢 ใช้ Alpine.js x-data สำหรับเปิด-ปิดโหมดแก้ไขในแต่ละแถว -->
-                            <tr x-data="{ editTypeMode: false }" class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                                <td class="py-4 pl-2 text-gray-400">{{ $type->id }}</td>
+                            <tr x-data="{ editTypeMode: false }" class="hover:bg-slate-800/40 transition">
+                                <td class="py-3.5 pl-3 text-slate-500 font-mono text-xs">{{ $type->id }}</td>
                                 
-                                <td class="py-4">
+                                <td class="py-3.5">
                                     <!-- โหมดแสดงผลปกติ -->
-                                    <div x-show="!editTypeMode" class="font-bold text-gray-900 dark:text-white">
+                                    <div x-show="!editTypeMode" class="font-bold text-white">
                                         {{ $type->name }}
                                     </div>
 
@@ -66,30 +73,32 @@
                                         @csrf
                                         @method('PUT')
                                         <input type="text" name="name" value="{{ $type->name }}" required
-                                               class="text-sm bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-md px-2.5 py-1 focus:ring-indigo-500 focus:border-indigo-500 w-full max-w-xs">
-                                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-2.5 py-1.5 rounded transition shadow-sm">
+                                               class="bg-slate-950 border border-indigo-500/80 text-white rounded-lg px-2.5 py-1 text-xs focus:outline-none w-full max-w-xs">
+                                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition shadow">
                                             บันทึก
                                         </button>
-                                        <button type="button" @click="editTypeMode = false" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-xs font-bold px-2.5 py-1.5 rounded transition">
+                                        <button type="button" @click="editTypeMode = false" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium px-2 py-1 rounded-lg transition">
                                             ยกเลิก
                                         </button>
                                     </form>
                                 </td>
 
-                                <td class="py-4 text-right pr-2">
+                                <td class="py-3.5 text-right pr-3">
                                     <!-- ซ่อนปุ่มจัดการเมื่ออยู่ในโหมดแก้ไข -->
-                                    <div x-show="!editTypeMode" class="flex justify-end items-center gap-2">
+                                    <div x-show="!editTypeMode" class="flex justify-end items-center gap-1.5">
                                         <!-- ปุ่มแก้ไข -->
-                                        <button type="button" @click="editTypeMode = true" class="text-blue-600 hover:text-blue-400 font-bold bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-md text-sm transition">
-                                            ✏️ แก้ไข
+                                        <button type="button" @click="editTypeMode = true" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition flex items-center gap-1.5 text-xs font-semibold">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                                            แก้ไข
                                         </button>
 
                                         <!-- ปุ่มลบ -->
                                         <form action="{{ route('admin.types.destroy', $type->id) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหมวดหมู่นี้?');" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-400 font-bold bg-red-100 dark:bg-red-900/30 px-3 py-1 rounded-md text-sm transition">
-                                                🗑️ ลบ
+                                            <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition flex items-center gap-1.5 text-xs font-semibold">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                                ลบ
                                             </button>
                                         </form>
                                     </div>
@@ -97,7 +106,10 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="3" class="py-8 text-center text-gray-500">ยังไม่มีข้อมูลหมวดหมู่ในระบบ</td>
+                                <td colspan="3" class="py-12 text-center text-slate-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-slate-600"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                                    <p class="font-medium text-slate-400 text-sm">ยังไม่มีข้อมูลหมวดหมู่ในระบบ</p>
+                                </td>
                             </tr>
                             @endforelse
                         </tbody>
