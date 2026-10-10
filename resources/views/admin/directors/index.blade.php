@@ -1,8 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('จัดการผู้กำกับภาพยนตร์') }}
-        </h2>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 class="font-bold text-lg sm:text-xl text-gray-800 dark:text-gray-200 leading-tight flex flex-wrap">
+                {{ __('จัดการผู้กำกับภาพยนตร์') }}
+            </h2>
+        </div>
     </x-slot>
 
     <div class="py-12">

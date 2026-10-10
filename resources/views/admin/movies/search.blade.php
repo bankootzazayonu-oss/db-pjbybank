@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h1 class="font-bold text-xl text-white tracking-tight flex items-center gap-2.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h1 class="font-bold text-lg sm:text-xl text-white tracking-tight flex items-center gap-2.5 flex-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400 shrink-0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 นำเข้าภาพยนตร์จากฐานข้อมูลโลก (TMDB)
             </h1>
-            <a href="{{ route('dashboard') }}" class="text-xs font-semibold bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white py-1.5 px-3.5 rounded-xl transition">
+            <a href="{{ route('dashboard') }}" class="inline-flex justify-center shrink-0 text-xs font-semibold bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white py-2 px-4 rounded-xl transition">
                 ← กลับหน้าคลังหนัง
             </a>
         </div>
