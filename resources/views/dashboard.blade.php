@@ -1,9 +1,6 @@
 <x-app-layout>
     <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
-        {{-- ==========================================
-             Header & Quick Actions
-        ========================================== --}}
         <div>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
@@ -71,9 +68,7 @@
             </div>
         </div>
 
-        {{-- ==========================================
-             Top 5 Genre
-        ========================================== --}}
+     
         <div class="bg-slate-900 rounded-xl border border-slate-800 p-5 sm:p-6">
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -116,9 +111,7 @@
             @endif
         </div>
 
-        {{-- ==========================================
-             คลังภาพยนตร์ทั้งหมด
-        ========================================== --}}
+     
         <div>
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
                 <div>
