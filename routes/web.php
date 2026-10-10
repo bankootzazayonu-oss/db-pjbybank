@@ -4,7 +4,6 @@ use App\Models\Activity;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\TypeController;
-use App\Http\Controllers\Admin\DirectorController;
 use App\Http\Controllers\Admin\TmdbController;
 use App\Http\Controllers\Admin\PlatformController;
 use App\Http\Controllers\ActivityController;
@@ -209,10 +208,6 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     
 
 Route::resource('types', TypeController::class);
-
-
-Route::redirect('/admin/directors', '/admin/types');
-
 
     Route::get('/admin/types', [TypeController::class, 'index'])->name('admin.types.index');
     Route::post('/admin/types', [TypeController::class, 'store'])->name('admin.types.store');

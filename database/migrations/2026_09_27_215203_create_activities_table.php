@@ -24,9 +24,6 @@ return new class extends Migration
             $table->foreignId('type_id')->nullable()->constrained('types')->nullOnDelete();
             
 
-            $table->foreignId('director_id')->nullable()->constrained('directors')->nullOnDelete();
-            
-
             $table->boolean('is_approved')->default(0); 
             $table->timestamps();
         });

@@ -18,7 +18,6 @@ class Activity extends Model
         'user_id',
         'hours',
         'type_id',
-        'director_id', 
         'is_approved',
         'tmdb_id',
         'status',
@@ -27,10 +26,7 @@ class Activity extends Model
 
     public function user() { return $this->belongsTo(User::class); }
     public function type() { return $this->belongsTo(Type::class); }
-    public function director() { return $this->belongsTo(Director::class); }
 
-
-    public function actors() { return $this->belongsToMany(Actor::class); }
     public function platforms() { return $this->belongsToMany(Platform::class); }
 
 

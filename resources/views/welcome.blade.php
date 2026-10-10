@@ -19,11 +19,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <span class="w-9 h-9 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8H4Z"/><path d="m4 11-.88-2.87a2 2 0 0 1 1.33-2.5l11.48-3.5a2 2 0 0 1 2.5 1.32l.85 2.87"/><path d="M6.6 4.97 10.4 16"/><path d="M12.3 3.2 16.1 14.3"/></svg>
-                </span>
-                <div class="flex items-baseline gap-1.5">
-                    <span class="text-lg font-black tracking-tight text-white group-hover:text-indigo-400 transition">CineReview</span>
+                <img src="{{ asset('images/logo.png') }}" class="h-12 w-auto rounded-xl object-contain shadow-md shadow-black/40 group-hover:scale-105 transition" alt="CineReview Logo" />
+                <div class="hidden sm:flex items-baseline gap-1.5">
                     <span class="text-xs text-slate-500 font-medium">คลังรีวิวหนัง</span>
                 </div>
             </a>
