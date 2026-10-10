@@ -280,7 +280,7 @@ public function reject($id)
             'review' => 'required|string',
             'type_id' => 'required|exists:types,id',
             'image' => 'nullable|image|max:5120',
-            'api_image' => 'nullable|string', //  เพิ่มการรองรับลิงก์รูปจาก API
+            'api_image' => 'nullable|string', 
             'platforms' => 'nullable|array',
             'platforms.*' => 'exists:platforms,id',
         ]);

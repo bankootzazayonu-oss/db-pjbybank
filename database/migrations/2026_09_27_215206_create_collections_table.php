@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('name'); // ชื่อกระดาน เช่น "หนังแอคชั่นห้ามพลาด"
+            $table->string('name'); 
             $table->timestamps();
         });
     }

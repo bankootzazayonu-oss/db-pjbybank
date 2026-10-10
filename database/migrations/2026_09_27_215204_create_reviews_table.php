@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('activity_id')->constrained('activities')->cascadeOnDelete();
-            $table->integer('rating'); // คะแนน 1-10
+            $table->integer('rating'); 
             $table->text('comment');
-            $table->boolean('is_spoiler')->default(false); // เตือนสปอยล์
+            $table->boolean('is_spoiler')->default(false); 
             $table->timestamps();
         });
     }

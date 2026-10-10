@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class PlatformController extends Controller
 {
-    /**
-     * แสดงรายการแพลตฟอร์มทั้งหมด พร้อมตัวนับจำนวนภาพยนตร์
-     */
+  
     public function index(Request $request)
     {
         $search = $request->query('q');
@@ -26,9 +24,7 @@ class PlatformController extends Controller
         return view('admin.platforms.index', compact('platforms', 'search'));
     }
 
-    /**
-     * บันทึกแพลตฟอร์มใหม่
-     */
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -47,9 +43,7 @@ class PlatformController extends Controller
         return back()->with('success', ' เพิ่มแพลตฟอร์ม "' . $request->name . '" เข้าสู่ระบบแล้ว');
     }
 
-    /**
-     * บันทึกการแก้ไขชื่อแพลตฟอร์ม
-     */
+ 
     public function update(Request $request, Platform $platform)
     {
         $request->validate([
@@ -68,9 +62,6 @@ class PlatformController extends Controller
         return back()->with('success', ' อัปเดตข้อมูลแพลตฟอร์มเรียบร้อยแล้ว');
     }
 
-    /**
-     * ลบแพลตฟอร์ม (ตัดความสัมพันธ์ในตาราง pivot อัตโนมัติ)
-     */
     public function destroy(Platform $platform)
     {
         $name = $platform->name;

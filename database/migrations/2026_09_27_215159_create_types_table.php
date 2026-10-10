@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('types', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // ชื่อหมวดหมู่ เช่น Action, Horror
+            $table->string('name'); 
             $table->timestamps();
         });
     }

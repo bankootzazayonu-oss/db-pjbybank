@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('platforms', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // เช่น Netflix, Disney+
-            $table->string('logo')->nullable(); // รูปลิงก์โลโก้
+            $table->string('name'); 
+            $table->string('logo')->nullable(); 
             $table->timestamps();
         });
     }

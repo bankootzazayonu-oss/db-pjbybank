@@ -174,7 +174,7 @@ class CollectionController extends Controller
 
 
         $response = Http::get('https://api.themoviedb.org/3/search/movie', [
-            'api_key' => env('TMDB_API_KEY'), // มั่นใจว่าในไฟล์ .env มี TMDB_API_KEY แล้ว
+            'api_key' => env('TMDB_API_KEY'), 
             'query' => $query,
             'language' => 'th-TH',
             'page' => 1
