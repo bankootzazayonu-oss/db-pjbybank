@@ -8,14 +8,14 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- แสดงข้อความสำเร็จ --}}
+            
             @if (session('success'))
                 <div class="mb-6 p-4 rounded-lg bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                     {{ session('success') }}
                 </div>
             @endif
 
-            {{-- แสดง Error --}}
+            
             @if ($errors->any())
                 <div class="mb-6 p-4 rounded-lg bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                     <ul class="list-disc list-inside">
@@ -91,13 +91,13 @@
 
                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
 
-                                    {{-- ID --}}
+                                    
                                     <td class="px-6 py-4">
                                         {{ $director->id }}
                                     </td>
 
 
-                                    {{-- ชื่อผู้กำกับ --}}
+                                    
                                     <td class="px-6 py-4">
 
                                         <form
@@ -128,7 +128,7 @@
                                     </td>
 
 
-                                    {{-- ลบ --}}
+                                    
                                     <td class="px-6 py-4">
 
                                         <form

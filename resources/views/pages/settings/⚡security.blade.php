@@ -223,7 +223,7 @@ new #[Title('Security settings')] class extends Component {
             </div>
         </form>
 
-        {{-- @chisel-2fa --}}
+        
         @if ($canManageTwoFactor)
             <section class="mt-12">
                 <flux:heading>{{ __('Two-factor authentication') }}</flux:heading>
@@ -268,9 +268,9 @@ new #[Title('Security settings')] class extends Component {
                 </div>
             </section>
         @endif
-        {{-- @end-chisel-2fa --}}
+        
 
-        {{-- @chisel-passkeys --}}
+        
         @if ($canManagePasskeys)
             <section class="mt-12">
                 <flux:heading>{{ __('Passkeys') }}</flux:heading>
@@ -325,10 +325,10 @@ new #[Title('Security settings')] class extends Component {
                 </div>
             </section>
         @endif
-        {{-- @end-chisel-passkeys --}}
+        
     </x-pages::settings.layout>
 
-    {{-- @chisel-passkeys --}}
+    
     <flux:modal
         name="delete-passkey-modal"
         class="max-w-md md:min-w-md"
@@ -359,5 +359,5 @@ new #[Title('Security settings')] class extends Component {
             </div>
         </div>
     </flux:modal>
-    {{-- @end-chisel-passkeys --}}
+    
 </section>

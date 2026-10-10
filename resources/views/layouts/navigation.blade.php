@@ -12,7 +12,7 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-2 sm:-my-px sm:ms-6 sm:flex items-center whitespace-nowrap overflow-x-auto">
-                    {{-- เมนูสำหรับทุกคน --}}
+                    
                     @auth
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="flex items-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7h4"/><path d="M3 13h4"/><path d="M3 17h4"/><path d="M17 7h4"/><path d="M17 13h4"/><path d="M17 17h4"/></svg>
@@ -26,7 +26,7 @@
                     </x-nav-link>
 
                     @auth
-                    {{-- เมนูสำหรับ User ทั่วไป --}}
+                    
                     @if(Auth::user()->role !== 'admin')
                         <x-nav-link :href="route('activities.create')" :active="request()->routeIs('activities.create')" class="flex items-center gap-1.5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M5 12h14"/><path d="M12 5v14"/></svg>

@@ -64,13 +64,13 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex flex-wrap justify-center items-center gap-2">
-                                        {{-- Admin แก้ได้ทุกสถานะ --}}
+                                        
                                         @if(auth()->user()->role === 'admin')
                                             <a href="{{ route('activities.edit', $movie->id) }}"
                                                class="text-indigo-400 hover:text-white font-semibold text-xs bg-slate-800 hover:bg-indigo-600 px-3 py-1.5 rounded-xl transition">
                                                 ✏️ แก้ไข
                                             </a>
-                                        {{-- User แก้ได้เฉพาะ Pending / Rejected --}}
+                                        
                                         @elseif(in_array($movie->status, ['pending', 'rejected']))
                                             <a href="{{ route('activities.edit', $movie->id) }}"
                                                class="text-indigo-400 hover:text-white font-semibold text-xs bg-slate-800 hover:bg-indigo-600 px-3 py-1.5 rounded-xl transition">
@@ -82,7 +82,7 @@
                                             </span>
                                         @endif
 
-                                        {{-- Approved เท่านั้นที่ดู / รีวิวได้ --}}
+                                        
                                         @if($movie->status === 'approved')
                                             <a href="{{ route('activities.show', $movie->id) }}"
                                                class="text-white font-semibold text-xs bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-xl shadow transition">

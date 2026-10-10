@@ -14,7 +14,7 @@
             ========================================== --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-                {{-- จำนวนรีวิว --}}
+                
                 <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
                     <div>
                         <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">หนังที่ฉันรีวิว</p>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
 
-                {{-- จำนวน Tier List --}}
+                
                 <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
                     <div>
                         <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">Tier List ของฉัน</p>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
 
-                {{-- จำนวนหนังที่เสนอ --}}
+                
                 <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
                     <div>
                         <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">หนังที่เสนอเข้าระบบ</p>
@@ -144,7 +144,7 @@
                                     </div>
                                 </div>
 
-                                {{-- สถานะ --}}
+                                
                                 @if($movie->status === 'approved')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold whitespace-nowrap">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -179,14 +179,14 @@
                 </div>
             </div>
 
-            {{-- เปลี่ยนรหัสผ่าน --}}
+            
             <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
 
-            {{-- ลบบัญชี --}}
+            
             <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
                 <div class="max-w-xl">
                     @include('profile.partials.delete-user-form')
