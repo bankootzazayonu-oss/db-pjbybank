@@ -23,7 +23,7 @@ class CollectionController extends Controller
             'user_id' => auth()->id(),
             'name' => $request->name
         ]);
-        return back()->with('success', '✅ สร้างกระดานใหม่สำเร็จ!');
+        return back()->with('success', ' สร้างกระดานใหม่สำเร็จ!');
     }
 
 
@@ -58,7 +58,7 @@ class CollectionController extends Controller
         ->first();
 
     if ($exists) {
-        return back()->with('error', '❌ หนังเรื่องนี้อยู่ในกระดานแล้ว!');
+        return back()->with('error', ' หนังเรื่องนี้อยู่ในกระดานแล้ว!');
     }
 
     CollectionItem::create([
@@ -67,7 +67,7 @@ class CollectionController extends Controller
         'tier_rank' => $request->tier_rank
     ]);
 
-    return back()->with('success', '✅ เพิ่มหนังลงกระดานสำเร็จ!');
+    return back()->with('success', ' เพิ่มหนังลงกระดานสำเร็จ!');
 }
 
 
@@ -87,7 +87,7 @@ class CollectionController extends Controller
         'tier_rank' => $request->tier_rank
     ]);
 
-    return back()->with('success', '🔄 เปลี่ยนระดับสำเร็จ!');
+    return back()->with('success', ' เปลี่ยนระดับสำเร็จ!');
 }
 
   public function destroyItem($id)
@@ -100,7 +100,7 @@ class CollectionController extends Controller
 
     $item->delete();
 
-    return back()->with('success', '🗑️ ลบหนังออกจากกระดานสำเร็จ!');
+    return back()->with('success', '️ ลบหนังออกจากกระดานสำเร็จ!');
 }
 
 
@@ -121,7 +121,7 @@ class CollectionController extends Controller
 
         $collection->update(['name' => $request->name]);
 
-        return back()->with('success', '✅ แก้ไขชื่อกระดานเรียบร้อยแล้ว');
+        return back()->with('success', ' แก้ไขชื่อกระดานเรียบร้อยแล้ว');
     }
 
 
@@ -140,7 +140,7 @@ class CollectionController extends Controller
 
         $collection->delete();
 
-        return redirect()->route('collections.index')->with('success', '🗑️ ลบกระดานจัดอันดับเรียบร้อยแล้ว');
+        return redirect()->route('collections.index')->with('success', '️ ลบกระดานจัดอันดับเรียบร้อยแล้ว');
     }
 
 
@@ -163,7 +163,7 @@ class CollectionController extends Controller
             ]
         ]);
 
-        return back()->with('success', '✨ อัปเดตชื่อระดับเรียบร้อยแล้ว!');
+        return back()->with('success', ' อัปเดตชื่อระดับเรียบร้อยแล้ว!');
     }
 
 
@@ -207,7 +207,7 @@ class CollectionController extends Controller
                 'language' => 'th-TH'
             ]);
 
-            if ($response->failed()) return back()->with('error', '❌ ไม่สามารถดึงข้อมูลจาก TMDB ได้');
+            if ($response->failed()) return back()->with('error', ' ไม่สามารถดึงข้อมูลจาก TMDB ได้');
             $tmdbData = $response->json();
             
             $movie = Activity::create([
@@ -233,7 +233,7 @@ class CollectionController extends Controller
 
         $exists = CollectionItem::where('collection_id', $collection->id)->where('activity_id', $movie->id)->exists();
         if ($exists) {
-            return back()->with('error', '⚠️ หนังเรื่องนี้อยู่ในกระดานของคุณแล้ว!');
+            return back()->with('error', '️ หนังเรื่องนี้อยู่ในกระดานของคุณแล้ว!');
         }
 
        CollectionItem::create([
@@ -242,7 +242,7 @@ class CollectionController extends Controller
     'tier_rank' => $request->tier_rank
 ]);
 
-        return back()->with('success', "✨ นำเข้าหนัง '{$movie->name}' ลงกระดานเรียบร้อย!");
+        return back()->with('success', " นำเข้าหนัง '{$movie->name}' ลงกระดานเรียบร้อย!");
     }
 
 

@@ -269,7 +269,7 @@
     
     <footer class="border-t border-slate-800 mt-16 py-8 text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 CineReview. โปรเจกต์วิชา Database & Web Application</p>
+            <p> 2026 CineReview. โปรเจกต์วิชา Database & Web Application</p>
             <div class="flex items-center gap-4 text-slate-400">
                 <a href="{{ route('leaderboard') }}" class="hover:text-white transition">จัดอันดับ</a>
                 <span>•</span>

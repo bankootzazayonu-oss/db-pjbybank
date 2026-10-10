@@ -25,7 +25,7 @@ class ReviewController extends Controller
             'is_spoiler' => $request->has('is_spoiler') ? 1 : 0,
         ]);
 
-        return back()->with('success', '✅ บันทึกรีวิวและให้คะแนนภาพยนตร์เรียบร้อยแล้ว!');
+        return back()->with('success', ' บันทึกรีวิวและให้คะแนนภาพยนตร์เรียบร้อยแล้ว!');
     }
 
 
@@ -53,7 +53,7 @@ class ReviewController extends Controller
             ->exists();
 
         if ($alreadyReported) {
-            return back()->with('error', '⚠️ คุณได้ส่งรายงานคอมเมนต์นี้ไปก่อนหน้านี้แล้ว');
+            return back()->with('error', '️ คุณได้ส่งรายงานคอมเมนต์นี้ไปก่อนหน้านี้แล้ว');
         }
 
         CommentReport::create([
@@ -62,7 +62,7 @@ class ReviewController extends Controller
             'reason' => 'ผู้ใช้แจ้งว่ามีเนื้อหาไม่เหมาะสม หรือสแปม',
         ]);
 
-        return back()->with('success', '🚩 รายงานคอมเมนต์ไปยังผู้ดูแลระบบเรียบร้อยแล้ว');
+        return back()->with('success', ' รายงานคอมเมนต์ไปยังผู้ดูแลระบบเรียบร้อยแล้ว');
     }
 
     public function update(Request $request, $id)
@@ -78,7 +78,7 @@ class ReviewController extends Controller
 
         $review->update(['comment' => $request->comment]);
 
-        return back()->with('success', '✅ แก้ไขคอมเมนต์เรียบร้อยแล้ว');
+        return back()->with('success', ' แก้ไขคอมเมนต์เรียบร้อยแล้ว');
     }
 
 
@@ -95,7 +95,7 @@ class ReviewController extends Controller
         CommentReport::where('review_id', $review->id)->delete();
         $review->delete();
 
-        return back()->with('success', '🗑️ ลบคอมเมนต์ของคุณเรียบร้อยแล้ว');
+        return back()->with('success', '️ ลบคอมเมนต์ของคุณเรียบร้อยแล้ว');
     }
 
 
@@ -125,7 +125,7 @@ class ReviewController extends Controller
         CommentReport::where('review_id', $review->id)->delete();
         $review->delete();
 
-        return back()->with('success', '🗑️ ลบคอมเมนต์ที่ไม่เหมาะสมออกจากระบบเรียบร้อยแล้ว');
+        return back()->with('success', '️ ลบคอมเมนต์ที่ไม่เหมาะสมออกจากระบบเรียบร้อยแล้ว');
     }
 
 
@@ -138,6 +138,6 @@ class ReviewController extends Controller
         $report = CommentReport::findOrFail($id);
         $report->delete();
 
-        return back()->with('success', '✅ ปัดตกรีพอร์ตเรียบร้อยแล้ว (คอมเมนต์ยังคงอยู่)');
+        return back()->with('success', ' ปัดตกรีพอร์ตเรียบร้อยแล้ว (คอมเมนต์ยังคงอยู่)');
     }
 }

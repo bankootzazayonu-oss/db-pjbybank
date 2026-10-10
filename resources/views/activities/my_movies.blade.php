@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h1 class="font-black text-xl text-white tracking-tight flex items-center gap-2">
-                <span>📂</span> ภาพยนตร์ที่ฉันเสนอ (My Submitted Movies)
+                <span></span> ภาพยนตร์ที่ฉันเสนอ (My Submitted Movies)
             </h1>
             <a href="{{ route('activities.create') }}" class="text-xs font-semibold bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white py-1.5 px-3.5 rounded-xl shadow-lg shadow-rose-950/40 transition">
-                ➕ เสนอเรื่องใหม่
+                 เสนอเรื่องใหม่
             </a>
         </div>
     </x-slot>
@@ -68,17 +68,17 @@
                                         @if(auth()->user()->role === 'admin')
                                             <a href="{{ route('activities.edit', $movie->id) }}"
                                                class="text-indigo-400 hover:text-white font-semibold text-xs bg-slate-800 hover:bg-indigo-600 px-3 py-1.5 rounded-xl transition">
-                                                ✏️ แก้ไข
+                                                ️ แก้ไข
                                             </a>
                                         
                                         @elseif(in_array($movie->status, ['pending', 'rejected']))
                                             <a href="{{ route('activities.edit', $movie->id) }}"
                                                class="text-indigo-400 hover:text-white font-semibold text-xs bg-slate-800 hover:bg-indigo-600 px-3 py-1.5 rounded-xl transition">
-                                                ✏️ แก้ไข
+                                                ️ แก้ไข
                                             </a>
                                         @else
                                             <span class="text-slate-500 text-xs italic">
-                                                🔒 ล็อกการแก้ไข
+                                                 ล็อกการแก้ไข
                                             </span>
                                         @endif
 
@@ -86,7 +86,7 @@
                                         @if($movie->status === 'approved')
                                             <a href="{{ route('activities.show', $movie->id) }}"
                                                class="text-white font-semibold text-xs bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-xl shadow transition">
-                                                🎬 ดู / รีวิว
+                                                 ดู / รีวิว
                                             </a>
                                         @endif
                                     </div>

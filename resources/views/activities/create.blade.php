@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            ➕ เสนอภาพยนตร์ใหม่เข้าระบบ
+             เสนอภาพยนตร์ใหม่เข้าระบบ
         </h2>
     </x-slot>
 
@@ -9,7 +9,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
             
             <div class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4 mb-6 flex items-start gap-3">
-                <span class="text-2xl">💡</span>
+                <span class="text-2xl"></span>
                 <div>
                     <h4 class="font-bold text-indigo-800 dark:text-indigo-300">ฟีเจอร์ผู้ช่วยอัจฉริยะ (Auto-Fill)</h4>
                     <p class="text-indigo-600 dark:text-indigo-400 text-sm mt-1">พิมพ์ชื่อภาพยนตร์ภาษาอังกฤษ แล้วกดปุ่ม "ดึงข้อมูลจาก TMDB" ระบบจะค้นหาและเติมข้อมูลให้คุณอัตโนมัติ!</p>
@@ -40,13 +40,13 @@
                                class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
                         
                         <button type="button" onclick="fetchTMDB()" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold px-4 py-2 rounded-md shadow transition flex items-center gap-2">
-                            <span>🔍 ดึงข้อมูล</span>
+                            <span> ดึงข้อมูล</span>
                         </button>
                     </div>
                 </div>
                 <div id="tmdb_results" class="hidden mb-6">
     <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-3">
-        🎬 เลือกภาพยนตร์ที่ต้องการ
+         เลือกภาพยนตร์ที่ต้องการ
     </h4>
 
     <div id="tmdb_results_list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -73,7 +73,7 @@
                 <div class="mb-6" x-data="{ selected: {{ json_encode($selectedPlatforms) }} }">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
                         <span class="flex items-center gap-1.5">
-                            <span>📺</span> ช่องทางการรับชม (Streaming Platforms)
+                            <span></span> ช่องทางการรับชม (Streaming Platforms)
                         </span>
                         <span class="text-xs text-indigo-400 font-normal">คลิกเลือกเพื่อเปิด/ปิด</span>
                     </label>
@@ -124,7 +124,7 @@
                     <input type="hidden" id="api_image" name="api_image">
                     
                     <div id="poster_preview_container" class="hidden mb-3">
-                        <p class="text-xs text-green-500 font-bold mb-1">✅ ดึงรูปภาพจาก TMDB สำเร็จ</p>
+                        <p class="text-xs text-green-500 font-bold mb-1"> ดึงรูปภาพจาก TMDB สำเร็จ</p>
                         <img id="poster_preview_img" src="" class="h-40 rounded shadow-md border border-gray-600">
                     </div>
 
@@ -156,7 +156,7 @@
 
     resultsList.innerHTML = `
         <div class="col-span-full text-center text-gray-500 dark:text-gray-400 py-6">
-            🔄 กำลังค้นหาจาก TMDB...
+             กำลังค้นหาจาก TMDB...
         </div>
     `;
 
@@ -174,7 +174,7 @@
         if (!data.results || data.results.length === 0) {
             resultsList.innerHTML = `
                 <div class="col-span-full text-center text-red-500 py-6">
-                    ❌ ไม่พบภาพยนตร์ที่ค้นหา
+                     ไม่พบภาพยนตร์ที่ค้นหา
                 </div>
             `;
             return;
@@ -230,7 +230,7 @@
 
         resultsList.innerHTML = `
             <div class="col-span-full text-center text-red-500 py-6">
-                ❌ ${escapeHtml(error.message)}
+                 ${escapeHtml(error.message)}
             </div>
         `;
     }

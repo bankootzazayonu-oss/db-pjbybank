@@ -121,7 +121,7 @@
                                                 type="submit"
                                                 class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
                                             >
-                                                ✏️ แก้ไข
+                                                ️ แก้ไข
                                             </button>
                                         </form>
 
@@ -143,7 +143,7 @@
                                                 type="submit"
                                                 class="text-red-500 hover:text-red-700 font-bold"
                                             >
-                                                🗑️ ลบ
+                                                ️ ลบ
                                             </button>
                                         </form>
 

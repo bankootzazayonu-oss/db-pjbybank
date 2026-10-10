@@ -31,7 +31,7 @@ class ReviewReplyController extends Controller
 
         $reply->update(['message' => $request->message]);
 
-        return back()->with('success', '✅ แก้ไขการตอบกลับเรียบร้อยแล้ว');
+        return back()->with('success', ' แก้ไขการตอบกลับเรียบร้อยแล้ว');
     }
 
 
@@ -45,6 +45,6 @@ class ReviewReplyController extends Controller
 
         $reply->delete();
 
-        return back()->with('success', '🗑️ ลบการตอบกลับเรียบร้อยแล้ว');
+        return back()->with('success', '️ ลบการตอบกลับเรียบร้อยแล้ว');
     }
 }

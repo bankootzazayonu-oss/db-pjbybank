@@ -36,7 +36,7 @@ class PlatformController extends Controller
             'logo' => 'nullable|string|max:255',
         ], [
             'name.required' => 'กรุณากรอกชื่อแพลตฟอร์ม',
-            'name.unique' => '⚠️ แพลตฟอร์มนี้มีอยู่ในระบบแล้ว',
+            'name.unique' => '️ แพลตฟอร์มนี้มีอยู่ในระบบแล้ว',
         ]);
 
         Platform::create([
@@ -44,7 +44,7 @@ class PlatformController extends Controller
             'logo' => $request->logo ? trim($request->logo) : null,
         ]);
 
-        return back()->with('success', '✅ เพิ่มแพลตฟอร์ม "' . $request->name . '" เข้าสู่ระบบแล้ว');
+        return back()->with('success', ' เพิ่มแพลตฟอร์ม "' . $request->name . '" เข้าสู่ระบบแล้ว');
     }
 
     /**
@@ -57,7 +57,7 @@ class PlatformController extends Controller
             'logo' => 'nullable|string|max:255',
         ], [
             'name.required' => 'กรุณากรอกชื่อแพลตฟอร์ม',
-            'name.unique' => '⚠️ ชื่อแพลตฟอร์มนี้มีอยู่ในระบบแล้ว',
+            'name.unique' => '️ ชื่อแพลตฟอร์มนี้มีอยู่ในระบบแล้ว',
         ]);
 
         $platform->update([
@@ -65,7 +65,7 @@ class PlatformController extends Controller
             'logo' => $request->filled('logo') ? trim($request->logo) : $platform->logo,
         ]);
 
-        return back()->with('success', '✅ อัปเดตข้อมูลแพลตฟอร์มเรียบร้อยแล้ว');
+        return back()->with('success', ' อัปเดตข้อมูลแพลตฟอร์มเรียบร้อยแล้ว');
     }
 
     /**
@@ -77,6 +77,6 @@ class PlatformController extends Controller
         $platform->activities()->detach();
         $platform->delete();
 
-        return back()->with('success', '🗑️ ลบแพลตฟอร์ม "' . $name . '" เรียบร้อยแล้ว');
+        return back()->with('success', '️ ลบแพลตฟอร์ม "' . $name . '" เรียบร้อยแล้ว');
     }
 }

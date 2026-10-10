@@ -57,7 +57,7 @@ class ActivityController extends Controller
         if ($isTmdbDuplicate) {
             return back()->with(
                 'error',
-                '❌ ไม่สามารถอนุมัติได้ เพราะภาพยนตร์เรื่อง "' .
+                ' ไม่สามารถอนุมัติได้ เพราะภาพยนตร์เรื่อง "' .
                 $movie->name .
                 '" มี TMDB ID ซ้ำกับภาพยนตร์ในระบบแล้ว'
             );
@@ -78,7 +78,7 @@ class ActivityController extends Controller
     if ($isDuplicate) {
         return back()->with(
             'error',
-            '❌ ไม่สามารถอนุมัติได้ เพราะภาพยนตร์เรื่อง "' .
+            ' ไม่สามารถอนุมัติได้ เพราะภาพยนตร์เรื่อง "' .
             $movie->name .
             '" ปี ' .
             $movie->year .
@@ -96,7 +96,7 @@ class ActivityController extends Controller
 
     return back()->with(
         'success',
-        '✅ อนุมัติภาพยนตร์เรื่อง "' .
+        ' อนุมัติภาพยนตร์เรื่อง "' .
         $movie->name .
         '" เรียบร้อยแล้ว'
     );
@@ -113,7 +113,7 @@ public function reject($id)
 
     return back()->with(
         'success',
-        '❌ ปฏิเสธภาพยนตร์เรื่อง "' .
+        ' ปฏิเสธภาพยนตร์เรื่อง "' .
         $movie->name .
         '" เรียบร้อยแล้ว'
     );
@@ -155,7 +155,7 @@ public function reject($id)
             return back()
                 ->withInput()
                 ->withErrors([
-                    'name' => '❌ ภาพยนตร์เรื่องนี้มีอยู่ในระบบแล้ว (TMDB ID ซ้ำ)'
+                    'name' => ' ภาพยนตร์เรื่องนี้มีอยู่ในระบบแล้ว (TMDB ID ซ้ำ)'
                 ]);
         }
     }
@@ -178,7 +178,7 @@ public function reject($id)
         return back()
             ->withInput()
             ->withErrors([
-                'name' => '❌ ภาพยนตร์เรื่องนี้ (ปี ' .
+                'name' => ' ภาพยนตร์เรื่องนี้ (ปี ' .
                     $request->year .
                     ') มีอยู่ในคลังหรือกำลังรอตรวจสอบแล้วครับ!'
             ]);
@@ -244,7 +244,7 @@ public function reject($id)
     $activity->user_id !== auth()->id()
     || $activity->status === 'approved'
 ) {
-                return redirect()->route('my.movies')->with('error', '❌ คุณไม่มีสิทธิ์แก้ไข หรือภาพยนตร์ถูกอนุมัติไปแล้ว');
+                return redirect()->route('my.movies')->with('error', ' คุณไม่มีสิทธิ์แก้ไข หรือภาพยนตร์ถูกอนุมัติไปแล้ว');
             }
         }
 
@@ -271,7 +271,7 @@ public function reject($id)
         || $activity->status === 'approved'
     )
 ) {
-            return redirect()->route('my.movies')->with('error', '❌ ไม่อนุญาตให้แก้ไขข้อมูล');
+            return redirect()->route('my.movies')->with('error', ' ไม่อนุญาตให้แก้ไขข้อมูล');
         }
 
         $request->validate([
@@ -280,7 +280,7 @@ public function reject($id)
             'review' => 'required|string',
             'type_id' => 'required|exists:types,id',
             'image' => 'nullable|image|max:5120',
-            'api_image' => 'nullable|string', // 🟢 เพิ่มการรองรับลิงก์รูปจาก API
+            'api_image' => 'nullable|string', //  เพิ่มการรองรับลิงก์รูปจาก API
             'platforms' => 'nullable|array',
             'platforms.*' => 'exists:platforms,id',
         ]);
@@ -292,7 +292,7 @@ public function reject($id)
                                            ->exists();
 
         if ($isDuplicate) {
-            return back()->withInput()->withErrors(['name' => '❌ ไม่สามารถเปลี่ยนชื่อเป็นเรื่องนี้ได้ เพราะมีอยู่ในคลังแล้วครับ!']);
+            return back()->withInput()->withErrors(['name' => ' ไม่สามารถเปลี่ยนชื่อเป็นเรื่องนี้ได้ เพราะมีอยู่ในคลังแล้วครับ!']);
         }
 
         $updateData = [
@@ -320,7 +320,7 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
 
         $activity->platforms()->sync($request->platforms ?? []);
 
-        return redirect()->route('my.movies')->with('success', '✅ อัปเดตข้อมูลภาพยนตร์เรียบร้อยแล้ว');
+        return redirect()->route('my.movies')->with('success', ' อัปเดตข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }
 
 
@@ -330,7 +330,7 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
 
 
         if (auth()->user()->role !== 'admin' && $movie->user_id !== auth()->id()) {
-            return back()->with('error', '❌ คุณไม่มีสิทธิ์ลบรายการนี้');
+            return back()->with('error', ' คุณไม่มีสิทธิ์ลบรายการนี้');
         }
 
 
@@ -340,9 +340,9 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
 
                 $previousUrl = url()->previous();
         if (str_contains($previousUrl, '/movies/' . $id)) {
-            return redirect()->route('dashboard')->with('success', '🗑️ ลบภาพยนตร์เข้าถังขยะเรียบร้อยแล้ว');
+            return redirect()->route('dashboard')->with('success', '️ ลบภาพยนตร์เข้าถังขยะเรียบร้อยแล้ว');
         }
-        return back()->with('success', '🗑️ ลบ/ปัดตกข้อมูลภาพยนตร์เรียบร้อยแล้ว');
+        return back()->with('success', '️ ลบ/ปัดตกข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }
 
 

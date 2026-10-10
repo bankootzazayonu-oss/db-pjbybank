@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            ✏️ แก้ไขข้อมูลภาพยนตร์
+            ️ แก้ไขข้อมูลภาพยนตร์
         </h2>
     </x-slot>
 
@@ -62,7 +62,7 @@
                 <div class="mb-6" x-data="{ selected: {{ json_encode($selectedPlatforms) }} }">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
                         <span class="flex items-center gap-1.5">
-                            <span>📺</span> ช่องทางการรับชม (Streaming Platforms)
+                            <span></span> ช่องทางการรับชม (Streaming Platforms)
                         </span>
                         <span class="text-xs text-indigo-400 font-normal">คลิกเลือกเพื่อเปิด/ปิด</span>
                     </label>
@@ -106,7 +106,7 @@
 
                 <div class="flex gap-4">
                     <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md shadow transition">
-                        💾 บันทึกการแก้ไข
+                         บันทึกการแก้ไข
                     </button>
                     <a href="{{ route('my.movies') }}" class="flex-none bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-md shadow transition text-center">
                         ยกเลิก

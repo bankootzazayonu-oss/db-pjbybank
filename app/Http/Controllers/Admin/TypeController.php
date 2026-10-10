@@ -22,12 +22,12 @@ class TypeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:types,name',
         ], [
-            'name.unique' => '⚠️ หมวดหมู่นี้มีอยู่ในระบบแล้ว',
+            'name.unique' => '️ หมวดหมู่นี้มีอยู่ในระบบแล้ว',
             'name.required' => 'กรุณากรอกชื่อหมวดหมู่'
         ]);
 
         Type::create(['name' => $request->name]);
-        return back()->with('success', '✅ เพิ่มหมวดหมู่เรียบร้อยแล้ว');
+        return back()->with('success', ' เพิ่มหมวดหมู่เรียบร้อยแล้ว');
     }
 
 
@@ -36,13 +36,13 @@ class TypeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:types,name,' . $type->id,
         ], [
-            'name.unique' => '⚠️ ชื่อหมวดหมู่นี้มีอยู่ในระบบแล้ว',
+            'name.unique' => '️ ชื่อหมวดหมู่นี้มีอยู่ในระบบแล้ว',
             'name.required' => 'กรุณากรอกชื่อหมวดหมู่'
         ]);
 
         $type->update(['name' => $request->name]);
 
-        return back()->with('success', '✅ แก้ไขชื่อหมวดหมู่เรียบร้อยแล้ว');
+        return back()->with('success', ' แก้ไขชื่อหมวดหมู่เรียบร้อยแล้ว');
     }
 
 
@@ -52,11 +52,11 @@ class TypeController extends Controller
         $hasMovies = Activity::where('type_id', $type->id)->exists();
 
         if ($hasMovies) {
-            return back()->with('error', '❌ ไม่สามารถลบได้! เนื่องจากมีภาพยนตร์ใช้หมวดหมู่นี้อยู่ กรุณาเปลี่ยนหมวดหมู่ของภาพยนตร์ก่อน');
+            return back()->with('error', ' ไม่สามารถลบได้! เนื่องจากมีภาพยนตร์ใช้หมวดหมู่นี้อยู่ กรุณาเปลี่ยนหมวดหมู่ของภาพยนตร์ก่อน');
         }
 
         $type->delete();
 
-        return back()->with('success', '🗑️ ลบหมวดหมู่เรียบร้อยแล้ว');
+        return back()->with('success', '️ ลบหมวดหมู่เรียบร้อยแล้ว');
     }
 }
