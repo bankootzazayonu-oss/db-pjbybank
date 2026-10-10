@@ -13,7 +13,7 @@
 
     <div class="py-10 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         
-        <!-- แจ้งเตือนเมื่อนำเข้าสำเร็จ หรือ ซ้ำ -->
+        
         @if(session('success'))
             <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-2xl font-semibold shadow-lg">
                 {{ session('success') }}
@@ -25,7 +25,7 @@
             </div>
         @endif
 
-        <!-- กล่องค้นหา -->
+        
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-xl">
             <form action="{{ route('admin.movies.search') }}" method="GET" class="max-w-2xl mx-auto">
                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">
@@ -46,7 +46,7 @@
             </form>
         </div>
 
-        <!-- แสดงผลลัพธ์แบบ Grid -->
+        
         @if(isset($movies) && count($movies) > 0)
             <div>
                 <div class="flex items-center justify-between mb-4">
@@ -68,7 +68,7 @@
                         <div class="bg-slate-900 rounded-xl border {{ $isImported ? 'border-emerald-500/40 bg-slate-900/50' : 'border-slate-800 hover:border-slate-700' }} overflow-hidden flex flex-col justify-between shadow-lg transition duration-200">
                             
                             <div>
-                                <!-- รูปโปสเตอร์ -->
+                                
                                 <div class="relative aspect-[2/3] bg-slate-950 overflow-hidden">
                                     @if(!empty($movie['poster_path']))
                                         <img src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}" 
@@ -81,12 +81,12 @@
                                         </div>
                                     @endif
 
-                                    <!-- ป้ายปี -->
+                                    
                                     <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-slate-950/80 backdrop-blur text-[11px] text-slate-300 font-medium border border-white/10">
                                         {{ $year }}
                                     </div>
 
-                                    <!-- ป้ายเรตติ้ง TMDB -->
+                                    
                                     @if(!empty($movie['vote_average']))
                                         <div class="absolute top-2 right-2 px-2 py-0.5 rounded bg-slate-950/80 backdrop-blur text-[11px] font-bold text-amber-400 border border-white/10 flex items-center gap-1 shadow">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -95,7 +95,7 @@
                                     @endif
                                 </div>
                                 
-                                <!-- รายละเอียด -->
+                                
                                 <div class="p-4">
                                     <h3 class="font-bold text-sm text-white truncate mb-0.5" title="{{ $movie['title'] }}">
                                         {{ $movie['title'] }}
@@ -114,7 +114,7 @@
                                 </div>
                             </div>
 
-                            <!-- ส่วนจัดการนำเข้า -->
+                            
                             <div class="p-4 pt-0">
                                 @if($isImported)
                                     <div class="w-full py-2.5 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold text-center flex items-center justify-center gap-1.5">
@@ -147,7 +147,7 @@
                                             </select>
                                         </div>
 
-                                        <!-- 📺 เลือกช่องทางการรับชม (Platforms) -->
+                                        
                                         @if(!empty($platforms) && $platforms->isNotEmpty())
                                             <div class="pt-0.5" x-data="{ selectedPlatforms: [] }">
                                                 <label class="text-[11px] font-semibold text-slate-400 mb-1 flex items-center justify-between">

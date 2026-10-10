@@ -7,12 +7,12 @@
 
         <title>{{ config('app.name', 'CineReview') }}</title>
 
-        <!-- Google Fonts: Inter & Prompt -->
+        
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
+        
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-slate-100 antialiased bg-slate-950 selection:bg-indigo-500 selection:text-white">

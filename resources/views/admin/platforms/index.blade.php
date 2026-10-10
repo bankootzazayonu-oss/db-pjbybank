@@ -13,7 +13,7 @@
 
     <div class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Alerts -->
+        
         @if(session('success'))
             <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-xl mb-6 font-semibold flex items-center gap-2 text-sm shadow-md">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -36,7 +36,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- ฝั่งซ้าย: ฟอร์มเพิ่มแพลตฟอร์มใหม่ -->
+            
             <div class="lg:col-span-4 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-xl backdrop-blur-sm sticky top-24">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-800">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -78,7 +78,7 @@
                     </button>
                 </form>
 
-                <!-- คำแนะนำการใช้งาน -->
+                
                 <div class="mt-6 pt-5 border-t border-slate-800/80">
                     <p class="text-[11px] text-slate-400 leading-relaxed font-light flex items-start gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400 mt-0.5 flex-shrink-0"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
@@ -87,7 +87,7 @@
                 </div>
             </div>
 
-            <!-- ฝั่งขวา: ตารางรายชื่อแพลตฟอร์มทั้งหมด -->
+            
             <div class="lg:col-span-8 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-xl backdrop-blur-sm">
                 
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-800">
@@ -101,7 +101,7 @@
                         </h3>
                     </div>
 
-                    <!-- ฟอร์มค้นหาแพลตฟอร์ม -->
+                    
                     <form action="{{ route('admin.platforms.index') }}" method="GET" class="flex items-center gap-2">
                         <div class="relative">
                             <input type="text" 
@@ -139,7 +139,7 @@
                                     </td>
 
                                     <td class="py-3.5 pr-3">
-                                        <!-- โหมดปกติ -->
+                                        
                                         <div x-show="!isEditing" class="flex items-center gap-2.5">
                                             <div class="w-7 h-7 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-xs font-bold text-indigo-400 flex-shrink-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
@@ -151,7 +151,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- โหมดแก้ไข Inline -->
+                                        
                                         <form x-show="isEditing" 
                                               style="display: none;" 
                                               action="{{ route('admin.platforms.update', $platform->id) }}" 
@@ -176,7 +176,7 @@
                                         </form>
                                     </td>
 
-                                    <!-- จำนวนหนังที่ผูกอยู่ -->
+                                    
                                     <td class="py-3.5 text-center">
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $platform->activities_count > 0 ? 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20' : 'bg-slate-800 text-slate-500' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.82 2c-.78 0-1.52.2-2.17.55L8 8.35C4.21 10.21 1 12 1 16c0 3.86 3.14 7 7 7 3.96 0 6.64-2.81 8.54-6.6l5.77-11.53c.48-1 .69-2.07.69-3.13 0-1.5-.78-2.74-2.18-2.74z"/></svg>
@@ -184,10 +184,10 @@
                                         </span>
                                     </td>
 
-                                    <!-- ปุ่มจัดการ -->
+                                    
                                     <td class="py-3.5 text-right pr-3">
                                         <div x-show="!isEditing" class="flex items-center justify-end gap-1.5">
-                                            <!-- ปุ่มแก้ไข -->
+                                            
                                             <button type="button" 
                                                     @click="isEditing = true" 
                                                     class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition" 
@@ -195,7 +195,7 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                                             </button>
 
-                                            <!-- ปุ่มลบ -->
+                                            
                                             <form action="{{ route('admin.platforms.destroy', $platform->id) }}" 
                                                   method="POST" 
                                                   onsubmit="return confirm('ยืนยันที่จะลบแพลตฟอร์ม &quot;{{ addslashes($platform->name) }}&quot; หรือไม่? (จะตัดการเชื่อมต่อกับหนัง {{ $platform->activities_count }} เรื่องอัตโนมัติ)');" 

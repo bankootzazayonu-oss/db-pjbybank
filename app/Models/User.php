@@ -28,12 +28,12 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-// 🟢 เพิ่ม 'role' เข้าไปในวงเล็บนี้
+
 #[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
-    /** @use HasFactory<UserFactory> */
+    
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
@@ -61,7 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             : $initials;
     }
 
-    // 🟢 เพิ่มความสัมพันธ์ (Relationships) ให้ User คุยกับตารางอื่นได้
+
     public function activities() { return $this->hasMany(Activity::class); }
     public function reviews() { return $this->hasMany(Review::class); }
     public function replies() { return $this->hasMany(ReviewReply::class); }

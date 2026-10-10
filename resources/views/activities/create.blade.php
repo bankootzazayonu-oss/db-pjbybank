@@ -66,7 +66,7 @@
                     </select>
                 </div>
 
-                <!-- ช่องทางการรับชม (Platforms) -->
+                
                 @php
                     $selectedPlatforms = array_map('strval', old('platforms', []));
                 @endphp
@@ -139,7 +139,7 @@
         </div>
     </div>
 
-    <!-- Script สำหรับดึงข้อมูล TMDB -->
+    
     <script>
         async function fetchTMDB() {
     const query = document.getElementById('movie_name').value.trim();

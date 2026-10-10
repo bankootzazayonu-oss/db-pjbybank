@@ -32,11 +32,11 @@ class TmdbController extends Controller
         }
     }
 
-        // ดึง Genre/Type และ Platform จากฐานข้อมูล
+
         $types = Type::orderBy('name')->get();
         $platforms = Platform::orderBy('name')->get();
 
-        // ตรวจสอบ TMDB ID และชื่อที่มีในระบบแล้ว ทั้งชื่อไทยและชื่ออังกฤษ
+
         $existingTmdbIds = Activity::whereNotNull('tmdb_id')->pluck('tmdb_id')->toArray();
         $existingNames = Activity::pluck('name')
             ->concat(Activity::whereNotNull('original_title')->pluck('original_title'))
@@ -50,7 +50,7 @@ class TmdbController extends Controller
         );
     }
 
-    // ฟังก์ชันใหม่สำหรับบันทึกลงฐานข้อมูล
+
     public function import(Request $request)
 {
     $request->validate([

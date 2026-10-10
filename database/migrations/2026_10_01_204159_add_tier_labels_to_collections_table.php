@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('collections', function (Blueprint $table) {
-            // เพิ่มคอลัมน์ชนิด JSON เพื่อเก็บ Array ชื่อ Tier (เช่น {"S": "โคตรเทพ", "A": "สนุกดี"})
+
             $table->json('tier_labels')->nullable();
         });
     }

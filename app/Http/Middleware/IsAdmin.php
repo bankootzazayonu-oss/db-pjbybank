@@ -11,12 +11,12 @@ class IsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // เช็กว่าล็อกอินแล้ว และ role เป็น admin หรือไม่
+
         if (Auth::check() && Auth::user()->role === 'admin') {
             return $next($request);
         }
 
-        // ถ้าไม่ใช่ ให้เตะกลับไปหน้าแรก
+
         return redirect('/')->with('error', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (เฉพาะ Admin)');
     }
 }

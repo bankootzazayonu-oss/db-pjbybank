@@ -10,10 +10,10 @@ class ActivityController extends Controller
 {
     public function show($id)
     {
-        // ดึงข้อมูลหนัง พร้อมหมวดหมู่, แพลตฟอร์ม และรีวิว (เรียงจากใหม่ไปเก่า)
+
         $movie = \App\Models\Activity::with(['type', 'reviews.user', 'platforms'])->findOrFail($id);
         
-        // เช็กว่า User คนนี้เคยรีวิวเรื่องนี้ไปหรือยัง (จะได้ไม่ให้รีวิวซ้ำ)
+
         $userReview = auth()->check() ? $movie->reviews()->where('user_id', auth()->id())->first() : null;
 
         return view('activities.show', compact('movie', 'userReview'));
@@ -21,7 +21,7 @@ class ActivityController extends Controller
 
     public function leaderboard()
     {
-        // ดึงหนังที่มีการอนุมัติแล้ว พร้อมคำนวณคะแนนเฉลี่ยและจำนวนรีวิว
+
         $topMovies = Activity::where('status', 'approved')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
@@ -46,9 +46,9 @@ class ActivityController extends Controller
 {
     $movie = Activity::findOrFail($id);
 
-    // ==========================================
-    // 1. ตรวจสอบ TMDB ID ซ้ำ
-    // ==========================================
+
+
+
     if (!empty($movie->tmdb_id)) {
         $isTmdbDuplicate = Activity::where('tmdb_id', $movie->tmdb_id)
             ->where('id', '!=', $movie->id)
@@ -64,9 +64,9 @@ class ActivityController extends Controller
         }
     }
 
-    // ==========================================
-    // 2. ตรวจสอบชื่อ + ปีซ้ำ
-    // ==========================================
+
+
+
     $isDuplicate = Activity::whereRaw(
         'LOWER(name) = ?',
         [strtolower($movie->name)]
@@ -86,9 +86,9 @@ class ActivityController extends Controller
         );
     }
 
-    // ==========================================
-    // 3. อนุมัติ
-    // ==========================================
+
+
+
     $movie->update([
     'is_approved' => 1,
     'status' => 'approved',
@@ -120,7 +120,7 @@ public function reject($id)
 }
    public function create()
     {
-        // ดึงหมวดหมู่และแพลตฟอร์มทั้งหมดจากฐานข้อมูล
+
         $types = \App\Models\Type::orderBy('name')->get(); 
         $platforms = \App\Models\Platform::orderBy('name')->get();
 
@@ -142,9 +142,9 @@ public function reject($id)
         'platforms.*' => 'exists:platforms,id',
     ]);
 
-    // ==========================================
-    // 1. ตรวจสอบ TMDB ID ซ้ำ
-    // ==========================================
+
+
+
     if ($request->filled('tmdb_id')) {
         $isTmdbDuplicate = Activity::where(
             'tmdb_id',
@@ -160,9 +160,9 @@ public function reject($id)
         }
     }
 
-    // ==========================================
-    // 2. ตรวจสอบชื่อ + ปี ซ้ำ
-    // ==========================================
+
+
+
     $isDuplicate = Activity::where(function($query) use ($request) {
             $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)])
                   ->orWhere(function($sub) use ($request) {
@@ -184,9 +184,9 @@ public function reject($id)
             ]);
     }
 
-    // ==========================================
-    // 3. จัดการรูปภาพ
-    // ==========================================
+
+
+
     $imagePath = null;
 
     if ($request->hasFile('image')) {
@@ -197,9 +197,9 @@ public function reject($id)
         $imagePath = $request->api_image;
     }
 
-    // ==========================================
-    // 4. บันทึกภาพยนตร์
-    // ==========================================
+
+
+
     $activity = Activity::create([
         'name' => $request->name,
         'original_title' => $request->original_title ?: null,
@@ -214,7 +214,7 @@ public function reject($id)
         'status' => 'pending',
     ]);
 
-    // ผูกช่องทางการรับชม (Platforms)
+
     if ($request->filled('platforms')) {
         $activity->platforms()->sync($request->platforms);
     }
@@ -226,19 +226,19 @@ public function reject($id)
             'ส่งข้อมูลภาพยนตร์สำเร็จ! กรุณารอแอดมินตรวจสอบอนุมัติครับ'
         );
 }
-    // 1. ฟังก์ชันดูหนังที่ตัวเองเสนอ
+
     public function myMovies()
     {
         $movies = Activity::where('user_id', auth()->id())->latest()->get();
         return view('activities.my_movies', compact('movies'));
     }
 
-    // 2. ฟังก์ชันแก้ไข (ล็อกสิทธิ์)
+
     public function edit($id)
     {
         $activity = Activity::findOrFail($id);
 
-        // 🚨 ระบบล็อกสิทธิ์: ถ้าไม่ใช่แอดมิน + ไม่ใช่เจ้าของหนัง หรือ หนังอนุมัติไปแล้ว -> เตะออก
+
         if (auth()->user()->role !== 'admin') {
             if (
     $activity->user_id !== auth()->id()
@@ -259,7 +259,7 @@ public function reject($id)
         ));
     }
 
-    // 3. ฟังก์ชันอัปเดตข้อมูล
+
     public function update(Request $request, $id)
     {
         $activity = Activity::findOrFail($id);
@@ -285,7 +285,7 @@ public function reject($id)
             'platforms.*' => 'exists:platforms,id',
         ]);
         
-        // 🚨 ระบบเช็คหนังซ้ำสำหรับการแก้ไข (ต้องยกเว้น ID ของตัวเองด้วย)
+
         $isDuplicate = \App\Models\Activity::whereRaw('LOWER(name) = ?', [strtolower($request->name)])
                                            ->where('year', $request->year)
                                            ->where('id', '!=', $id)
@@ -301,14 +301,14 @@ public function reject($id)
             'review' => $request->review,
             'type_id' => $request->type_id,
         ];
-// ถ้า User แก้หนังที่ถูกปฏิเสธ
-// ให้ส่งกลับเข้าสู่ขั้นตอนตรวจสอบอีกครั้ง
+
+
 if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
     $updateData['status'] = 'pending';
     $updateData['is_approved'] = 0;
 }
 
-        // 🟢 อัปเดตรูปภาพ (ถ้าอัปโหลดใหม่ หรือมีลิงก์ API ส่งมาใหม่)
+
         if ($request->hasFile('image')) {
             $updateData['image'] = $request->file('image')->store('activities', 'public');
         } elseif ($request->filled('api_image')) {
@@ -317,23 +317,23 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
 
         $activity->update($updateData);
 
-        // ผูกช่องทางการรับชม (Platforms)
+
         $activity->platforms()->sync($request->platforms ?? []);
 
         return redirect()->route('my.movies')->with('success', '✅ อัปเดตข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }
 
-// 4. ฟังก์ชันลบภาพยนตร์ / ปัดตกรายการ
+
     public function destroy($id)
     {
         $movie = Activity::findOrFail($id);
 
-        // ตรวจสอบสิทธิ์: อนุญาตเฉพาะ Admin หรือเจ้าของที่เสนอเรื่องนี้เข้ามา
+
         if (auth()->user()->role !== 'admin' && $movie->user_id !== auth()->id()) {
             return back()->with('error', '❌ คุณไม่มีสิทธิ์ลบรายการนี้');
         }
 
-        // ลบไฟล์ภาพออกจาก Storage หากเป็นไฟล์ที่อัปโหลดเอง (ไม่ใช่ URL จาก TMDB)
+
         
 
         $movie->delete();
@@ -377,7 +377,7 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
 
 
 
-    // --- ระบบถังขยะส่วนกลาง (System Trash) ---
+
     public function trash()
     {
         $movies = Activity::onlyTrashed()->latest()->paginate(20);
@@ -395,7 +395,7 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
     {
         $movie = Activity::onlyTrashed()->findOrFail($id);
         
-        // ลบรูปภาพทิ้งจริงๆ เมื่อ Force Delete
+
         if ($movie->image && !str_starts_with($movie->image, 'http')) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($movie->image);
         }

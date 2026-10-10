@@ -7,12 +7,12 @@
     </x-slot>
 
     <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <!-- แจ้งเตือนข้อความต่างๆ -->
+        
         @if(session('success'))
             <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('success') }}</div>
         @endif
         
-        <!-- 🟢 ดักจับข้อความแจ้งเตือนข้อผิดพลาด (เช่น เมื่อลบหมวดหมู่ที่มีหนังผูกอยู่) -->
+        
         @if(session('error'))
             <div class="bg-rose-500/10 border border-rose-500/30 text-rose-400 font-bold p-4 rounded-lg mb-6 shadow-md">{{ session('error') }}</div>
         @endif
@@ -22,7 +22,7 @@
         @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- ส่วนที่ 1: ฟอร์มเพิ่มหมวดหมู่ (ซ้าย) -->
+            
             <div class="bg-slate-900/90 p-6 rounded-2xl shadow-xl border border-slate-800 backdrop-blur-sm h-fit">
                 <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -41,7 +41,7 @@
                 </form>
             </div>
 
-            <!-- ส่วนที่ 2: ตารางแสดงหมวดหมู่ (ขวา) -->
+            
             <div class="md:col-span-2 bg-slate-900/90 p-6 rounded-2xl shadow-xl border border-slate-800 backdrop-blur-sm overflow-hidden">
                 <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
@@ -58,17 +58,17 @@
                         </thead>
                         <tbody class="divide-y divide-slate-800/60">
                             @forelse($types as $type)
-                            <!-- 🟢 ใช้ Alpine.js x-data สำหรับเปิด-ปิดโหมดแก้ไขในแต่ละแถว -->
+                            
                             <tr x-data="{ editTypeMode: false }" class="hover:bg-slate-800/40 transition">
                                 <td class="py-3.5 pl-3 text-slate-500 font-mono text-xs">{{ $type->id }}</td>
                                 
                                 <td class="py-3.5">
-                                    <!-- โหมดแสดงผลปกติ -->
+                                    
                                     <div x-show="!editTypeMode" class="font-bold text-white">
                                         {{ $type->name }}
                                     </div>
 
-                                    <!-- โหมดฟอร์มแก้ไขข้อความ -->
+                                    
                                     <form x-show="editTypeMode" style="display: none;" action="{{ route('admin.types.update', $type->id) }}" method="POST" class="flex items-center gap-2">
                                         @csrf
                                         @method('PUT')
@@ -84,15 +84,15 @@
                                 </td>
 
                                 <td class="py-3.5 text-right pr-3">
-                                    <!-- ซ่อนปุ่มจัดการเมื่ออยู่ในโหมดแก้ไข -->
+                                    
                                     <div x-show="!editTypeMode" class="flex justify-end items-center gap-1.5">
-                                        <!-- ปุ่มแก้ไข -->
+                                        
                                         <button type="button" @click="editTypeMode = true" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition flex items-center gap-1.5 text-xs font-semibold">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                                             แก้ไข
                                         </button>
 
-                                        <!-- ปุ่มลบ -->
+                                        
                                         <form action="{{ route('admin.types.destroy', $type->id) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหมวดหมู่นี้?');" class="inline">
                                             @csrf
                                             @method('DELETE')

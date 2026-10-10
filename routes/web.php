@@ -16,9 +16,9 @@ use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-// =====================================
-// โซน PUBLIC (ใครๆ ก็เข้าได้ ไม่ต้องล็อกอิน)
-// =====================================
+
+
+
 Route::get('/', function (Request $request) {
     $search = $request->query('q');
     $typeId = $request->query('type');
@@ -58,16 +58,16 @@ Route::get('/', function (Request $request) {
     return view('welcome', compact('featuredMovies', 'recentReviews', 'types', 'totalMovies', 'totalReviews', 'search', 'typeId'));
 })->name('home');
 
-// หน้า Leaderboard แบบไม่ต้องล็อกอิน
+
 Route::get('/leaderboard', [ActivityController::class, 'leaderboard'])->name('leaderboard');
 
 
-// =====================================
-// โซน USER (ต้องล็อกอินถึงจะทำได้)
-// =====================================
+
+
+
 Route::middleware(['auth'])->group(function () {
     
-    // หน้า Dashboard ของระบบ (หนังที่อนุมัติแล้ว)
+
    Route::get('/dashboard', function (Request $request) {
     $search = $request->query('q');
     $typeId = $request->query('type');
@@ -89,24 +89,24 @@ Route::middleware(['auth'])->group(function () {
     $movies = $movieQuery->latest()->get();
     $types = Type::orderBy('name')->get();
 
-    // จำนวนหนังทั้งหมด
+
     $totalMovies = Activity::where('is_approved', true)
         ->where('status', 'approved')
         ->count();
 
-    // จำนวนรีวิวทั้งหมดของหนังที่อนุมัติแล้ว
+
     $totalReviews = Review::whereHas('activity', function ($query) {
         $query->where('is_approved', true)
             ->where('status', 'approved');
     })->count();
 
-    // คะแนนเฉลี่ยรวม
+
     $overallAverageRating = Review::whereHas('activity', function ($query) {
         $query->where('is_approved', true)
             ->where('status', 'approved');
     })->avg('rating');
 
-    // Top 5 Genre ตามคะแนนเฉลี่ย
+
     $topGenres = Type::query()
         ->select(
             'types.id',
@@ -137,12 +137,12 @@ Route::middleware(['auth'])->group(function () {
 
 })->name('dashboard');
 
-    // ระบบ Profile
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // ระบบ จัดการภาพยนตร์ (ฝั่ง User)
+
     Route::get('/movies/create', [ActivityController::class, 'create'])->name('activities.create');
 
     Route::get('/movies/tmdb-search', [ActivityController::class, 'tmdbSearch'])
@@ -154,20 +154,20 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/movies/{id}', [ActivityController::class, 'update'])->name('activities.update');
     Route::get('/movies/{id}', [ActivityController::class, 'show'])->name('activities.show');
 
-    // ระบบ รีวิว & รายงาน (คอมเมนต์)
+
     Route::post('/movies/{id}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/reviews/{id}/reply', [ReviewController::class, 'storeReply'])->name('replies.store');
 
-    // ระบบแก้ไข และ ลบ การตอบกลับคอมเมนต์ (Reply)
+
     Route::put('/replies/{id}', [\App\Http\Controllers\ReviewReplyController::class, 'update'])->name('replies.update');
     Route::delete('/replies/{id}', [\App\Http\Controllers\ReviewReplyController::class, 'destroy'])->name('replies.destroy');
     
     
     
-    // 🟢 ย้าย Route นี้ออกมาให้ User ทั่วไปใช้งานได้แล้ว!
+
     Route::post('/reviews/{id}/report', [ReviewController::class, 'report'])->name('reviews.report');
 
-    // ระบบ Collection / Tier List
+
     Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
     Route::post('/collections', [CollectionController::class, 'store'])->name('collections.store');
     Route::get('/collections/{id}', [CollectionController::class, 'show'])->name('collections.show');
@@ -176,24 +176,24 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/collections/item/{id}', [CollectionController::class, 'destroyItem'])->name('collections.destroyItem');
 
 
-    // ระบบแก้ไข และ ลบ กระดานจัดอันดับ (Collection)
+
     Route::put('/collections/{id}', [\App\Http\Controllers\CollectionController::class, 'update'])->name('collections.update');
     Route::delete('/collections/{id}', [\App\Http\Controllers\CollectionController::class, 'destroy'])->name('collections.destroy');
     
-    // เส้นทางสำหรับเซฟชื่อ Tier แบบปั่นๆ
+
     Route::put('/collections/{id}/labels', [\App\Http\Controllers\CollectionController::class, 'updateLabels'])->name('collections.updateLabels');
 
-        // ระบบถังขยะ Tier List (My Trash)
+
     Route::get('/collections-trash/view', [\App\Http\Controllers\CollectionController::class, 'trash'])->name('collections.trash');
     Route::post('/collections/{id}/restore', [\App\Http\Controllers\CollectionController::class, 'restore'])->name('collections.restore');
     Route::delete('/collections/{id}/force-delete', [\App\Http\Controllers\CollectionController::class, 'forceDelete'])->name('collections.forceDelete');
 
-    // ระบบแก้ไข และ ลบ รีวิวของตัวเอง (User)
+
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{id}/user', [ReviewController::class, 'userDestroy'])->name('reviews.user_destroy');
 
 
-    // 🟢 ระบบ Live Search TMDB และนำเข้ากระดานจัดอันดับ
+
     Route::get('/tmdb/search-json', [\App\Http\Controllers\CollectionController::class, 'searchTmdb'])->name('tmdb.search_json');
     Route::post('/collections/{id}/add-tmdb', [\App\Http\Controllers\CollectionController::class, 'storeFromTmdb'])->name('collections.store_tmdb');
 
@@ -202,29 +202,29 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-// =====================================
-// โซน ADMIN (ต้องเป็น Admin เท่านั้น)
-// =====================================
+
+
+
 Route::middleware(['auth', IsAdmin::class])->group(function () {
     
-   // ระบบจัดการหมวดหมู่และผู้กำกับ (Resource Controllers)
+
 Route::resource('types', TypeController::class);
 
-// ปิดระบบจัดการผู้กำกับ (Redirect ไปยังจัดการหมวดหมู่)
+
 Route::redirect('/admin/directors', '/admin/types');
 
-    // ระบบจัดการหมวดหมู่แบบเจาะจง (ซ้ำกับ Resource ข้างบน แต่อาจใช้สำหรับฟอร์มเฉพาะ)
+
     Route::get('/admin/types', [TypeController::class, 'index'])->name('admin.types.index');
     Route::post('/admin/types', [TypeController::class, 'store'])->name('admin.types.store');
     Route::delete('/admin/types/{type}', [TypeController::class, 'destroy'])->name('admin.types.destroy');
 
     Route::get('/admin/types', [\App\Http\Controllers\Admin\TypeController::class, 'index'])->name('admin.types.index');
     Route::post('/admin/types', [\App\Http\Controllers\Admin\TypeController::class, 'store'])->name('admin.types.store');
-    // 🟢 แทรกบรรทัดนี้เพื่อทำระบบแก้ไข
+
     Route::put('/admin/types/{type}', [\App\Http\Controllers\Admin\TypeController::class, 'update'])->name('admin.types.update');
     Route::delete('/admin/types/{type}', [\App\Http\Controllers\Admin\TypeController::class, 'destroy'])->name('admin.types.destroy');
 
-        // ระบบจัดการ อนุมัติภาพยนตร์
+
     Route::get('/admin/movies/trash', [\App\Http\Controllers\ActivityController::class, 'trash'])->name('admin.movies.trash');
     Route::post('/admin/movies/{id}/restore', [\App\Http\Controllers\ActivityController::class, 'restore'])->name('admin.movies.restore');
     Route::delete('/admin/movies/{id}/force-delete', [\App\Http\Controllers\ActivityController::class, 'forceDelete'])->name('admin.movies.forceDelete');
@@ -237,16 +237,16 @@ Route::redirect('/admin/directors', '/admin/types');
     Route::put('/admin/movies/{id}', [\App\Http\Controllers\ActivityController::class, 'update'])->name('admin.movies.update');
     Route::delete('/movies/{id}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
-    // ระบบจัดการ รายงานคอมเมนต์สแปม/ไม่เหมาะสม
+
     Route::get('/admin/reports', [ReviewController::class, 'adminReports'])->name('admin.reports');
     Route::delete('/admin/reviews/{id}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
     Route::delete('/admin/reports/{id}/dismiss', [ReviewController::class, 'dismissReport'])->name('admin.reports.dismiss');
 
-    // ระบบนำเข้าหนังจาก TMDB
+
     Route::get('/admin/movies/search', [TmdbController::class, 'search'])->name('admin.movies.search');
     Route::post('/admin/movies/import', [TmdbController::class, 'import'])->name('admin.movies.import');
 
-    // ระบบจัดการแพลตฟอร์มรับชม (Admin Platform Management)
+
     Route::get('/admin/platforms', [PlatformController::class, 'index'])->name('admin.platforms.index');
     Route::post('/admin/platforms', [PlatformController::class, 'store'])->name('admin.platforms.store');
     Route::put('/admin/platforms/{platform}', [PlatformController::class, 'update'])->name('admin.platforms.update');

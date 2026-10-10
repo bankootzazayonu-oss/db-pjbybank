@@ -17,14 +17,14 @@ class ReviewReplyController extends Controller
         return back()->with('success', 'ตอบกลับความเห็นเรียบร้อยแล้ว!');
     }
 
-    // User กดแก้ไขการตอบกลับ
+
     public function update(Request $request, $id)
     {
         $request->validate(['message' => 'required|string|max:1000']);
         
         $reply = \App\Models\ReviewReply::findOrFail($id);
 
-        // เช็กสิทธิ์ว่าใช่เจ้าของไหม
+
         if ($reply->user_id !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์แก้ไขข้อความนี้');
         }
@@ -34,7 +34,7 @@ class ReviewReplyController extends Controller
         return back()->with('success', '✅ แก้ไขการตอบกลับเรียบร้อยแล้ว');
     }
 
-    // User กดลบการตอบกลับ
+
     public function destroy($id)
     {
         $reply = \App\Models\ReviewReply::findOrFail($id);

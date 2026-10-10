@@ -13,7 +13,7 @@
 
         <div class="py-10 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
         
-        <!-- Admin Tools -->
+        
         @if(Auth::check() && Auth::user()->role === 'admin')
         <div class="bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 backdrop-blur-sm">
             <div class="flex items-center gap-2 text-indigo-300">
@@ -37,7 +37,7 @@
         </div>
         @endif
         
-        <!-- แจ้งเตือนสถานะ -->
+        
         @if(session('success'))
             <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-2xl font-semibold shadow-lg">
                 {{ session('success') }}
@@ -49,10 +49,10 @@
             </div>
         @endif
 
-        <!-- ================= ส่วนแสดงรายละเอียดหนัง ================= -->
+        
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
             
-            <!-- ฝั่งซ้าย: โปสเตอร์ -->
+            
             <div class="md:col-span-4 lg:col-span-4">
                 <div class="rounded-3xl shadow-2xl border border-slate-800 overflow-hidden aspect-[2/3] bg-slate-950 sticky top-24">
                     @if($movie->image)
@@ -70,12 +70,12 @@
                 </div>
             </div>
             
-            <!-- ฝั่งขวา: ข้อมูลหนัง -->
+            
             <div class="md:col-span-8 lg:col-span-8 flex flex-col">
                 <div class="bg-slate-900/60 p-6 md:p-8 rounded-3xl shadow-xl border border-slate-800/90 h-full flex flex-col justify-between backdrop-blur-sm">
                     
                     <div>
-                        <!-- ป้าย Tag ข้อมูลพื้นฐาน -->
+                        
                         <div class="flex flex-wrap items-center gap-2.5 mb-5">
                             <span class="bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
@@ -111,7 +111,7 @@
                             </p>
                         </div>
 
-                        <!-- 📺 ช่องทางการรับชม (Platforms) -->
+                        
                         @if($movie->platforms->isNotEmpty())
                             <div class="mb-6 pt-4 border-t border-slate-800/60">
                                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
@@ -130,7 +130,7 @@
                         @endif
                     </div>
 
-                    <!-- คะแนนเฉลี่ย -->
+                    
                     <div class="mt-6 pt-6 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-4 bg-slate-950/80 px-5 py-3.5 rounded-2xl border border-slate-800">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="text-amber-400"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -151,7 +151,7 @@
             </div>
         </div>
 
-        <!-- ================= ส่วนเขียนรีวิว ================= -->
+        
         <div class="bg-slate-900/60 p-6 md:p-8 rounded-3xl shadow-xl border border-slate-800/90 backdrop-blur-sm">
             <h3 class="text-xl font-bold text-white mb-5 flex items-center gap-2.5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
@@ -211,7 +211,7 @@
             @endif
         </div>
 
-        <!-- ================= ส่วนแสดงคอมเมนต์ทั้งหมด ================= -->
+        
         <div class="bg-slate-900/60 p-6 md:p-8 rounded-3xl shadow-xl border border-slate-800/90 backdrop-blur-sm">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2.5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
@@ -233,7 +233,7 @@
                                 </div>
                             </div>
                             
-                            <!-- คะแนน & ปุ่มรายงาน -->
+                            
                             <div class="flex flex-col items-end gap-2">
                                 <div class="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-lg shadow-sm flex items-center gap-1.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -252,10 +252,10 @@
                             </div>
                         </div>
 
-                        <!-- ส่วนเนื้อหาคอมเมนต์ & ระบบแก้ไข -->
+                        
                         <div x-data="{ editMode: false }">
 
-                            <!-- โหมดปกติ -->
+                            
                             <div x-show="!editMode">
                                 @if($review->is_spoiler)
                                     <details class="group bg-amber-500/5 border border-amber-500/20 rounded-xl p-3 my-2">
@@ -274,7 +274,7 @@
                                     </p>
                                 @endif
 
-                                <!-- ปุ่มแก้ไข / ลบ -->
+                                
                                 @if(Auth::check() && (Auth::id() === $review->user_id || Auth::user()->role === 'admin'))
                                     <div class="flex items-center gap-4 mt-4 pt-3 border-t border-slate-800/80">
                                         @if(Auth::id() === $review->user_id)
@@ -296,7 +296,7 @@
                                 @endif
                             </div>
 
-                            <!-- โหมดแก้ไขข้อความ -->
+                            
                             <div x-show="editMode" style="display: none;" class="mt-3 bg-slate-900 p-4 rounded-xl border border-indigo-500/40">
                                 <form action="{{ route('reviews.update', $review->id) }}" method="POST">
                                     @csrf
@@ -317,10 +317,10 @@
 
                         </div>
                         
-                        <!-- ================= โซนตอบกลับ (Reply on Comment) ================= -->
+                        
                         <div class="ml-2 sm:ml-8 mt-5 pl-4 border-l-2 border-slate-800 space-y-3">
                             
-                            <!-- ลูปแสดงคอมเมนต์ย่อย -->
+                            
                             @foreach($review->replies as $reply)
                                 <div x-data="{ editReplyMode: false }" class="bg-slate-900/80 rounded-xl p-3 border border-slate-800/80">
                                     
@@ -368,7 +368,7 @@
                                 </div>
                             @endforeach
 
-                            <!-- ฟอร์มพิมพ์ตอบกลับ -->
+                            
                             @auth
                                 <form action="{{ route('replies.store', $review->id) }}" method="POST" class="mt-3 flex gap-2">
                                     @csrf

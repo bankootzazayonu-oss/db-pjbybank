@@ -21,18 +21,18 @@ class ProfileController extends Controller
 {
     $user = $request->user();
 
-    // หนังที่ User เคยรีวิว
+
     $reviews = Review::with('activity')
         ->where('user_id', $user->id)
         ->latest()
         ->get();
 
-    // Tier List ที่ User สร้าง
+
     $collections = Collection::where('user_id', $user->id)
         ->latest()
         ->get();
 
-    // หนังที่ User เป็นคนเสนอเข้าระบบ
+
     $submittedMovies = Activity::where('user_id', $user->id)
         ->latest()
         ->get();

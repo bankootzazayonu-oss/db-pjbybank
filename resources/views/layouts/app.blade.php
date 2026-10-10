@@ -7,19 +7,19 @@
 
         <title>{{ config('app.name', 'CineReview') }}</title>
 
-        <!-- Google Fonts: Inter & Prompt -->
+        
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
+        
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white">
         <div class="min-h-screen bg-slate-950 flex flex-col">
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
+            
             @isset($header)
                 <header class="bg-slate-900/60 border-b border-slate-800/80 backdrop-blur-md">
                     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -28,7 +28,7 @@
                 </header>
             @endisset
 
-            <!-- Page Content -->
+            
             <main class="flex-1">
                 {{ $slot }}
             </main>

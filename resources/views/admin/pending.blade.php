@@ -50,7 +50,7 @@
                             </p>
                         </div>
 
-                        <!-- ปุ่มจัดการ -->
+                        
                         <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800">
 
                             <form action="{{ route('admin.movies.approve', $movie->id) }}" method="POST">

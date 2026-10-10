@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CineReview - บันทึก รีวิว และจัดอันดับภาพยนตร์</title>
 
-    <!-- Google Fonts: Prompt -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -14,10 +14,10 @@
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- Top Navigation Bar -->
+    
     <header class="border-b border-slate-800/80 bg-slate-950/95 backdrop-blur sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Brand Logo -->
+            
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
                 <span class="w-9 h-9 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8H4Z"/><path d="m4 11-.88-2.87a2 2 0 0 1 1.33-2.5l11.48-3.5a2 2 0 0 1 2.5 1.32l.85 2.87"/><path d="M6.6 4.97 10.4 16"/><path d="M12.3 3.2 16.1 14.3"/></svg>
@@ -28,7 +28,7 @@
                 </div>
             </a>
 
-            <!-- Navigation Links -->
+            
             <nav class="flex items-center gap-2 sm:gap-3">
                 <a href="{{ route('leaderboard') }}" class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800/80 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400"><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/><path d="M15 7a3 3 0 1 0-6 0"/></svg>
@@ -55,7 +55,7 @@
         </div>
     </header>
 
-    <!-- Compact & Clean Hero Header -->
+    
     <section class="border-b border-slate-800/80 bg-slate-900/40 py-7 sm:py-9">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
             
@@ -67,7 +67,7 @@
                 บันทึกเรื่องที่ดู แบ่งปันมุมมองกับเพื่อนคอหนัง และสร้างกระดานจัดอันดับ Tier List
             </p>
 
-            <!-- Search Form -->
+            
             <form action="{{ route('home') }}" method="GET" class="mt-5 max-w-xl mx-auto">
                 <div class="relative flex items-center">
                     <input type="text" 
@@ -86,7 +86,7 @@
                 </div>
             </form>
 
-            <!-- Quick Genre Filter Chips -->
+            
             @if($types->count() > 0)
                 <div class="mt-4 flex flex-wrap justify-center items-center gap-1.5">
                     <a href="{{ route('home') }}" 
@@ -105,10 +105,10 @@
         </div>
     </section>
 
-    <!-- Main Content: Movie Grid -->
+    
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-        <!-- Grid Header -->
+        
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
@@ -135,13 +135,13 @@
             @endif
         </div>
 
-        <!-- Movie Cards -->
+        
         @if($featuredMovies->count() > 0)
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5">
                 @foreach($featuredMovies as $movie)
                     <div class="group bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex flex-col hover:border-slate-700 transition duration-200">
                         
-                        <!-- Poster -->
+                        
                         <div class="relative aspect-[2/3] bg-slate-950 overflow-hidden">
                             @if($movie->image)
                                 <img src="{{ Str::startsWith($movie->image, ['http://', 'https://']) ? $movie->image : asset('storage/' . $movie->image) }}" 
@@ -155,19 +155,19 @@
                                 </div>
                             @endif
 
-                            <!-- Floating Rating -->
+                            
                             <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-slate-950/85 backdrop-blur text-[11px] font-bold text-amber-400 flex items-center gap-1 border border-white/10 shadow">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                                 <span class="text-white">{{ $movie->reviews_avg_rating ? number_format($movie->reviews_avg_rating, 1) : '-' }}</span>
                             </div>
 
-                            <!-- Year -->
+                            
                             <div class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-slate-950/80 text-[10px] text-slate-300 font-medium">
                                 {{ $movie->year }}
                             </div>
                         </div>
 
-                        <!-- Info -->
+                        
                         <div class="p-3 flex flex-col flex-1 justify-between">
                             <div>
                                 <h3 class="font-bold text-sm text-slate-100 group-hover:text-indigo-400 transition line-clamp-1 leading-snug" title="{{ $movie->name }}">
@@ -207,7 +207,7 @@
             </div>
         @endif
 
-        <!-- Recent Real Community Reviews -->
+        
         @if($recentReviews->count() > 0)
             <section class="mt-16 pt-10 border-t border-slate-800">
                 <div class="flex items-center justify-between mb-6">
@@ -224,7 +224,7 @@
                     @foreach($recentReviews as $review)
                         <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
                             <div>
-                                <!-- Author & Rating -->
+                                
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-2.5">
                                         <div class="w-7 h-7 rounded-full bg-slate-800 text-slate-200 flex items-center justify-center text-xs font-bold border border-slate-700">
@@ -241,13 +241,13 @@
                                     </span>
                                 </div>
 
-                                <!-- Movie Link -->
+                                
                                 <a href="{{ route('activities.show', $review->activity_id) }}" class="text-xs font-bold text-indigo-400 hover:underline flex items-center gap-1.5 mb-2 truncate">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
                                     {{ $review->activity->name ?? 'ภาพยนตร์' }}
                                 </a>
 
-                                <!-- Comment Snippet -->
+                                
                                 <p class="text-xs text-slate-300 font-light leading-relaxed line-clamp-3">
                                     {{ $review->comment }}
                                 </p>
@@ -266,7 +266,7 @@
 
     </main>
 
-    <!-- Footer -->
+    
     <footer class="border-t border-slate-800 mt-16 py-8 text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>© 2026 CineReview. โปรเจกต์วิชา Database & Web Application</p>

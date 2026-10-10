@@ -25,7 +25,7 @@
         @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- ฟอร์มสร้างกระดาน (ซ้าย) -->
+            
             <div class="bg-slate-900/30 p-6 rounded-2xl shadow-sm border border-dashed border-slate-700 h-fit">
                 <h2 class="text-base font-bold text-white mb-2 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -45,15 +45,15 @@
                 </form>
             </div>
 
-            <!-- แสดงกระดานที่มีอยู่ (ขวา) -->
+            
             <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @forelse($collections as $collection)
                     <div x-data="{ editCollectionMode: false }" class="bg-slate-900/60 p-6 rounded-2xl shadow-sm border border-slate-800 hover:border-slate-700 transition group relative">
                         
-                        <!-- โหมด 1: แสดงผลปกติ -->
+                        
                         <div x-show="!editCollectionMode">
                             
-                            <!-- แถบปุ่มจัดการ -->
+                            
                             <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition flex gap-1.5 z-10">
                                 <button type="button" @click="editCollectionMode = true" class="text-slate-400 hover:text-white bg-slate-950 border border-slate-700 hover:border-slate-500 px-2 py-1.5 rounded-md text-xs transition" title="แก้ไขชื่อกระดาน">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
@@ -67,7 +67,7 @@
                                 </form>
                             </div>
 
-                            <!-- ลิงก์คลิกเข้ากระดาน -->
+                            
                             <a href="{{ route('collections.show', $collection->id) }}" class="block mt-1">
                                 <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-105 transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
@@ -82,7 +82,7 @@
 
                         </div>
 
-                        <!-- โหมด 2: ฟอร์มแก้ไขชื่อกระดาน -->
+                        
                         <div x-show="editCollectionMode" style="display: none;">
                             <form action="{{ route('collections.update', $collection->id) }}" method="POST">
                                 @csrf

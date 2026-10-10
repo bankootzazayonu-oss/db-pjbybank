@@ -1,16 +1,16 @@
 <nav x-data="{ open: false }" class="bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-50">
-    <!-- Primary Navigation Menu -->
+    
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <!-- Logo -->
+                
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
                         <x-application-logo class="block h-9 w-auto" />
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
+                
                 <div class="hidden space-x-2 sm:-my-px sm:ms-6 sm:flex items-center whitespace-nowrap overflow-x-auto">
                     
                     @auth
@@ -44,7 +44,7 @@
                         จัดเทียร์ลิสต์
                     </x-nav-link>
 
-                    <!-- เมนูเฉพาะ Admin -->
+                    
                     @if(Auth::user()->role === 'admin')
                         <div class="h-4 w-px bg-slate-800 mx-1"></div>
 
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
+            
             @auth
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
@@ -125,7 +125,7 @@
             </div>
             @endauth
 
-            <!-- Hamburger -->
+            
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 focus:outline-none transition">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -137,7 +137,7 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
+    
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-slate-900 border-b border-slate-800">
         <div class="pt-2 pb-3 space-y-1 px-4">
             @auth
@@ -202,7 +202,7 @@
             @endauth
         </div>
 
-        <!-- Responsive Settings Options -->
+        
         @auth
         <div class="pt-4 pb-3 border-t border-slate-800 px-4">
             <div class="flex items-center gap-3 px-3">

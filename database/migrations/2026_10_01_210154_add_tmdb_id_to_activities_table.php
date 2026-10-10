@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('activities', function (Blueprint $table) {
-            // เพิ่มคอลัมน์ tmdb_id เพื่อเก็บ ID อ้างอิงจาก TMDB
+
             $table->unsignedBigInteger('tmdb_id')->nullable()->after('id');
         });
     }

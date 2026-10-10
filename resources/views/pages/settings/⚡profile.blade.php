@@ -1,9 +1,9 @@
 <?php
 
 use App\Concerns\ProfileValidationRules;
-/* @chisel-email-verification */
+
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-/* @end-chisel-email-verification */
+
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -46,7 +46,7 @@ new #[Title('Profile settings')] class extends Component {
         Flux::toast(variant: 'success', text: __('Profile updated.'));
     }
 
-    /* @chisel-email-verification */
+    
     /**
      * Send an email verification notification to the current user.
      */
@@ -77,7 +77,7 @@ new #[Title('Profile settings')] class extends Component {
         return ! Auth::user() instanceof MustVerifyEmail
             || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
-    /* @end-chisel-email-verification */
+    
 }; ?>
 
 <section class="w-full">

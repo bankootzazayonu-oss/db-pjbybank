@@ -137,7 +137,7 @@
                     </p>
                 </div>
 
-                <!-- Search form on dashboard -->
+                
                 <form action="{{ route('dashboard') }}" method="GET" class="flex items-center gap-2 max-w-sm w-full">
                     @if($typeId)
                         <input type="hidden" name="type" value="{{ $typeId }}">
@@ -163,7 +163,7 @@
                 </form>
             </div>
 
-            <!-- Quick Genre Filter Chips on Dashboard -->
+            
             @if(isset($types) && $types->count() > 0)
                 <div class="mb-5 flex flex-wrap items-center gap-1.5">
                     <span class="text-xs text-slate-500 mr-1 font-medium">หมวดหมู่:</span>

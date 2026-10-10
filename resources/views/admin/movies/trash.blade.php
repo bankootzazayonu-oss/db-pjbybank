@@ -32,7 +32,7 @@
             <div class="space-y-4">
                 @forelse($movies as $movie)
                     <div class="bg-slate-950/80 border border-slate-800/80 p-5 rounded-2xl flex flex-col sm:flex-row gap-6 hover:border-slate-700 transition">
-                        <!-- Poster -->
+                        
                         <div class="w-24 h-36 shrink-0 rounded-xl overflow-hidden bg-slate-900 shadow-md">
                             @if($movie->image)
                                 <img src="{{ Str::startsWith($movie->image, 'http') ? $movie->image : asset('storage/' . $movie->image) }}" alt="{{ $movie->name }}" class="w-full h-full object-cover">
@@ -43,7 +43,7 @@
                             @endif
                         </div>
 
-                        <!-- Info -->
+                        
                         <div class="flex-1 space-y-2">
                             <h3 class="text-xl font-bold text-white leading-tight">
                                 {{ $movie->name }} <span class="text-slate-400 font-normal">({{ $movie->year }})</span>
@@ -61,7 +61,7 @@
                             </div>
                         </div>
 
-                        <!-- Actions -->
+                        
                         <div class="flex flex-col gap-2 min-w-[120px] justify-center">
                             <form action="{{ route('admin.movies.restore', $movie->id) }}" method="POST">
                                 @csrf

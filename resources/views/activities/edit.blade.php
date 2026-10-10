@@ -55,7 +55,7 @@
     </select>
 </div>
 
-                <!-- ช่องทางการรับชม (Platforms) -->
+                
                 @php
                     $selectedPlatforms = array_map('strval', old('platforms', $activity->platforms->pluck('id')->toArray()));
                 @endphp
