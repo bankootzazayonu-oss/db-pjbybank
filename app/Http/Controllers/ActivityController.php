@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Activity;
+use App\Models\ActivityReport;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
 class ActivityController extends Controller
@@ -402,5 +403,43 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
         
         $movie->forceDelete();
         return back()->with('success', 'ลบภาพยนตร์ ' . $movie->name . ' ถาวรสำเร็จ!');
+    }
+
+    public function report($id)
+    {
+        $alreadyReported = ActivityReport::where('activity_id', $id)->where('user_id', auth()->id())->exists();
+
+        if ($alreadyReported) {
+            return back()->with('error', 'ผู้ใช้ได้รายงานไปแล้ว');
+        }
+
+        ActivityReport::create([
+            'activity_id' => $id,
+            'user_id' => auth()->id(),
+            'reason' => 'ผู้ใช้รายงานว่าหนังเรื่องนี้มีข้อมูลผิดพลาด หรือไม่เหมาะสม',
+        ]);
+
+        return back()->with('success', 'กดรายงานเรียบร้อย รอ Admin อนุมัติ');
+    }
+
+    public function adminReports()
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+        $reports = ActivityReport::with(['activity', 'user'])->latest()->get();
+        $activityReports = $reports;
+        $commentReports = \App\Models\CommentReport::with(['review.user', 'review.activity', 'user'])->latest()->get();
+        return view('admin.reports', compact('reports', 'activityReports', 'commentReports'));
+    }
+
+    public function dismissReport($id)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+        $report = ActivityReport::findOrFail($id);
+        $report->delete();
+        return back()->with('success', 'จัดการรายงานเรียบร้อยแล้ว');
     }
 }

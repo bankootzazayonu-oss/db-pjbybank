@@ -91,6 +91,16 @@
                                     {{ $movie->hours }} ชั่วโมง
                                 </span>
                             @endif
+                            
+                            @if(Auth::check())
+                                <form action="{{ route('activities.report', $movie->id) }}" method="POST" class="ml-auto">
+                                    @csrf
+                                    <button type="submit" onclick="return confirm('ยืนยันการรายงานหนังเรื่องนี้ว่าข้อมูลผิดพลาดหรือไม่เหมาะสม?')" class="text-xs text-slate-500 hover:text-rose-400 transition flex items-center gap-1 font-semibold">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                                        รายงานหนัง
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                         
                         <h2 class="text-3xl md:text-5xl font-black text-white mb-2 leading-tight tracking-tight">

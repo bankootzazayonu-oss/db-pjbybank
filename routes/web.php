@@ -152,6 +152,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/movies/{id}/edit', [ActivityController::class, 'edit'])->name('activities.edit');
     Route::put('/movies/{id}', [ActivityController::class, 'update'])->name('activities.update');
     Route::get('/movies/{id}', [ActivityController::class, 'show'])->name('activities.show');
+    Route::post('/movies/{id}/report', [ActivityController::class, 'report'])->name('activities.report');
 
 
     Route::post('/movies/{id}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
@@ -233,9 +234,10 @@ Route::resource('types', TypeController::class);
     Route::delete('/movies/{id}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
 
-    Route::get('/admin/reports', [ReviewController::class, 'adminReports'])->name('admin.reports');
+    Route::get('/admin/reports', [ActivityController::class, 'adminReports'])->name('admin.reports');
     Route::delete('/admin/reviews/{id}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
-    Route::delete('/admin/reports/{id}/dismiss', [ReviewController::class, 'dismissReport'])->name('admin.reports.dismiss');
+    Route::delete('/admin/comment_reports/{id}/dismiss', [ReviewController::class, 'dismissReport'])->name('admin.comment_reports.dismiss');
+    Route::delete('/admin/reports/{id}/dismiss', [ActivityController::class, 'dismissReport'])->name('admin.reports.dismiss');
 
 
     Route::get('/admin/movies/search', [TmdbController::class, 'search'])->name('admin.movies.search');
@@ -249,3 +251,5 @@ Route::resource('types', TypeController::class);
 });
 
 require __DIR__.'/auth.php';
+
+
