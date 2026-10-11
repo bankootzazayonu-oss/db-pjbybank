@@ -35,13 +35,19 @@
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-sm">
                         @forelse($reports as $report)
-                            @if($report->activity)
-                                <tr class="hover:bg-slate-800/40 transition">
+                            <tr class="hover:bg-slate-800/40 transition">
                                     <td class="p-4">
                                         <div class="flex items-center gap-3 mb-2">
                                             <div>
                                                 <span class="font-bold text-white block">
-                                                    <a href="{{ route('activities.show', $report->activity_id) }}" class="text-indigo-400 hover:underline" target="_blank">{{ $report->activity->name ?? 'ไม่ทราบชื่อหนัง' }}</a>
+                                                    @if($report->activity)
+                                                        <a href="{{ route('activities.show', $report->activity_id) }}" class="text-indigo-400 hover:underline" target="_blank">{{ $report->activity->name }}</a>
+                                                        @if($report->activity->trashed())
+                                                            <span class="text-xs text-rose-400 font-normal ml-1 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">ลบเข้าถังขยะแล้ว</span>
+                                                        @endif
+                                                    @else
+                                                        <span class="text-slate-400 italic">ไม่พบข้อมูลหนัง (ถูกลบไปแล้ว)</span>
+                                                    @endif
                                                 </span>
                                             </div>
                                         </div>
@@ -65,14 +71,16 @@
                                     
                                     <td class="p-4">
                                         <div class="flex flex-col gap-2">
-                                            <form action="{{ route('activities.destroy', $report->activity_id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" onclick="return confirm('ลบหนังเรื่องนี้ทิ้งเลยหรือไม่?')" class="w-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-medium py-2 px-3 rounded-lg shadow-sm transition flex justify-center items-center gap-1.5">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                                    ลบหนังเรื่องนี้
-                                                </button>
-                                            </form>
+                                            @if($report->activity && !$report->activity->trashed())
+                                                <form action="{{ route('activities.destroy', $report->activity_id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" onclick="return confirm('ลบหนังเรื่องนี้ทิ้งเลยหรือไม่?')" class="w-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-medium py-2 px-3 rounded-lg shadow-sm transition flex justify-center items-center gap-1.5">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                                        ลบหนังเรื่องนี้
+                                                    </button>
+                                                </form>
+                                            @endif
                                             
                                             <form action="{{ route('admin.reports.dismiss', $report->id) }}" method="POST">
                                                 @csrf
@@ -85,7 +93,6 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endif
                         @empty
                             <tr>
                                 <td colspan="4" class="p-16 text-center text-slate-500">

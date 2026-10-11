@@ -327,15 +327,14 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
 
     public function destroy($id)
     {
-        $movie = Activity::findOrFail($id);
+        $movie = Activity::withTrashed()->findOrFail($id);
 
 
         if (auth()->user()->role !== 'admin' && $movie->user_id !== auth()->id()) {
             return back()->with('error', ' คุณไม่มีสิทธิ์ลบรายการนี้');
         }
 
-
-        
+        ActivityReport::where('activity_id', $movie->id)->delete();
 
         $movie->delete();
 
