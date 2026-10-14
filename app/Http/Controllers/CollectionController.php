@@ -112,7 +112,7 @@ class CollectionController extends Controller
             'name.required' => 'กรุณาระบุชื่อกระดาน'
         ]);
         
-        $collection = \App\Models\Collection::findOrFail($id);
+        $collection = Collection::findOrFail($id);
 
 
         if ($collection->user_id !== auth()->id()) {
@@ -127,7 +127,7 @@ class CollectionController extends Controller
 
     public function destroy($id)
     {
-        $collection = \App\Models\Collection::findOrFail($id);
+        $collection = Collection::findOrFail($id);
 
 
         if ($collection->user_id !== auth()->id()) {
@@ -135,7 +135,7 @@ class CollectionController extends Controller
         }
 
 
-        \App\Models\CollectionItem::where('collection_id', $collection->id)->delete();
+        CollectionItem::where('collection_id', $collection->id)->delete();
         
 
         $collection->delete();
@@ -146,7 +146,7 @@ class CollectionController extends Controller
 
     public function updateLabels(Request $request, $id)
     {
-        $collection = \App\Models\Collection::findOrFail($id);
+        $collection = Collection::findOrFail($id);
 
         if ($collection->user_id !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์แก้ไขกระดานนี้');
@@ -191,7 +191,7 @@ class CollectionController extends Controller
             'tier_rank' => 'required|in:S,A,B,C,D',
         ]);
 
-        $collection = \App\Models\Collection::findOrFail($id);
+        $collection = Collection::findOrFail($id);
         if ($collection->user_id !== auth()->id()) abort(403);
 
         $tmdbId = $request->tmdb_id;

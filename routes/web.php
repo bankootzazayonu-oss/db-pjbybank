@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PlatformController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\ReviewReplyController;
 use App\Http\Middleware\IsAdmin;
 use App\Models\Review;
 use App\Models\Type;
@@ -159,14 +160,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reviews/{id}/reply', [ReviewController::class, 'storeReply'])->name('replies.store');
 
 
-    Route::put('/replies/{id}', [\App\Http\Controllers\ReviewReplyController::class, 'update'])->name('replies.update');
-    Route::delete('/replies/{id}', [\App\Http\Controllers\ReviewReplyController::class, 'destroy'])->name('replies.destroy');
-    
-    
-    
+    Route::put('/replies/{id}', [ReviewReplyController::class, 'update'])->name('replies.update');
+    Route::delete('/replies/{id}', [ReviewReplyController::class, 'destroy'])->name('replies.destroy');
 
     Route::post('/reviews/{id}/report', [ReviewController::class, 'report'])->name('reviews.report');
-
 
     Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
     Route::post('/collections', [CollectionController::class, 'store'])->name('collections.store');
@@ -175,27 +172,20 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/collections/item/{id}', [CollectionController::class, 'updateRank'])->name('collections.updateRank');
     Route::delete('/collections/item/{id}', [CollectionController::class, 'destroyItem'])->name('collections.destroyItem');
 
+    Route::put('/collections/{id}', [CollectionController::class, 'update'])->name('collections.update');
+    Route::delete('/collections/{id}', [CollectionController::class, 'destroy'])->name('collections.destroy');
 
+    Route::put('/collections/{id}/labels', [CollectionController::class, 'updateLabels'])->name('collections.updateLabels');
 
-    Route::put('/collections/{id}', [\App\Http\Controllers\CollectionController::class, 'update'])->name('collections.update');
-    Route::delete('/collections/{id}', [\App\Http\Controllers\CollectionController::class, 'destroy'])->name('collections.destroy');
-    
-
-    Route::put('/collections/{id}/labels', [\App\Http\Controllers\CollectionController::class, 'updateLabels'])->name('collections.updateLabels');
-
-
-    Route::get('/collections-trash/view', [\App\Http\Controllers\CollectionController::class, 'trash'])->name('collections.trash');
-    Route::post('/collections/{id}/restore', [\App\Http\Controllers\CollectionController::class, 'restore'])->name('collections.restore');
-    Route::delete('/collections/{id}/force-delete', [\App\Http\Controllers\CollectionController::class, 'forceDelete'])->name('collections.forceDelete');
-
+    Route::get('/collections-trash/view', [CollectionController::class, 'trash'])->name('collections.trash');
+    Route::post('/collections/{id}/restore', [CollectionController::class, 'restore'])->name('collections.restore');
+    Route::delete('/collections/{id}/force-delete', [CollectionController::class, 'forceDelete'])->name('collections.forceDelete');
 
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{id}/user', [ReviewController::class, 'userDestroy'])->name('reviews.user_destroy');
 
-
-
-    Route::get('/tmdb/search-json', [\App\Http\Controllers\CollectionController::class, 'searchTmdb'])->name('tmdb.search_json');
-    Route::post('/collections/{id}/add-tmdb', [\App\Http\Controllers\CollectionController::class, 'storeFromTmdb'])->name('collections.store_tmdb');
+    Route::get('/tmdb/search-json', [CollectionController::class, 'searchTmdb'])->name('tmdb.search_json');
+    Route::post('/collections/{id}/add-tmdb', [CollectionController::class, 'storeFromTmdb'])->name('collections.store_tmdb');
 
 
 
@@ -208,29 +198,21 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', IsAdmin::class])->group(function () {
     
 
-Route::resource('types', TypeController::class);
-
     Route::get('/admin/types', [TypeController::class, 'index'])->name('admin.types.index');
     Route::post('/admin/types', [TypeController::class, 'store'])->name('admin.types.store');
+    Route::put('/admin/types/{type}', [TypeController::class, 'update'])->name('admin.types.update');
     Route::delete('/admin/types/{type}', [TypeController::class, 'destroy'])->name('admin.types.destroy');
 
-    Route::get('/admin/types', [\App\Http\Controllers\Admin\TypeController::class, 'index'])->name('admin.types.index');
-    Route::post('/admin/types', [\App\Http\Controllers\Admin\TypeController::class, 'store'])->name('admin.types.store');
-
-    Route::put('/admin/types/{type}', [\App\Http\Controllers\Admin\TypeController::class, 'update'])->name('admin.types.update');
-    Route::delete('/admin/types/{type}', [\App\Http\Controllers\Admin\TypeController::class, 'destroy'])->name('admin.types.destroy');
-
-
-    Route::get('/admin/movies/trash', [\App\Http\Controllers\ActivityController::class, 'trash'])->name('admin.movies.trash');
-    Route::post('/admin/movies/{id}/restore', [\App\Http\Controllers\ActivityController::class, 'restore'])->name('admin.movies.restore');
-    Route::delete('/admin/movies/{id}/force-delete', [\App\Http\Controllers\ActivityController::class, 'forceDelete'])->name('admin.movies.forceDelete');
+    Route::get('/admin/movies/trash', [ActivityController::class, 'trash'])->name('admin.movies.trash');
+    Route::post('/admin/movies/{id}/restore', [ActivityController::class, 'restore'])->name('admin.movies.restore');
+    Route::delete('/admin/movies/{id}/force-delete', [ActivityController::class, 'forceDelete'])->name('admin.movies.forceDelete');
 
     Route::get('/admin/pending-movies', [ActivityController::class, 'pending'])->name('admin.movies.pending');
     Route::post('/admin/approve-movie/{id}', [ActivityController::class, 'approve'])->name('admin.movies.approve');
 
-        Route::post('/admin/reject-movie/{id}', [\App\Http\Controllers\ActivityController::class, 'reject'])->name('admin.movies.reject');
-    Route::get('/admin/movies/{id}/edit', [\App\Http\Controllers\ActivityController::class, 'edit'])->name('admin.movies.edit');
-    Route::put('/admin/movies/{id}', [\App\Http\Controllers\ActivityController::class, 'update'])->name('admin.movies.update');
+    Route::post('/admin/reject-movie/{id}', [ActivityController::class, 'reject'])->name('admin.movies.reject');
+    Route::get('/admin/movies/{id}/edit', [ActivityController::class, 'edit'])->name('admin.movies.edit');
+    Route::put('/admin/movies/{id}', [ActivityController::class, 'update'])->name('admin.movies.update');
     Route::delete('/movies/{id}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
 

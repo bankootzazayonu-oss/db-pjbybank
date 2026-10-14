@@ -22,8 +22,7 @@ class ReviewReplyController extends Controller
     {
         $request->validate(['message' => 'required|string|max:1000']);
         
-        $reply = \App\Models\ReviewReply::findOrFail($id);
-
+        $reply = ReviewReply::findOrFail($id);
 
         if ($reply->user_id !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์แก้ไขข้อความนี้');
@@ -37,7 +36,7 @@ class ReviewReplyController extends Controller
 
     public function destroy($id)
     {
-        $reply = \App\Models\ReviewReply::findOrFail($id);
+        $reply = ReviewReply::findOrFail($id);
 
         if ($reply->user_id !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์ลบข้อความนี้');

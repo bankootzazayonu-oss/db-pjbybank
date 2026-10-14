@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Activity;
 use App\Models\ActivityReport;
+use App\Models\Type;
+use App\Models\Platform;
+use App\Models\CommentReport;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
+
 class ActivityController extends Controller
 {
     public function show($id)
     {
 
-        $movie = \App\Models\Activity::with(['type', 'reviews.user', 'platforms'])->findOrFail($id);
+        $movie = Activity::with(['type', 'reviews.user', 'platforms'])->findOrFail($id);
         
 
         $userReview = auth()->check() ? $movie->reviews()->where('user_id', auth()->id())->first() : null;
@@ -122,8 +126,8 @@ public function reject($id)
    public function create()
     {
 
-        $types = \App\Models\Type::orderBy('name')->get(); 
-        $platforms = \App\Models\Platform::orderBy('name')->get();
+        $types = Type::orderBy('name')->get(); 
+        $platforms = Platform::orderBy('name')->get();
 
         return view('activities.create', compact('types', 'platforms'));
     }
@@ -249,8 +253,8 @@ public function reject($id)
             }
         }
 
-        $types = \App\Models\Type::orderBy('name')->get();
-        $platforms = \App\Models\Platform::orderBy('name')->get();
+        $types = Type::orderBy('name')->get();
+        $platforms = Platform::orderBy('name')->get();
         $activity->load('platforms');
 
         return view('activities.edit', compact(
@@ -287,7 +291,7 @@ public function reject($id)
         ]);
         
 
-        $isDuplicate = \App\Models\Activity::whereRaw('LOWER(name) = ?', [strtolower($request->name)])
+        $isDuplicate = Activity::whereRaw('LOWER(name) = ?', [strtolower($request->name)])
                                            ->where('year', $request->year)
                                            ->where('id', '!=', $id)
                                            ->exists();
@@ -428,7 +432,7 @@ if (auth()->user()->role !== 'admin' && $activity->status === 'rejected') {
         }
         $reports = ActivityReport::with(['activity', 'user'])->latest()->get();
         $activityReports = $reports;
-        $commentReports = \App\Models\CommentReport::with(['review.user', 'review.activity', 'user'])->latest()->get();
+        $commentReports = CommentReport::with(['review.user', 'review.activity', 'user'])->latest()->get();
         return view('admin.reports', compact('reports', 'activityReports', 'commentReports'));
     }
 
