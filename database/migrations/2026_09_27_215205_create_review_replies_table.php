@@ -6,18 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('review_replies', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('review_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->text('message');
-            $table->timestamps();
+            $table->char('Reply_ID', 10)->primary();
+            $table->char('Review_ID', 10);
+            $table->char('User_ID', 5);
+            $table->text('Message');
+            $table->timestamp('CreatedAt')->useCurrent();
+            $table->timestamp('UpdatedAt')->useCurrent();
+            $table->softDeletes('DeletedAt');
+
+            $table->foreign('Review_ID')->references('Review_ID')->on('reviews')->cascadeOnDelete();
+            $table->foreign('User_ID')->references('User_ID')->on('users')->cascadeOnDelete();
         });
     }
-    public function down(): void { Schema::dropIfExists('review_replies'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('review_replies');
+    }
 };

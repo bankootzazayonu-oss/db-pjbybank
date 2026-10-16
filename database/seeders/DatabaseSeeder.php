@@ -10,11 +10,12 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $this->call(PlatformSeeder::class);
+        $this->call([
+            PlatformSeeder::class,
+            MovieAndReviewSeeder::class,
+        ]);
     }
 }
+

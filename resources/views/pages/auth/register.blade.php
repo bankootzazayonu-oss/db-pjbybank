@@ -1,11 +1,10 @@
 <x-layouts::auth :title="__('Register')">
-    <div class="flex flex-col gap-6">
+    <div class="d-flex flex-column gap-4">
         <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
 
-        
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6">
+        <form method="POST" action="{{ route('register.store') }}" class="d-flex flex-column gap-3">
             @csrf
             
             <flux:input
@@ -19,7 +18,6 @@
                 :placeholder="__('Full name')"
             />
 
-            
             <flux:input
                 name="email"
                 :label="__('Email address')"
@@ -30,7 +28,6 @@
                 placeholder="email@example.com"
             />
 
-            
             <flux:input
                 name="password"
                 :label="__('Password')"
@@ -42,7 +39,6 @@
                 viewable
             />
 
-            
             <flux:input
                 name="password_confirmation"
                 :label="__('Confirm password')"
@@ -54,14 +50,14 @@
                 viewable
             />
 
-            <div class="flex items-center justify-end">
-                <flux:button type="submit" variant="primary" class="w-full" data-test="register-user-button">
+            <div class="d-flex align-items-center justify-content-end">
+                <flux:button type="submit" variant="primary" class="w-100" data-test="register-user-button">
                     {{ __('Create account') }}
                 </flux:button>
             </div>
         </form>
 
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
+        <div class="text-center small text-secondary">
             <span>{{ __('Already have an account?') }}</span>
             <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
         </div>

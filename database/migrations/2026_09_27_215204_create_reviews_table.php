@@ -6,20 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('activity_id')->constrained('activities')->cascadeOnDelete();
-            $table->integer('rating'); 
-            $table->text('comment');
-            $table->boolean('is_spoiler')->default(false); 
-            $table->timestamps();
+            $table->char('Review_ID', 10)->primary();
+            $table->char('User_ID', 5);
+            $table->char('Movie_ID', 6);
+            $table->text('Review_Text');
+            $table->decimal('Score', 3, 1)->default(0.0);
+            $table->tinyInteger('Spoiler')->default(0);
+            $table->softDeletes('DeletedAt');
+            $table->timestamp('CreatedAt')->useCurrent();
+            $table->timestamp('UpdatedAt')->useCurrent();
+
+            $table->foreign('User_ID')->references('User_ID')->on('users')->cascadeOnDelete();
+            $table->foreign('Movie_ID')->references('Movie_ID')->on('activities')->cascadeOnDelete();
         });
     }
-    public function down(): void { Schema::dropIfExists('reviews'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('reviews');
+    }
 };

@@ -9,11 +9,7 @@ use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+
     public function rules(): array
     {
         return [
@@ -23,8 +19,9 @@ class ProfileUpdateRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                Rule::unique(User::class, 'Email')->ignore($this->user()->User_ID, 'User_ID'),
             ],
         ];
     }
 }
+

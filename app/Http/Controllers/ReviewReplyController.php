@@ -10,13 +10,12 @@ class ReviewReplyController extends Controller
     {
         $request->validate(['message' => 'required|string|max:500']);
         ReviewReply::create([
-            'review_id' => $reviewId,
-            'user_id' => auth()->id(),
-            'message' => $request->message,
+            'Review_ID' => $reviewId,
+            'User_ID' => auth()->id(),
+            'Message' => $request->message,
         ]);
         return back()->with('success', 'ตอบกลับความเห็นเรียบร้อยแล้ว!');
     }
-
 
     public function update(Request $request, $id)
     {
@@ -24,21 +23,20 @@ class ReviewReplyController extends Controller
         
         $reply = ReviewReply::findOrFail($id);
 
-        if ($reply->user_id !== auth()->id()) {
+        if ($reply->User_ID !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์แก้ไขข้อความนี้');
         }
 
-        $reply->update(['message' => $request->message]);
+        $reply->update(['Message' => $request->message]);
 
         return back()->with('success', ' แก้ไขการตอบกลับเรียบร้อยแล้ว');
     }
-
 
     public function destroy($id)
     {
         $reply = ReviewReply::findOrFail($id);
 
-        if ($reply->user_id !== auth()->id()) {
+        if ($reply->User_ID !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์ลบข้อความนี้');
         }
 

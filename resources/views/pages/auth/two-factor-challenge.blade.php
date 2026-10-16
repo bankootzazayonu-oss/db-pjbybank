@@ -1,7 +1,7 @@
 <x-layouts::auth :title="__('Two-factor authentication')">
-    <div class="flex flex-col gap-6">
+    <div class="d-flex flex-column gap-4">
         <div
-            class="relative w-full h-auto"
+            class="position-relative w-100"
             x-cloak
             x-data="{
                 showRecoveryInput: @js($errors->has('recovery_code')),
@@ -46,9 +46,9 @@
             <form method="POST" action="{{ route('two-factor.login.store') }}">
                 @csrf
 
-                <div class="space-y-5 text-center">
+                <div class="d-flex flex-column gap-3 text-center">
                     <div x-show="!showRecoveryInput">
-                        <div class="flex items-center justify-center my-5" x-ref="otp">
+                        <div class="d-flex align-items-center justify-content-center my-3" x-ref="otp">
                             <flux:otp
                                 x-model="code"
                                 length="6"
@@ -61,7 +61,7 @@
                     </div>
 
                     <div x-show="showRecoveryInput">
-                        <div class="my-5">
+                        <div class="my-3">
                             <flux:input
                                 type="text"
                                 name="recovery_code"
@@ -73,24 +73,24 @@
                         </div>
 
                         @error('recovery_code')
-                            <flux:text color="red">
+                            <div class="small text-danger">
                                 {{ $message }}
-                            </flux:text>
+                            </div>
                         @enderror
                     </div>
 
                     <flux:button
                         variant="primary"
                         type="submit"
-                        class="w-full"
+                        class="w-100"
                     >
                         {{ __('Continue') }}
                     </flux:button>
                 </div>
 
-                <div class="mt-5 space-x-0.5 text-sm leading-5 text-center">
-                    <span class="opacity-50">{{ __('or you can') }}</span>
-                    <div class="inline font-medium underline cursor-pointer opacity-80">
+                <div class="mt-4 text-center small">
+                    <span class="text-secondary">{{ __('or you can') }}</span>
+                    <div class="d-inline fw-medium text-decoration-underline" style="cursor: pointer;">
                         <span x-show="!showRecoveryInput" @click="toggleInput()">{{ __('login using a recovery code') }}</span>
                         <span x-show="showRecoveryInput" @click="toggleInput()">{{ __('login using an authentication code') }}</span>
                     </div>

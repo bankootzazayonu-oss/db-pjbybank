@@ -6,18 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('collection_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('collection_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('activity_id')->constrained('activities')->cascadeOnDelete(); 
-            $table->enum('tier_rank', ['S', 'A', 'B', 'C', 'D'])->default('C'); 
-            $table->timestamps();
+            $table->char('Tier_ID', 10);
+            $table->char('Movie_ID', 6);
+            $table->char('Tier_Level', 2)->default('B');
+
+            $table->primary(['Tier_ID', 'Movie_ID']);
+            $table->foreign('Tier_ID')->references('Tier_ID')->on('collections')->cascadeOnDelete();
+            $table->foreign('Movie_ID')->references('Movie_ID')->on('activities')->cascadeOnDelete();
         });
     }
-    public function down(): void { Schema::dropIfExists('collection_items'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('collection_items');
+    }
 };

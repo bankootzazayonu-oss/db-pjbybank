@@ -1,83 +1,103 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 class="font-bold text-lg sm:text-xl text-white flex items-center gap-2.5 flex-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-rose-400 shrink-0"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>จัดการรายงานหนัง (แอดมิน) - {{ config('app.name', 'CineReview') }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-dark text-light min-vh-100 d-flex flex-column">
+
+    @include('layouts.navigation')
+
+    <div class="bg-dark bg-opacity-75 border-bottom border-secondary py-3">
+        <div class="container d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+            <h2 class="h5 fw-bold text-white d-flex align-items-center gap-2 mb-0">
+                <i class="bi bi-flag-fill text-danger"></i>
                 จัดการรายงานหนัง (แอดมิน)
             </h2>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        
-        @if(session('success'))
-            <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium p-4 rounded-xl mb-6 shadow-sm">{{ session('success') }}</div>
-        @endif
+    <main class="flex-grow-1 py-5">
+        <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success d-flex align-items-center gap-2 mb-4 shadow-sm">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>{{ session('success') }}</div>
+                </div>
+            @endif
 
-        <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 overflow-hidden">
-            <div class="p-6 border-b border-slate-800 bg-rose-500/5">
-                <h3 class="text-lg font-bold text-rose-400 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    รายการแจ้งปัญหาหนัง ({{ $reports->count() }} รายการ)
-                </h3>
-                <p class="text-sm text-rose-500/70 mt-1">โปรดพิจารณาและจัดการหนังที่ผู้ใช้งานกดรายงานเข้ามา</p>
-            </div>
+            <div class="card bg-dark border-secondary rounded-4 shadow-lg overflow-hidden">
+                <div class="card-header bg-danger bg-opacity-10 border-bottom border-secondary p-4">
+                    <h3 class="h6 fw-bold text-danger d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        รายการแจ้งปัญหาหนัง ({{ $reports->count() }} รายการ)
+                    </h3>
+                    <small class="text-secondary">โปรดพิจารณาและจัดการหนังที่ผู้ใช้งานกดรายงานเข้ามา</small>
+                </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-950/50 text-slate-400 text-xs uppercase tracking-wider">
-                            <th class="p-4 font-bold border-b border-slate-800 w-1/4">หนังที่ถูกรายงาน</th>
-                            <th class="p-4 font-bold border-b border-slate-800 w-1/3">รายละเอียดการแจ้ง</th>
-                            <th class="p-4 font-bold border-b border-slate-800">ผู้แจ้งรายงาน</th>
-                            <th class="p-4 font-bold border-b border-slate-800 text-center">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800 text-sm">
-                        @forelse($reports as $report)
-                            <tr class="hover:bg-slate-800/40 transition">
-                                    <td class="p-4">
-                                        <div class="flex items-center gap-3 mb-2">
-                                            <div>
-                                                <span class="font-bold text-white block">
-                                                    @if($report->activity)
-                                                        <a href="{{ route('activities.show', $report->activity_id) }}" class="text-indigo-400 hover:underline" target="_blank">{{ $report->activity->name }}</a>
-                                                        @if($report->activity->trashed())
-                                                            <span class="text-xs text-rose-400 font-normal ml-1 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">ลบเข้าถังขยะแล้ว</span>
-                                                        @endif
-                                                    @else
-                                                        <span class="text-slate-400 italic">ไม่พบข้อมูลหนัง (ถูกลบไปแล้ว)</span>
-                                                    @endif
-                                                </span>
-                                            </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0 text-light">
+                        <thead class="table-dark border-bottom border-secondary text-secondary small text-uppercase">
+                            <tr>
+                                <th class="py-3 px-4" style="width: 25%;">หนังที่ถูกรายงาน</th>
+                                <th class="py-3 px-4" style="width: 35%;">รายละเอียดการแจ้ง</th>
+                                <th class="py-3 px-4">ผู้แจ้งรายงาน</th>
+                                <th class="py-3 px-4 text-center" style="width: 20%;">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($reports as $report)
+                                <tr>
+                                    <td class="py-3 px-4">
+                                        <div class="fw-bold text-white mb-1">
+                                            @if($report->activity)
+                                                <a href="{{ route('activities.show', $report->activity_id) }}" class="text-primary text-decoration-none" target="_blank">{{ $report->activity->name }}</a>
+                                                @if($report->activity->trashed())
+                                                    <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 small ms-1">ลบเข้าถังขยะแล้ว</span>
+                                                @endif
+                                            @else
+                                                <span class="text-secondary fst-italic">ไม่พบข้อมูลหนัง (ถูกลบไปแล้ว)</span>
+                                            @endif
                                         </div>
                                     </td>
                                     
-                                    <td class="p-4">
-                                        <div class="bg-slate-950 p-3 rounded-lg border-l-2 border-rose-500 text-sm text-slate-300 whitespace-pre-line shadow-inner">
+                                    <td class="py-3 px-4">
+                                        <div class="p-3 bg-black border-start border-danger border-3 rounded-2 small text-light whitespace-pre-line">
                                             {{ $report->reason }}
                                         </div>
                                     </td>
                                     
-                                    <td class="p-4">
-                                        <div class="text-sm">
-                                            <p class="font-bold text-slate-300 flex items-center gap-1.5">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                                {{ $report->user->name ?? 'ผู้ใช้ทั่วไป' }}
-                                            </p>
-                                            <p class="text-[11px] text-slate-500 mt-1">แจ้งเมื่อ: {{ $report->created_at->diffForHumans() }}</p>
+                                    <td class="py-3 px-4">
+                                        <div class="small">
+                                            <div class="fw-bold text-light d-flex align-items-center gap-1.5">
+                                                <i class="bi bi-person text-secondary"></i>
+                                                <span>{{ $report->user->name ?? 'ผู้ใช้ทั่วไป' }}</span>
+                                            </div>
+                                            <small class="text-secondary">แจ้งเมื่อ: {{ $report->created_at->diffForHumans() }}</small>
                                         </div>
                                     </td>
                                     
-                                    <td class="p-4">
-                                        <div class="flex flex-col gap-2">
+                                    <td class="py-3 px-4">
+                                        <div class="d-flex flex-column gap-2">
                                             @if($report->activity && !$report->activity->trashed())
                                                 <form action="{{ route('activities.destroy', $report->activity_id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" onclick="return confirm('ลบหนังเรื่องนี้ทิ้งเลยหรือไม่?')" class="w-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-medium py-2 px-3 rounded-lg shadow-sm transition flex justify-center items-center gap-1.5">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                                        ลบหนังเรื่องนี้
+                                                    <button type="submit" onclick="return confirm('ลบหนังเรื่องนี้ทิ้งเลยหรือไม่?')" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-1.5 fw-semibold">
+                                                        <i class="bi bi-trash"></i>
+                                                        <span>ลบหนังเรื่องนี้</span>
                                                     </button>
                                                 </form>
                                             @endif
@@ -85,26 +105,35 @@
                                             <form action="{{ route('admin.reports.dismiss', $report->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" onclick="return confirm('ปัดตกรีพอร์ตนี้ (เก็บหนังไว้เหมือนเดิม)?')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-medium py-2 px-3 rounded-lg shadow-sm transition flex justify-center items-center gap-1.5">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                                                    ปัดตกรีพอร์ต
+                                                <button type="submit" onclick="return confirm('ปัดตกรีพอร์ตนี้ (เก็บหนังไว้เหมือนเดิม)?')" class="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center gap-1.5">
+                                                    <i class="bi bi-check-lg"></i>
+                                                    <span>ปัดตกรีพอร์ต</span>
                                                 </button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="p-16 text-center text-slate-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-slate-600"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                    <p class="font-bold text-lg text-slate-300">ยังไม่มีแจ้งรายงานหนังเข้ามา</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="py-5 text-center text-secondary">
+                                        <i class="bi bi-check-circle fs-1 text-secondary mb-2 d-block"></i>
+                                        <p class="fw-bold text-light mb-0">ยังไม่มีแจ้งรายงานหนังเข้ามา</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-</x-app-layout>
+    </main>
 
+    <footer class="border-top border-secondary bg-dark py-4 mt-auto">
+        <div class="container text-center text-secondary small">
+            <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

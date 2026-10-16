@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-vh-100 bg-dark text-light">
+        <flux:sidebar sticky collapsible="mobile" class="border-end border-secondary bg-dark">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
-                <flux:sidebar.collapse class="lg:hidden" />
+                <flux:sidebar.collapse class="d-lg-none" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                <flux:sidebar.group :heading="__('Platform')">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
@@ -30,12 +30,11 @@
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
-            <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
+            <x-desktop-user-menu class="d-none d-lg-block" :name="auth()->user()->name" />
         </flux:sidebar>
 
-        
-        <flux:header class="lg:hidden">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+        <flux:header class="d-lg-none bg-dark border-bottom border-secondary">
+            <flux:sidebar.toggle class="d-lg-none" icon="bars-2" inset="left" />
 
             <flux:spacer />
 
@@ -47,16 +46,16 @@
 
                 <flux:menu>
                     <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                        <div class="p-0 small">
+                            <div class="d-flex align-items-center gap-2 p-2">
                                 <flux:avatar
                                     :name="auth()->user()->name"
                                     :initials="auth()->user()->initials()"
                                 />
 
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
+                                <div class="overflow-hidden">
+                                    <flux:heading class="text-truncate">{{ auth()->user()->name }}</flux:heading>
+                                    <flux:text class="text-truncate small">{{ auth()->user()->email }}</flux:text>
                                 </div>
                             </div>
                         </div>
@@ -72,13 +71,13 @@
 
                     <flux:menu.separator />
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    <form method="POST" action="{{ route('logout') }}" class="w-100">
                         @csrf
                         <flux:menu.item
                             as="button"
                             type="submit"
                             icon="arrow-right-start-on-rectangle"
-                            class="w-full cursor-pointer"
+                            class="w-100 cursor-pointer"
                             data-test="logout-button"
                         >
                             {{ __('Log out') }}
@@ -88,7 +87,9 @@
             </flux:dropdown>
         </flux:header>
 
-        {{ $slot }}
+        <main class="container py-4 flex-grow-1">
+            {{ $slot }}
+        </main>
 
         @persist('toast')
             <flux:toast.group>

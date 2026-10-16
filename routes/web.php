@@ -23,36 +23,37 @@ Route::get('/', function (Request $request) {
     $search = $request->query('q');
     $typeId = $request->query('type');
 
-    $query = Activity::where('is_approved', true)->where('status', 'approved');
+    $query = Activity::where('Approval_Status', 'approved');
 
     if ($search) {
         $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', '%' . $search . '%')
-              ->orWhere('original_title', 'like', '%' . $search . '%');
+            $q->where('Title', 'like', '%' . $search . '%')
+              ->orWhere('Original_Title', 'like', '%' . $search . '%');
         });
     }
 
     if ($typeId) {
-        $query->where('type_id', $typeId);
+        $query->where('Genre_ID', $typeId);
     }
 
-    $featuredMovies = $query->withAvg('reviews', 'rating')
+    $featuredMovies = $query->withAvg('reviews as reviews_avg_rating', 'Score')
+        ->withAvg('reviews as reviews_avg_score', 'Score')
         ->withCount('reviews')
         ->with('type')
-        ->latest()
+        ->latest('CreatedAt')
         ->take(12)
         ->get();
 
     $recentReviews = Review::with(['user', 'activity'])
         ->whereHas('activity', function ($q) {
-            $q->where('is_approved', true)->where('status', 'approved');
+            $q->where('Approval_Status', 'approved');
         })
-        ->latest()
+        ->latest('CreatedAt')
         ->take(3)
         ->get();
 
-    $types = Type::orderBy('name')->get();
-    $totalMovies = Activity::where('is_approved', true)->where('status', 'approved')->count();
+    $types = Type::orderBy('Genre_Name')->get();
+    $totalMovies = Activity::where('Approval_Status', 'approved')->count();
     $totalReviews = Review::count();
 
     return view('welcome', compact('featuredMovies', 'recentReviews', 'types', 'totalMovies', 'totalReviews', 'search', 'typeId'));
@@ -72,53 +73,47 @@ Route::middleware(['auth'])->group(function () {
     $search = $request->query('q');
     $typeId = $request->query('type');
 
-    $movieQuery = Activity::where('is_approved', true)
-        ->where('status', 'approved');
+    $movieQuery = Activity::where('Approval_Status', 'approved')
+        ->with(['type', 'reviews']);
 
     if ($search) {
         $movieQuery->where(function ($q) use ($search) {
-            $q->where('name', 'like', '%' . $search . '%')
-              ->orWhere('original_title', 'like', '%' . $search . '%');
+            $q->where('Title', 'like', '%' . $search . '%')
+              ->orWhere('Original_Title', 'like', '%' . $search . '%');
         });
     }
 
     if ($typeId) {
-        $movieQuery->where('type_id', $typeId);
+        $movieQuery->where('Genre_ID', $typeId);
     }
 
-    $movies = $movieQuery->latest()->get();
-    $types = Type::orderBy('name')->get();
+    $movies = $movieQuery->latest('CreatedAt')->get();
+    $types = Type::orderBy('Genre_Name')->get();
 
-
-    $totalMovies = Activity::where('is_approved', true)
-        ->where('status', 'approved')
+    $totalMovies = Activity::where('Approval_Status', 'approved')
         ->count();
 
-
     $totalReviews = Review::whereHas('activity', function ($query) {
-        $query->where('is_approved', true)
-            ->where('status', 'approved');
+        $query->where('Approval_Status', 'approved');
     })->count();
 
-
     $overallAverageRating = Review::whereHas('activity', function ($query) {
-        $query->where('is_approved', true)
-            ->where('status', 'approved');
-    })->avg('rating');
-
+        $query->where('Approval_Status', 'approved');
+    })->avg('Score');
 
     $topGenres = Type::query()
         ->select(
-            'types.id',
-            'types.name',
-            DB::raw('AVG(reviews.rating) as average_rating'),
-            DB::raw('COUNT(reviews.id) as review_count')
+            'types.Genre_ID',
+            'types.Genre_Name',
+            'types.Genre_ID as id',
+            'types.Genre_Name as name',
+            DB::raw('AVG(reviews.Score) as average_rating'),
+            DB::raw('COUNT(reviews.Review_ID) as review_count')
         )
-        ->join('activities', 'activities.type_id', '=', 'types.id')
-        ->join('reviews', 'reviews.activity_id', '=', 'activities.id')
-        ->where('activities.is_approved', true)
-        ->where('activities.status', 'approved')
-        ->groupBy('types.id', 'types.name')
+        ->join('activities', 'activities.Genre_ID', '=', 'types.Genre_ID')
+        ->join('reviews', 'reviews.Movie_ID', '=', 'activities.Movie_ID')
+        ->where('activities.Approval_Status', 'approved')
+        ->groupBy('types.Genre_ID', 'types.Genre_Name')
         ->orderByDesc('average_rating')
         ->orderByDesc('review_count')
         ->limit(5)
@@ -233,5 +228,6 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/settings.php';
 
 

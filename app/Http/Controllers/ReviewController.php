@@ -18,16 +18,15 @@ class ReviewController extends Controller
         ]);
 
         Review::create([
-            'user_id' => auth()->id(),
-            'activity_id' => $activityId,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-            'is_spoiler' => $request->has('is_spoiler') ? 1 : 0,
+            'User_ID' => auth()->id(),
+            'Movie_ID' => $activityId,
+            'Score' => $request->rating,
+            'Review_Text' => $request->comment,
+            'Spoiler' => $request->has('is_spoiler') ? 1 : 0,
         ]);
 
         return back()->with('success', ' บันทึกรีวิวและให้คะแนนภาพยนตร์เรียบร้อยแล้ว!');
     }
-
 
     public function storeReply(Request $request, $reviewId)
     {
@@ -36,20 +35,18 @@ class ReviewController extends Controller
         ]);
 
         ReviewReply::create([
-            'review_id' => $reviewId,
-            'user_id' => auth()->id(),
-            'message' => $request->message,
+            'Review_ID' => $reviewId,
+            'User_ID' => auth()->id(),
+            'Message' => $request->message,
         ]);
 
         return redirect()->back()->with('success', 'ตอบกลับความคิดเห็นเรียบร้อยแล้ว!');
     }
 
-
     public function report($reviewId)
     {
-
-        $alreadyReported = CommentReport::where('review_id', $reviewId)
-            ->where('user_id', auth()->id())
+        $alreadyReported = CommentReport::where('Review_ID', $reviewId)
+            ->where('User_ID', auth()->id())
             ->exists();
 
         if ($alreadyReported) {
@@ -57,9 +54,9 @@ class ReviewController extends Controller
         }
 
         CommentReport::create([
-            'review_id' => $reviewId,
-            'user_id' => auth()->id(),
-            'reason' => 'ผู้ใช้แจ้งว่ามีเนื้อหาไม่เหมาะสม หรือสแปม',
+            'Review_ID' => $reviewId,
+            'User_ID' => auth()->id(),
+            'Reason' => 'ผู้ใช้แจ้งว่ามีเนื้อหาไม่เหมาะสม หรือสแปม',
         ]);
 
         return back()->with('success', ' รายงานคอมเมนต์ไปยังผู้ดูแลระบบเรียบร้อยแล้ว');
@@ -71,67 +68,57 @@ class ReviewController extends Controller
         
         $review = Review::findOrFail($id);
 
-
-        if ($review->user_id !== auth()->id()) {
+        if ($review->User_ID !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์แก้ไขคอมเมนต์นี้');
         }
 
-        $review->update(['comment' => $request->comment]);
+        $review->update(['Review_Text' => $request->comment]);
 
         return back()->with('success', ' แก้ไขคอมเมนต์เรียบร้อยแล้ว');
     }
-
 
     public function userDestroy($id)
     {
         $review = Review::findOrFail($id);
 
-
-        if ($review->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+        if ($review->User_ID !== auth()->id() && auth()->user()->Role !== 'admin' && auth()->user()->role !== 'admin') {
             abort(403, 'คุณไม่มีสิทธิ์ลบคอมเมนต์นี้');
         }
 
-
-        CommentReport::where('review_id', $review->id)->delete();
+        CommentReport::where('Review_ID', $review->Review_ID)->delete();
         $review->delete();
 
         return back()->with('success', '️ ลบคอมเมนต์ของคุณเรียบร้อยแล้ว');
     }
 
-
-
-
     public function adminReports()
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->Role !== 'admin' && auth()->user()->role !== 'admin') {
             abort(403, 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
         }
 
-        $reports = CommentReport::with(['review.user', 'review.activity', 'user'])->latest()->get();
+        $reports = CommentReport::with(['review.user', 'review.activity', 'user'])->latest('CreatedAt')->get();
         
         return view('admin.reports', compact('reports'));
     }
 
-
     public function destroy($id)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->Role !== 'admin' && auth()->user()->role !== 'admin') {
             abort(403);
         }
 
         $review = Review::findOrFail($id);
-        
 
-        CommentReport::where('review_id', $review->id)->delete();
+        CommentReport::where('Review_ID', $review->Review_ID)->delete();
         $review->delete();
 
         return back()->with('success', '️ ลบคอมเมนต์ที่ไม่เหมาะสมออกจากระบบเรียบร้อยแล้ว');
     }
 
-
     public function dismissReport($id)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()->Role !== 'admin' && auth()->user()->role !== 'admin') {
             abort(403);
         }
 

@@ -1,94 +1,132 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 class="font-bold text-lg sm:text-xl text-white flex items-center gap-2.5 flex-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400 shrink-0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>รายการรออนุมัติ (แอดมิน) - {{ config('app.name', 'CineReview') }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-dark text-light min-vh-100 d-flex flex-column">
+
+    @include('layouts.navigation')
+
+    <div class="bg-dark bg-opacity-75 border-bottom border-secondary py-3">
+        <div class="container d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+            <h2 class="h5 fw-bold text-white d-flex align-items-center gap-2 mb-0">
+                <i class="bi bi-shield-check text-primary"></i>
                 รายการภาพยนตร์รอการอนุมัติ (แอดมิน)
             </h2>
         </div>
-    </x-slot>
-
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        @if(session('success'))
-            <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium p-4 rounded-xl mb-6 shadow-sm">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="bg-rose-500/10 border border-rose-500/20 text-rose-400 font-medium p-4 rounded-xl mb-6 shadow-sm">{{ session('error') }}</div>
-        @endif
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            @forelse($movies as $movie)
-                <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex flex-col sm:flex-row shadow-sm">
-                    
-                    <div class="w-full sm:w-44 flex-shrink-0 bg-slate-950 aspect-[2/3] sm:aspect-auto sm:h-full relative border-b sm:border-b-0 sm:border-r border-slate-800">
-                        @if($movie->image)
-                            <img src="{{ \Illuminate\Support\Str::startsWith($movie->image, ['http://', 'https://']) ? $movie->image : asset('storage/' . $movie->image) }}" 
-                                 alt="{{ $movie->name }}" 
-                                 class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 min-h-[180px]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7h4"/><path d="M3 13h4"/><path d="M3 17h4"/><path d="M17 7h4"/><path d="M17 13h4"/><path d="M17 17h4"/></svg>
-                                <span class="text-[10px] text-slate-500">ไม่มีรูปภาพ</span>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-start justify-between gap-2 mb-2">
-                                <h3 class="font-bold text-lg text-white leading-snug">{{ $movie->name }} ({{ $movie->year }})</h3>
-                                <span class="bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded-md whitespace-nowrap shadow-sm">
-                                    {{ $movie->type ? $movie->type->name : 'ไม่ระบุหมวด' }}
-                                </span>
-                            </div>
-                            
-                            <p class="text-xs text-slate-400 mb-3">
-                                เสนอโดย: <span class="font-semibold text-slate-300">{{ $movie->user->name ?? 'ไม่ระบุ' }}</span> 
-                                ({{ $movie->created_at->diffForHumans() }})
-                            </p>
-                            
-                            <p class="text-sm text-slate-300 line-clamp-3 leading-relaxed mb-4">
-                                {{ $movie->review ?: 'ไม่มีเรื่องย่อสำหรับภาพยนตร์เรื่องนี้' }}
-                            </p>
-                        </div>
-
-                        
-                        <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800">
-
-                            <form action="{{ route('admin.movies.approve', $movie->id) }}" method="POST">
-                                @csrf
-                                <button
-                                    type="submit"
-                                    onclick="return confirm('ยืนยันการอนุมัติภาพยนตร์เรื่องนี้?')"
-                                    class="w-full flex items-center justify-center gap-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-medium py-2 px-3 rounded-lg text-sm transition"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                                    อนุมัติ
-                                </button>
-                            </form>
-
-                            <form action="{{ route('admin.movies.reject', $movie->id) }}" method="POST">
-                                @csrf
-                                <button
-                                    type="submit"
-                                    onclick="return confirm('ต้องการปฏิเสธภาพยนตร์เรื่องนี้หรือไม่?')"
-                                    class="w-full flex items-center justify-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 font-medium py-2 px-3 rounded-lg text-sm transition"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                    ปฏิเสธ
-                                </button>
-                            </form>
-
-                        </div>
-                    </div>
-
-                </div>
-            @empty
-                <div class="col-span-full text-center py-16 bg-slate-900/40 rounded-xl border border-dashed border-slate-800 flex flex-col items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-3 text-slate-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <p class="text-slate-300 font-medium">ไม่มีรายการรออนุมัติ</p>
-                </div>
-            @endforelse
-        </div>
     </div>
-</x-app-layout>
+
+    <main class="flex-grow-1 py-5">
+        <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success d-flex align-items-center gap-2 mb-4 shadow-sm">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>{{ session('success') }}</div>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger d-flex align-items-center gap-2 mb-4 shadow-sm">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>{{ session('error') }}</div>
+                </div>
+            @endif
+
+            <div class="row row-cols-1 row-cols-lg-2 g-4">
+                @forelse($movies as $movie)
+                    <div class="col">
+                        <div class="card bg-dark border-secondary rounded-4 shadow-sm h-100 overflow-hidden">
+                            <div class="row g-0 h-100">
+                                <div class="col-sm-4 bg-black position-relative" style="min-height: 200px;">
+                                    @if($movie->image)
+                                        <img src="{{ \Illuminate\Support\Str::startsWith($movie->image, ['http://', 'https://']) ? $movie->image : asset('storage/' . $movie->image) }}" 
+                                             alt="{{ $movie->name }}" 
+                                             class="w-100 h-100 object-fit-cover">
+                                    @else
+                                        <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-secondary p-3 text-center">
+                                            <i class="bi bi-film fs-2 mb-1"></i>
+                                            <span class="small">ไม่มีรูปภาพ</span>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="col-sm-8 p-3 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                                            <h3 class="h6 fw-bold text-white mb-0 text-truncate" title="{{ $movie->name }}">
+                                                {{ $movie->name }}
+                                            </h3>
+                                            <span class="badge bg-secondary bg-opacity-50 text-light px-2 py-0.5 small">
+                                                {{ $movie->year }}
+                                            </span>
+                                        </div>
+
+                                        <p class="small text-secondary mb-2">
+                                            {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
+                                        </p>
+
+                                        <p class="text-secondary small text-truncate-3 mb-3">
+                                            {{ $movie->review ?: 'ไม่มีเรื่องย่อสำหรับภาพยนตร์เรื่องนี้' }}
+                                        </p>
+                                    </div>
+
+                                    <div class="row g-2 pt-3 border-top border-secondary">
+                                        <div class="col-6">
+                                            <form action="{{ route('admin.movies.approve', $movie->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                        onclick="return confirm('ยืนยันการอนุมัติภาพยนตร์เรื่องนี้?')"
+                                                        class="btn btn-outline-success btn-sm w-100 d-flex align-items-center justify-content-center gap-1.5 fw-semibold">
+                                                    <i class="bi bi-check-lg"></i>
+                                                    <span>อนุมัติ</span>
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <form action="{{ route('admin.movies.reject', $movie->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                        onclick="return confirm('ต้องการปฏิเสธภาพยนตร์เรื่องนี้หรือไม่?')"
+                                                        class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-1.5 fw-semibold">
+                                                    <i class="bi bi-x-lg"></i>
+                                                    <span>ปฏิเสธ</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-12 text-center py-5 bg-dark border border-secondary border-dashed rounded-4">
+                        <i class="bi bi-shield-check fs-1 text-secondary mb-2 d-block"></i>
+                        <p class="text-light fw-medium mb-0">ไม่มีรายการรออนุมัติ</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-top border-secondary bg-dark py-4 mt-auto">
+        <div class="container text-center text-secondary small">
+            <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

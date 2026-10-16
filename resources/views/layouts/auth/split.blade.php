@@ -1,40 +1,38 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
-        <div class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
-            <div class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-e dark:border-neutral-800">
-                <div class="absolute inset-0 bg-neutral-900"></div>
-                <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
-                    <span class="flex h-10 w-10 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="me-2 h-7 fill-current text-white" />
-                    </span>
-                    {{ config('app.name', 'Laravel') }}
-                </a>
-
-                @php
-                    [$message, $author] = str(Illuminate\Foundation\Inspiring::quotes()->random())->explode('-');
-                @endphp
-
-                <div class="relative z-20 mt-auto">
-                    <blockquote class="space-y-2">
-                        <flux:heading size="lg">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
-                        <footer><flux:heading>{{ trim($author) }}</flux:heading></footer>
-                    </blockquote>
-                </div>
-            </div>
-            <div class="w-full lg:p-8">
-                <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-                    <a href="{{ route('home') }}" class="z-20 flex flex-col items-center gap-2 font-medium lg:hidden" wire:navigate>
-                        <span class="flex h-9 w-9 items-center justify-center rounded-md">
-                            <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
-                        </span>
-
-                        <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+    <body class="bg-dark text-light min-vh-100">
+        <div class="container-fluid min-vh-100 p-0">
+            <div class="row g-0 min-vh-100">
+                <div class="col-lg-6 bg-black d-none d-lg-flex flex-column justify-content-between p-5 border-end border-secondary position-relative">
+                    <a href="{{ route('home') }}" class="d-flex align-items-center gap-2 text-decoration-none text-light fs-5 fw-bold" wire:navigate>
+                        <x-app-logo-icon style="width: 32px; height: 32px;" class="text-light" />
+                        <span>{{ config('app.name', 'CineReview') }}</span>
                     </a>
-                    {{ $slot }}
+
+                    @php
+                        [$message, $author] = str(Illuminate\Foundation\Inspiring::quotes()->random())->explode('-');
+                    @endphp
+
+                    <div class="mt-auto">
+                        <blockquote class="blockquote text-light">
+                            <p class="fs-4 fst-italic">&ldquo;{{ trim($message) }}&rdquo;</p>
+                            <footer class="blockquote-footer text-secondary">{{ trim($author) }}</footer>
+                        </blockquote>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
+                    <div class="w-100" style="max-width: 400px;">
+                        <div class="d-lg-none text-center mb-4">
+                            <a href="{{ route('home') }}" class="text-decoration-none" wire:navigate>
+                                <x-app-logo-icon style="width: 44px; height: 44px;" class="text-light" />
+                            </a>
+                        </div>
+                        {{ $slot }}
+                    </div>
                 </div>
             </div>
         </div>

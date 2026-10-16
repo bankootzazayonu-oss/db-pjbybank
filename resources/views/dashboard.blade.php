@@ -1,250 +1,272 @@
-<x-app-layout>
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <div>
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                        แดชบอร์ดชุมชนภาพยนตร์
-                    </h1>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-1">
-                        สรุปสถิติบทวิจารณ์ คะแนนเฉลี่ย และคลังภาพยนตร์ที่เปิดให้รีวิว
-                    </p>
-                </div>
+    <title>แดชบอร์ด - {{ config('app.name', 'CineReview') }}</title>
 
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('activities.create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm transition shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                        เสนอภาพยนตร์ใหม่
-                    </a>
-                </div>
-            </div>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-            
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-                
-                <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 sm:p-5">
-                    <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">ภาพยนตร์ทั้งหมด</p>
-                    <p class="text-2xl sm:text-3xl font-black text-white mt-1">{{ $totalMovies }}</p>
-                    <p class="text-[11px] text-emerald-400 mt-1 font-medium">เรื่องที่ได้รับการอนุมัติ</p>
-                </div>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-dark text-light min-vh-100 d-flex flex-column">
 
-                
-                <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 sm:p-5">
-                    <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">รีวิวจากสมาชิก</p>
-                    <p class="text-2xl sm:text-3xl font-black text-white mt-1">{{ $totalReviews }}</p>
-                    <p class="text-[11px] text-slate-400 mt-1">บทวิจารณ์ทั้งหมด</p>
-                </div>
+    @include('layouts.navigation')
 
-                
-                <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 sm:p-5">
-                    <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">คะแนนเฉลี่ยรวม</p>
-                    <div class="flex items-baseline gap-1 mt-1">
-                        <span class="text-2xl sm:text-3xl font-black text-amber-400">
-                            {{ $overallAverageRating !== null ? number_format($overallAverageRating, 1) : '0.0' }}
-                        </span>
-                        <span class="text-xs text-slate-500">/ 10</span>
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+
+            <div class="mb-5">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mb-4">
+                    <div>
+                        <h1 class="h3 fw-bold text-white mb-1">
+                            แดชบอร์ดชุมชนภาพยนตร์
+                        </h1>
+                        <p class="text-secondary small mb-0">
+                            สรุปสถิติบทวิจารณ์ คะแนนเฉลี่ย และคลังภาพยนตร์ที่เปิดให้รีวิว
+                        </p>
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-1">คำนวณจากรีวิวทุกเรื่อง</p>
+
+                    <div>
+                        <a href="{{ route('activities.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 fw-semibold shadow-sm">
+                            <i class="bi bi-plus-circle"></i>
+                            <span>เสนอภาพยนตร์ใหม่</span>
+                        </a>
+                    </div>
                 </div>
 
-                
-                <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 sm:p-5">
-                    <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">หมวดหมู่คะแนนสูงสุด</p>
-                    <p class="text-xl sm:text-2xl font-black text-white mt-1 truncate">
-                        {{ $topGenres->first()?->name ?? 'ไม่มีข้อมูล' }}
-                    </p>
-                    <p class="text-[11px] text-amber-400 mt-1 font-semibold flex items-center gap-1">
-                        @if($topGenres->first())
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                            {{ number_format($topGenres->first()->average_rating, 1) }} / 10
-                        @else
-                            -
-                        @endif
-                    </p>
-                </div>
+                <div class="row row-cols-2 row-cols-lg-4 g-3">
+                    <div class="col">
+                        <div class="card bg-dark border-secondary p-3 h-100 shadow-sm">
+                            <small class="text-uppercase text-secondary fw-semibold">ภาพยนตร์ทั้งหมด</small>
+                            <div class="h2 fw-bold text-white my-1">{{ $totalMovies }}</div>
+                            <small class="text-success fw-medium">เรื่องที่ได้รับการอนุมัติ</small>
+                        </div>
+                    </div>
 
+                    <div class="col">
+                        <div class="card bg-dark border-secondary p-3 h-100 shadow-sm">
+                            <small class="text-uppercase text-secondary fw-semibold">รีวิวจากสมาชิก</small>
+                            <div class="h2 fw-bold text-white my-1">{{ $totalReviews }}</div>
+                            <small class="text-secondary">บทวิจารณ์ทั้งหมด</small>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card bg-dark border-secondary p-3 h-100 shadow-sm">
+                            <small class="text-uppercase text-secondary fw-semibold">คะแนนเฉลี่ยรวม</small>
+                            <div class="d-flex align-items-baseline gap-1 my-1">
+                                <span class="h2 fw-bold text-warning mb-0">
+                                    {{ $overallAverageRating !== null ? number_format($overallAverageRating, 1) : '0.0' }}
+                                </span>
+                                <span class="small text-secondary">/ 10</span>
+                            </div>
+                            <small class="text-secondary">คำนวณจากรีวิวทุกเรื่อง</small>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card bg-dark border-secondary p-3 h-100 shadow-sm">
+                            <small class="text-uppercase text-secondary fw-semibold">หมวดหมู่คะแนนสูงสุด</small>
+                            <div class="h4 fw-bold text-white my-1 text-truncate">
+                                {{ $topGenres->first()?->name ?? 'ไม่มีข้อมูล' }}
+                            </div>
+                            <small class="text-warning fw-semibold d-flex align-items-center gap-1">
+                                @if($topGenres->first())
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>{{ number_format($topGenres->first()->average_rating, 1) }} / 10</span>
+                                @else
+                                    -
+                                @endif
+                            </small>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-     
-        <div class="bg-slate-900 rounded-xl border border-slate-800 p-5 sm:p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            <div class="card bg-dark border-secondary p-4 rounded-4 shadow-sm mb-5">
+                <div class="mb-3">
+                    <h2 class="h5 fw-bold text-white d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-trophy-fill text-warning"></i>
                         5 อันดับหมวดหมู่ที่มีคะแนนรีวิวเฉลี่ยสูงสุด
                     </h2>
-                    <p class="text-xs text-slate-400 mt-1">
-                        คำนวณจากค่าเฉลี่ยคะแนนของผู้ใช้งานจริง (SQL Aggregation)
-                    </p>
+                    <small class="text-secondary">คำนวณจากค่าเฉลี่ยคะแนนของผู้ใช้งานจริง (SQL Aggregation)</small>
                 </div>
-            </div>
 
-            @if($topGenres->count() > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                    @foreach($topGenres as $index => $genre)
-                        <div class="p-3.5 rounded-lg bg-slate-950 border border-slate-800/80 flex flex-col justify-between hover:border-slate-700 transition">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="w-6 h-6 rounded-md bg-slate-800 text-slate-300 font-bold flex items-center justify-center text-xs">
-                                    #{{ $index + 1 }}
-                                </span>
-                                <span class="text-[11px] text-slate-500">{{ $genre->review_count }} รีวิว</span>
-                            </div>
-
-                            <div>
-                                <h3 class="font-bold text-white text-sm truncate">{{ $genre->name }}</h3>
-                                <div class="mt-1 flex items-center gap-1 text-amber-400 font-bold text-xs">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                    <span>{{ number_format($genre->average_rating, 1) }}</span>
-                                    <span class="text-[10px] text-slate-500 font-normal">/ 10</span>
+                @if($topGenres->count() > 0)
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-5 g-3">
+                        @foreach($topGenres as $index => $genre)
+                            <div class="col">
+                                <div class="card bg-black border-secondary p-3 h-100 d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <span class="badge bg-secondary bg-opacity-50 text-light fw-bold">
+                                            #{{ $index + 1 }}
+                                        </span>
+                                        <small class="text-secondary">{{ $genre->review_count }} รีวิว</small>
+                                    </div>
+                                    <div>
+                                        <h3 class="h6 fw-bold text-white text-truncate mb-1">{{ $genre->name }}</h3>
+                                        <div class="d-flex align-items-center gap-1 text-warning fw-bold small">
+                                            <i class="bi bi-star-fill"></i>
+                                            <span>{{ number_format($genre->average_rating, 1) }}</span>
+                                            <span class="text-secondary fw-normal">/ 10</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-6 text-slate-500 text-xs">
-                    ยังไม่มีข้อมูลรีวิวเพียงพอสำหรับการจัดอันดับหมวดหมู่
-                </div>
-            @endif
-        </div>
-
-     
-        <div>
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
-                <div>
-                    <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7h4"/><path d="M3 13h4"/><path d="M3 17h4"/><path d="M17 7h4"/><path d="M17 13h4"/><path d="M17 17h4"/></svg>
-                        คลังภาพยนตร์ทั้งหมด
-                    </h2>
-                    <p class="text-xs text-slate-400 mt-1">
-                        @if($search)
-                            ผลการค้นหาสำหรับ "{{ $search }}" (พบ {{ $movies->count() }} เรื่อง)
-                        @elseif($typeId)
-                            หมวดหมู่: {{ $types->firstWhere('id', $typeId)?->name ?? 'ที่เลือก' }} (พบ {{ $movies->count() }} เรื่อง)
-                        @else
-                            คลิกที่ภาพยนตร์เพื่อดูเรื่องย่อและอ่านรีวิวทั้งหมด (มี {{ $movies->count() }} เรื่อง)
-                        @endif
-                    </p>
-                </div>
-
-                
-                <form action="{{ route('dashboard') }}" method="GET" class="flex items-center gap-2 max-w-sm w-full">
-                    @if($typeId)
-                        <input type="hidden" name="type" value="{{ $typeId }}">
-                    @endif
-                    <div class="relative flex-1">
-                        <input type="text" 
-                               name="q" 
-                               value="{{ $search ?? '' }}" 
-                               placeholder="ค้นหาชื่อภาพยนตร์..." 
-                               class="w-full bg-slate-950 border border-slate-700/80 focus:border-indigo-500 text-white placeholder:text-slate-500 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none transition">
-                        <span class="absolute left-2.5 top-1.5 text-slate-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                        </span>
+                        @endforeach
                     </div>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex-shrink-0">
-                        ค้นหา
-                    </button>
-                    @if($search || $typeId)
-                        <a href="{{ route('dashboard') }}" class="text-xs text-slate-400 hover:text-white px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition flex-shrink-0" title="ล้างตัวกรอง">
-                            ✕ ล้าง
-                        </a>
-                    @endif
-                </form>
+                @else
+                    <div class="text-center py-4 text-secondary small">
+                        ยังไม่มีข้อมูลรีวิวเพียงพอสำหรับการจัดอันดับหมวดหมู่
+                    </div>
+                @endif
             </div>
 
-            
-            @if(isset($types) && $types->count() > 0)
-                <div class="mb-5 flex flex-wrap items-center gap-1.5">
-                    <span class="text-xs text-slate-500 mr-1 font-medium">หมวดหมู่:</span>
-                    <a href="{{ route('dashboard', $search ? ['q' => $search] : []) }}" 
-                       class="text-[11px] font-medium px-2.5 py-1 rounded-lg border transition {{ empty($typeId) ? 'bg-slate-200 text-slate-900 border-slate-200 font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
-                        ทั้งหมด
-                    </a>
-                    @foreach($types as $type)
-                        <a href="{{ route('dashboard', array_merge($search ? ['q' => $search] : [], ['type' => $type->id])) }}" 
-                           class="text-[11px] font-medium px-2.5 py-1 rounded-lg border transition {{ ($typeId == $type->id) ? 'bg-indigo-600 text-white border-indigo-600 font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700' }}">
-                            {{ $type->name }}
-                        </a>
-                    @endforeach
-                </div>
-            @endif
-
-            
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5">
-                @forelse($movies as $movie)
-                    @php
-                        $reviewCount = $movie->reviews ? $movie->reviews->count() : 0;
-                        $avgRating = $reviewCount > 0 ? round($movie->reviews->avg('rating'), 1) : 0;
-                    @endphp
-
-                    <a href="{{ route('activities.show', $movie->id) }}" 
-                       class="group bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex flex-col hover:border-slate-700 transition duration-200">
-                        
-                        
-                        <div class="relative aspect-[2/3] bg-slate-950 overflow-hidden">
-                            @if($movie->image)
-                                <img src="{{ Str::startsWith($movie->image, ['http://', 'https://']) ? $movie->image : asset('storage/' . $movie->image) }}"
-                                     alt="{{ $movie->name }}"
-                                     class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                                     loading="lazy">
+            <div>
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+                    <div>
+                        <h2 class="h4 fw-bold text-white d-flex align-items-center gap-2 mb-1">
+                            <i class="bi bi-film text-primary"></i>
+                            คลังภาพยนตร์ทั้งหมด
+                        </h2>
+                        <small class="text-secondary">
+                            @if($search)
+                                ผลการค้นหาสำหรับ "{{ $search }}" (พบ {{ $movies->count() }} เรื่อง)
+                            @elseif($typeId)
+                                หมวดหมู่: {{ $types->firstWhere('id', $typeId)?->name ?? 'ที่เลือก' }} (พบ {{ $movies->count() }} เรื่อง)
                             @else
-                                <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 bg-slate-900">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7h4"/><path d="M3 13h4"/><path d="M3 17h4"/><path d="M17 7h4"/><path d="M17 13h4"/><path d="M17 17h4"/></svg>
-                                    <span class="text-[10px] text-slate-500">ไม่มีรูป</span>
-                                </div>
+                                คลิกที่ภาพยนตร์เพื่อดูเรื่องย่อและอ่านรีวิวทั้งหมด (มี {{ $movies->count() }} เรื่อง)
                             @endif
-
-                            
-                            <div class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-slate-950/80 text-[10px] text-slate-300 font-medium">
-                                {{ $movie->year }}
-                            </div>
-
-                            
-                            <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-slate-950/85 backdrop-blur text-[11px] font-bold text-amber-400 flex items-center gap-1 border border-white/10 shadow">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <span class="text-white">{{ $avgRating > 0 ? number_format($avgRating, 1) : '-' }}</span>
-                            </div>
-                        </div>
-
-                        
-                        <div class="p-3 flex flex-col flex-1 justify-between">
-                            <div>
-                                <h3 class="font-bold text-sm text-slate-100 group-hover:text-indigo-400 transition line-clamp-1 leading-snug" title="{{ $movie->name }}">
-                                    {{ $movie->name }}
-                                </h3>
-                                @if(!empty($movie->original_title) && $movie->original_title !== $movie->name)
-                                    <p class="text-[11px] text-slate-400 font-normal truncate italic" title="{{ $movie->original_title }}">
-                                        {{ $movie->original_title }}
-                                    </p>
-                                @endif
-                                <p class="text-[11px] text-slate-500 mt-0.5">
-                                    {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
-                                </p>
-                            </div>
-
-                            <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-500">
-                                <span class="flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
-                                    {{ $reviewCount }} รีวิว
-                                </span>
-                                <span class="text-indigo-400 font-medium group-hover:underline">ดูรีวิว</span>
-                            </div>
-                        </div>
-
-                    </a>
-                @empty
-                    <div class="col-span-full text-center py-12 bg-slate-900/40 rounded-xl border border-dashed border-slate-800 flex flex-col items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-3 text-slate-600"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7h4"/><path d="M3 13h4"/><path d="M3 17h4"/><path d="M17 7h4"/><path d="M17 13h4"/><path d="M17 17h4"/></svg>
-                        <p class="text-slate-300 font-medium text-sm">ยังไม่มีภาพยนตร์ในคลังหลัก</p>
-                        <p class="text-xs text-slate-500 mt-1">ภาพยนตร์ที่ผ่านการอนุมัติแล้วจะแสดงขึ้นที่นี่</p>
+                        </small>
                     </div>
-                @endforelse
-            </div>
-        </div>
 
-    </div>
-</x-app-layout>
+                    <form action="{{ route('dashboard') }}" method="GET" class="d-flex align-items-center gap-2" style="max-width: 380px;">
+                        @if($typeId)
+                            <input type="hidden" name="type" value="{{ $typeId }}">
+                        @endif
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-dark border-secondary text-secondary">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" 
+                                   name="q" 
+                                   value="{{ $search ?? '' }}" 
+                                   placeholder="ค้นหาชื่อภาพยนตร์..." 
+                                   class="form-control bg-dark border-secondary text-light">
+                            <button type="submit" class="btn btn-primary fw-semibold px-3">
+                                ค้นหา
+                            </button>
+                            @if($search || $typeId)
+                                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary" title="ล้างตัวกรอง">
+                                    ✕ ล้าง
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+
+                @if(isset($types) && $types->count() > 0)
+                    <div class="d-flex flex-wrap align-items-center gap-1 mb-4">
+                        <small class="text-secondary me-2 fw-medium">หมวดหมู่:</small>
+                        <a href="{{ route('dashboard', $search ? ['q' => $search] : []) }}" 
+                           class="btn btn-sm {{ empty($typeId) ? 'btn-light fw-bold text-dark' : 'btn-outline-secondary text-light' }} rounded-pill px-3 py-0.5 small">
+                            ทั้งหมด
+                        </a>
+                        @foreach($types as $type)
+                            <a href="{{ route('dashboard', array_merge($search ? ['q' => $search] : [], ['type' => $type->id])) }}" 
+                               class="btn btn-sm {{ ($typeId == $type->id) ? 'btn-primary fw-bold text-white' : 'btn-outline-secondary text-light' }} rounded-pill px-3 py-0.5 small">
+                                {{ $type->name }}
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 g-md-4">
+                    @forelse($movies as $movie)
+                        @php
+                            $reviewCount = $movie->reviews ? $movie->reviews->count() : 0;
+                            $avgRating = $reviewCount > 0 ? round($movie->reviews->avg('rating'), 1) : 0;
+                        @endphp
+
+                        <div class="col">
+                            <a href="{{ route('activities.show', $movie->id) }}" class="text-decoration-none">
+                                <div class="card bg-dark border-secondary h-100 overflow-hidden shadow-sm">
+                                    <div class="position-relative bg-black poster-ratio overflow-hidden">
+                                        @if($movie->image)
+                                            <img src="{{ Str::startsWith($movie->image, ['http://', 'https://']) ? $movie->image : asset('storage/' . $movie->image) }}"
+                                                 alt="{{ $movie->name }}"
+                                                 class="w-100 h-100 object-fit-cover"
+                                                 loading="lazy">
+                                        @else
+                                            <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-secondary bg-dark">
+                                                <i class="bi bi-film fs-2 text-secondary mb-1"></i>
+                                                <span class="small text-secondary">ไม่มีรูป</span>
+                                            </div>
+                                        @endif
+
+                                        <div class="position-absolute bottom-0 start-0 m-2 px-1.5 py-0.5 rounded bg-dark bg-opacity-75 small text-light fw-medium">
+                                            {{ $movie->year }}
+                                        </div>
+
+                                        <div class="position-absolute top-0 end-0 m-2 px-2 py-0.5 rounded bg-dark bg-opacity-75 border border-secondary small fw-bold text-warning d-flex align-items-center gap-1 shadow-sm">
+                                            <i class="bi bi-star-fill"></i>
+                                            <span class="text-light">{{ $avgRating > 0 ? number_format($avgRating, 1) : '-' }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body p-3 d-flex flex-column justify-content-between">
+                                        <div>
+                                            <h3 class="h6 fw-bold text-light mb-1 text-truncate" title="{{ $movie->name }}">
+                                                {{ $movie->name }}
+                                            </h3>
+                                            @if(!empty($movie->original_title) && $movie->original_title !== $movie->name)
+                                                <p class="small text-secondary text-truncate fst-italic mb-1" title="{{ $movie->original_title }}">
+                                                    {{ $movie->original_title }}
+                                                </p>
+                                            @endif
+                                            <p class="small text-secondary mb-0">
+                                                {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
+                                            </p>
+                                        </div>
+
+                                        <div class="mt-3 pt-2 border-top border-secondary d-flex align-items-center justify-content-between small text-secondary">
+                                            <span class="d-flex align-items-center gap-1">
+                                                <i class="bi bi-chat-left-text"></i>
+                                                {{ $reviewCount }} รีวิว
+                                            </span>
+                                            <span class="text-primary fw-medium">ดูรีวิว</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @empty
+                        <div class="col-12 text-center py-5 bg-dark border border-secondary border-dashed rounded-4">
+                            <i class="bi bi-film fs-1 text-secondary mb-2 d-block"></i>
+                            <p class="text-light fw-medium mb-1">ยังไม่มีภาพยนตร์ในคลังหลัก</p>
+                            <small class="text-secondary">ภาพยนตร์ที่ผ่านการอนุมัติแล้วจะแสดงขึ้นที่นี่</small>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="border-top border-secondary bg-dark py-4 mt-auto">
+        <div class="container text-center text-secondary small">
+            <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

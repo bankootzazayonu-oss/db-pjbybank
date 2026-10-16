@@ -7,10 +7,10 @@ new #[Title('Appearance settings')] class extends Component {
 
 }; ?>
 
-<section class="w-full">
+<section class="w-100">
     @include('partials.settings-heading')
 
-    <flux:heading level="2" class="sr-only">{{ __('Appearance settings') }}</flux:heading>
+    <flux:heading level="2" class="visually-hidden">{{ __('Appearance settings') }}</flux:heading>
 
     <x-pages::settings.layout :heading="__('Appearance')" :subheading="__('Update the appearance settings for your account')">
         <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">

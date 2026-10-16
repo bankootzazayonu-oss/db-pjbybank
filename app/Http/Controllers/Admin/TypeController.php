@@ -12,44 +12,40 @@ class TypeController extends Controller
 
     public function index()
     {
-        $types = Type::latest()->get();
+        $types = Type::latest('CreatedAt')->get();
         return view('admin.types.index', compact('types'));
     }
-
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:types,name',
+            'name' => 'required|string|max:255|unique:types,Genre_Name',
         ], [
             'name.unique' => '️ หมวดหมู่นี้มีอยู่ในระบบแล้ว',
             'name.required' => 'กรุณากรอกชื่อหมวดหมู่'
         ]);
 
-        Type::create(['name' => $request->name]);
+        Type::create(['Genre_Name' => $request->name]);
         return back()->with('success', ' เพิ่มหมวดหมู่เรียบร้อยแล้ว');
     }
-
 
     public function update(Request $request, Type $type)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:types,name,' . $type->id,
+            'name' => 'required|string|max:255|unique:types,Genre_Name,' . $type->Genre_ID . ',Genre_ID',
         ], [
             'name.unique' => '️ ชื่อหมวดหมู่นี้มีอยู่ในระบบแล้ว',
             'name.required' => 'กรุณากรอกชื่อหมวดหมู่'
         ]);
 
-        $type->update(['name' => $request->name]);
+        $type->update(['Genre_Name' => $request->name]);
 
         return back()->with('success', ' แก้ไขชื่อหมวดหมู่เรียบร้อยแล้ว');
     }
 
-
     public function destroy(Type $type)
     {
-
-        $hasMovies = Activity::where('type_id', $type->id)->exists();
+        $hasMovies = Activity::where('Genre_ID', $type->Genre_ID)->exists();
 
         if ($hasMovies) {
             return back()->with('error', ' ไม่สามารถลบได้! เนื่องจากมีภาพยนตร์ใช้หมวดหมู่นี้อยู่ กรุณาเปลี่ยนหมวดหมู่ของภาพยนตร์ก่อน');

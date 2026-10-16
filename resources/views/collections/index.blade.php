@@ -1,115 +1,150 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h1 class="font-bold text-xl text-white flex items-center gap-2.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>กระดานจัดอันดับของฉัน - {{ config('app.name', 'CineReview') }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-dark text-light min-vh-100 d-flex flex-column">
+
+    @include('layouts.navigation')
+
+    <div class="bg-dark bg-opacity-75 border-bottom border-secondary py-3">
+        <div class="container d-flex align-items-center justify-content-between">
+            <h1 class="h5 fw-bold text-white d-flex align-items-center gap-2 mb-0">
+                <i class="bi bi-card-list text-primary"></i>
                 กระดานจัดอันดับของฉัน (My Tier Lists)
             </h1>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('collections.trash') }}" class="text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white py-1.5 px-3.5 rounded-lg transition flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                    ถังขยะ
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('collections.trash') }}" class="btn btn-outline-secondary btn-sm text-light d-flex align-items-center gap-1.5">
+                    <i class="bi bi-trash text-danger"></i>
+                    <span>ถังขยะ</span>
                 </a>
-                <a href="{{ route('dashboard') }}" class="text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white py-1.5 px-3.5 rounded-lg transition">
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary btn-sm text-light">
                     ← กลับหน้าคลังหนัง
                 </a>
             </div>
         </div>
-    </x-slot>
-
-    <div class="py-10 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-        @if(session('success'))
-            <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-2xl font-semibold shadow-lg">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <div class="bg-slate-900/30 p-6 rounded-2xl shadow-sm border border-dashed border-slate-700 h-fit">
-                <h2 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                    สร้างกระดานใหม่
-                </h2>
-                <p class="text-xs text-slate-400 mb-5 leading-relaxed">กำหนดหัวข้อ เช่น "หนังโนแลนในดวงใจ" หรือ "หนังซอมบี้ห้ามพลาด"</p>
-
-                <form action="{{ route('collections.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-4">
-                        <input type="text" name="name" required placeholder="พิมพ์ชื่อกระดาน..." 
-                               class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white rounded-lg px-4 py-2.5 text-sm placeholder:text-slate-600 transition">
-                    </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-medium text-sm py-2.5 rounded-lg shadow-sm transition">
-                        สร้างกระดานเลย
-                    </button>
-                </form>
-            </div>
-
-            
-            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                @forelse($collections as $collection)
-                    <div x-data="{ editCollectionMode: false }" class="bg-slate-900/60 p-6 rounded-2xl shadow-sm border border-slate-800 hover:border-slate-700 transition group relative">
-                        
-                        
-                        <div x-show="!editCollectionMode">
-                            
-                            
-                            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition flex gap-1.5 z-10">
-                                <button type="button" @click="editCollectionMode = true" class="text-slate-400 hover:text-white bg-slate-950 border border-slate-700 hover:border-slate-500 px-2 py-1.5 rounded-md text-xs transition" title="แก้ไขชื่อกระดาน">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                                </button>
-                                <form action="{{ route('collections.destroy', $collection->id) }}" method="POST" onsubmit="return confirm('ยืนยันลบกระดานนี้? (หนังที่จัดอันดับไว้จะหายไปทั้งหมด)');" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-slate-400 hover:text-rose-400 bg-slate-950 border border-slate-700 hover:border-rose-900 px-2 py-1.5 rounded-md text-xs transition" title="ลบกระดาน">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                    </button>
-                                </form>
-                            </div>
-
-                            
-                            <a href="{{ route('collections.show', $collection->id) }}" class="block mt-1">
-                                <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-105 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-                                </div>
-                                <h3 class="text-base font-bold text-white pr-14 truncate group-hover:text-indigo-400 transition">{{ $collection->name }}</h3>
-                                <p class="text-xs text-slate-400 mt-1">อัปเดต: {{ $collection->updated_at->diffForHumans() }}</p>
-                                <div class="mt-4 flex items-center gap-1.5 text-xs font-medium text-indigo-400 group-hover:translate-x-1 transition">
-                                    เปิดกระดานจัดอันดับ 
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                                </div>
-                            </a>
-
-                        </div>
-
-                        
-                        <div x-show="editCollectionMode" style="display: none;">
-                            <form action="{{ route('collections.update', $collection->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <label class="block text-xs font-bold text-slate-400 mb-1">แก้ไขชื่อกระดาน:</label>
-                                <input type="text" name="name" value="{{ $collection->name }}" required class="w-full text-sm bg-slate-950 border border-slate-800 focus:border-rose-500 text-white rounded-xl px-3 py-2 mb-3">
-                                
-                                <div class="flex gap-2">
-                                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition">
-                                        บันทึก
-                                    </button>
-                                    <button type="button" @click="editCollectionMode = false" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold py-1.5 px-3 rounded-lg transition">
-                                        ยกเลิก
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                @empty
-                    <div class="col-span-2 text-center text-slate-500 py-16 bg-slate-900/40 rounded-2xl border border-dashed border-slate-800 flex flex-col items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-slate-600"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-                        <p class="text-slate-300 font-medium text-sm">ยังไม่มีกระดานจัดอันดับ</p>
-                        <p class="text-xs text-slate-500 mt-1">สร้างกระดานแรกของคุณจากฟอร์มด้านซ้ายมือได้เลย</p>
-                    </div>
-                @endforelse
-            </div>
-        </div>
     </div>
-</x-app-layout>
+
+    <main class="flex-grow-1 py-5">
+        <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success d-flex align-items-center gap-2 mb-4 shadow-sm">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>{{ session('success') }}</div>
+                </div>
+            @endif
+
+            <div class="row g-4 align-items-start">
+                
+                <div class="col-md-4">
+                    <div class="card bg-dark border-secondary border-dashed rounded-4 p-4 shadow-sm position-sticky" style="top: 80px;">
+                        <h2 class="h6 fw-bold text-white mb-1 d-flex align-items-center gap-2">
+                            <i class="bi bi-plus-circle text-primary"></i>
+                            สร้างกระดานใหม่
+                        </h2>
+                        <p class="small text-secondary mb-3">กำหนดหัวข้อ เช่น "หนังโนแลนในดวงใจ" หรือ "หนังซอมบี้ห้ามพลาด"</p>
+
+                        <form action="{{ route('collections.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <input type="text" name="name" required placeholder="พิมพ์ชื่อกระดาน..." 
+                                       class="form-control bg-dark border-secondary text-light">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                                สร้างกระดานเลย
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="row row-cols-1 row-cols-sm-2 g-3">
+                        @forelse($collections as $collection)
+                            <div class="col">
+                                <div x-data="{ editCollectionMode: false }" class="card bg-dark border-secondary rounded-4 p-4 shadow-sm h-100 position-relative">
+                                    
+                                    <div x-show="!editCollectionMode">
+                                        <div class="position-absolute top-0 end-0 m-3 d-flex gap-1 z-3">
+                                            <button type="button" @click="editCollectionMode = true" class="btn btn-outline-secondary btn-sm py-0 px-1.5 text-light" title="แก้ไขชื่อกระดาน">
+                                                <i class="bi bi-pencil" style="font-size: 11px;"></i>
+                                            </button>
+                                            <form action="{{ route('collections.destroy', $collection->id) }}" method="POST" onsubmit="return confirm('ยืนยันลบกระดานนี้? (หนังที่จัดอันดับไว้จะหายไปทั้งหมด)');" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-1.5" title="ลบกระดาน">
+                                                    <i class="bi bi-trash" style="font-size: 11px;"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                        <a href="{{ route('collections.show', $collection->id) }}" class="text-decoration-none d-block">
+                                            <div class="rounded bg-primary bg-opacity-25 text-primary d-flex align-items-center justify-content-center mb-3" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-card-list fs-5"></i>
+                                            </div>
+                                            <h3 class="h6 fw-bold text-white text-truncate pe-5 mb-1">{{ $collection->name }}</h3>
+                                            <small class="text-secondary d-block">อัปเดต: {{ $collection->updated_at->diffForHumans() }}</small>
+                                            
+                                            <div class="mt-3 text-primary small fw-semibold d-flex align-items-center gap-1">
+                                                <span>เปิดกระดานจัดอันดับ</span>
+                                                <i class="bi bi-arrow-right"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <div x-show="editCollectionMode" style="display: none;">
+                                        <form action="{{ route('collections.update', $collection->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <label class="form-label text-secondary small fw-bold mb-1">แก้ไขชื่อกระดาน:</label>
+                                            <input type="text" name="name" value="{{ $collection->name }}" required class="form-control form-control-sm bg-dark border-secondary text-light mb-3">
+                                            
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary btn-sm px-3 fw-semibold">
+                                                    บันทึก
+                                                </button>
+                                                <button type="button" @click="editCollectionMode = false" class="btn btn-secondary btn-sm px-3">
+                                                    ยกเลิก
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-12 text-center py-5 bg-dark border border-secondary border-dashed rounded-4">
+                                <i class="bi bi-card-list fs-1 text-secondary mb-2 d-block"></i>
+                                <p class="text-light fw-medium mb-1">คุณยังไม่มีกระดานจัดอันดับ</p>
+                                <small class="text-secondary">สร้างกระดานแรกของคุณจากฟอร์มด้านซ้าย</small>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="border-top border-secondary bg-dark py-4 mt-auto">
+        <div class="container text-center text-secondary small">
+            <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

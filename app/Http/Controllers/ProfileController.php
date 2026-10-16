@@ -14,45 +14,36 @@ use App\Models\Review;
 use App\Models\Collection;
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): View
-{
-    $user = $request->user();
+    {
+        $user = $request->user();
 
+        $reviews = Review::with('activity')
+            ->where('User_ID', $user->User_ID)
+            ->latest('CreatedAt')
+            ->get();
 
-    $reviews = Review::with('activity')
-        ->where('user_id', $user->id)
-        ->latest()
-        ->get();
+        $collections = Collection::where('User_ID', $user->User_ID)
+            ->latest('CreatedAt')
+            ->get();
 
+        $submittedMovies = Activity::where('Submitted_By', $user->User_ID)
+            ->latest('CreatedAt')
+            ->get();
 
-    $collections = Collection::where('user_id', $user->id)
-        ->latest()
-        ->get();
+        return view('profile.edit', [
+            'user' => $user,
+            'reviews' => $reviews,
+            'collections' => $collections,
+            'submittedMovies' => $submittedMovies,
+        ]);
+    }
 
-
-    $submittedMovies = Activity::where('user_id', $user->id)
-        ->latest()
-        ->get();
-
-    return view('profile.edit', [
-        'user' => $user,
-        'reviews' => $reviews,
-        'collections' => $collections,
-        'submittedMovies' => $submittedMovies,
-    ]);
-}
-
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
+        if ($request->user()->isDirty('email') || $request->user()->isDirty('Email')) {
             $request->user()->email_verified_at = null;
         }
 
@@ -61,9 +52,6 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [

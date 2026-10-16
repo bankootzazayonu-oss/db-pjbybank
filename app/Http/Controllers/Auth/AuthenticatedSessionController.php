@@ -22,6 +22,14 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $user = Auth::user();
+        if ($user && class_exists(\Laravel\Fortify\Features::class) && \Laravel\Fortify\Features::enabled(\Laravel\Fortify\Features::twoFactorAuthentication()) && $user->two_factor_confirmed_at) {
+            Auth::guard('web')->logout();
+            $request->session()->put('login.id', $user->getKey());
+            $request->session()->put('login.remember', $request->boolean('remember'));
+            return redirect()->route('two-factor.login');
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));

@@ -46,11 +46,11 @@
 >
     <template x-if="supported">
         <div>
-            <div class="grid gap-2">
+            <div class="d-grid gap-2">
                 <flux:button
                     variant="outline"
                     icon="finger-print"
-                    class="w-full"
+                    class="w-100"
                     x-on:click="verify()"
                     x-bind:disabled="loading"
                 >
@@ -58,15 +58,13 @@
                     <span x-show="loading" x-cloak>{{ $loadingLabel }}</span>
                 </flux:button>
                 <p x-show="error" x-text="error" x-cloak
-                   class="text-sm text-center text-red-600 dark:text-red-400"></p>
+                   class="small text-center text-danger mb-0"></p>
             </div>
 
-            <div class="relative my-6">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-zinc-200 dark:border-zinc-700"></div>
-                </div>
-                <div class="relative flex justify-center text-xs uppercase">
-                    <span class="px-2 text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900">
+            <div class="position-relative my-4">
+                <div class="position-absolute top-50 start-0 w-100 border-top border-secondary opacity-25"></div>
+                <div class="position-relative text-center">
+                    <span class="px-2 small text-uppercase text-secondary bg-body">
                         {{ $separator }}
                     </span>
                 </div>

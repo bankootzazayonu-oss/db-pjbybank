@@ -1,85 +1,103 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h1 class="font-bold text-xl text-white tracking-tight flex items-center gap-2.5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            โปรไฟล์และประวัติการใช้งาน
-        </h1>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <div class="py-10">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+    <title>โปรไฟล์ของฉัน - {{ config('app.name', 'CineReview') }}</title>
 
-            {{-- ==========================================
-                 สรุปข้อมูลผู้ใช้
-            ========================================== --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-                
-                <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
-                    <div>
-                        <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">หนังที่ฉันรีวิว</p>
-                        <p class="mt-2 text-3xl font-black text-white">{{ $reviews->count() }}</p>
-                        <p class="text-xs text-rose-400 mt-1">บทวิจารณ์</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                </div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-                
-                <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
-                    <div>
-                        <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">Tier List ของฉัน</p>
-                        <p class="mt-2 text-3xl font-black text-white">{{ $collections->count() }}</p>
-                        <p class="text-xs text-indigo-400 mt-1">กระดานจัดอันดับ</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
-                    </div>
-                </div>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-dark text-light min-vh-100 d-flex flex-column">
 
-                
-                <div class="p-6 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl flex items-center justify-between">
-                    <div>
-                        <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">หนังที่เสนอเข้าระบบ</p>
-                        <p class="mt-2 text-3xl font-black text-white">{{ $submittedMovies->count() }}</p>
-                        <p class="text-xs text-emerald-400 mt-1">คำขอเสนอหนัง</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    @include('layouts.navigation')
+
+    <div class="bg-dark bg-opacity-75 border-bottom border-secondary py-3">
+        <div class="container d-flex align-items-center justify-content-between">
+            <h1 class="h5 fw-bold text-white d-flex align-items-center gap-2 mb-0">
+                <i class="bi bi-person-circle text-primary"></i>
+                โปรไฟล์และประวัติการใช้งาน
+            </h1>
+        </div>
+    </div>
+
+    <main class="flex-grow-1">
+
+    <div class="container py-5">
+        <div class="d-flex flex-column gap-5">
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col">
+                    <div class="card bg-dark border-secondary rounded-4 p-4 shadow-sm h-100 d-flex flex-row align-items-center justify-content-between">
+                        <div>
+                            <small class="text-uppercase text-secondary fw-semibold">หนังที่ฉันรีวิว</small>
+                            <div class="h2 fw-bold text-white my-1">{{ $reviews->count() }}</div>
+                            <small class="text-danger fw-semibold">บทวิจารณ์</small>
+                        </div>
+                        <div class="rounded-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 text-danger d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="bi bi-chat-quote-fill fs-4"></i>
+                        </div>
                     </div>
                 </div>
 
+                <div class="col">
+                    <div class="card bg-dark border-secondary rounded-4 p-4 shadow-sm h-100 d-flex flex-row align-items-center justify-content-between">
+                        <div>
+                            <small class="text-uppercase text-secondary fw-semibold">Tier List ของฉัน</small>
+                            <div class="h2 fw-bold text-white my-1">{{ $collections->count() }}</div>
+                            <small class="text-primary fw-semibold">กระดานจัดอันดับ</small>
+                        </div>
+                        <div class="rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-25 text-primary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="bi bi-card-list fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card bg-dark border-secondary rounded-4 p-4 shadow-sm h-100 d-flex flex-row align-items-center justify-content-between">
+                        <div>
+                            <small class="text-uppercase text-secondary fw-semibold">หนังที่เสนอเข้าระบบ</small>
+                            <div class="h2 fw-bold text-white my-1">{{ $submittedMovies->count() }}</div>
+                            <small class="text-success fw-semibold">คำขอเสนอหนัง</small>
+                        </div>
+                        <div class="rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 text-success d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="bi bi-film fs-4"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-
-            {{-- ==========================================
-                 หนังที่ฉันรีวิว
-            ========================================== --}}
-            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
-                <h2 class="text-xl font-bold text-white mb-5 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-rose-400"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
+                <h2 class="h5 fw-bold text-white mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-chat-quote-fill text-danger"></i>
                     หนังที่ฉันรีวิว ({{ $reviews->count() }})
                 </h2>
 
                 @if($reviews->count() > 0)
-                    <div class="space-y-3">
+                    <div class="d-flex flex-column gap-3">
                         @foreach($reviews as $review)
-                            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-950/70 border border-slate-800/90 hover:border-slate-700 transition">
+                            <div class="card bg-black border-secondary p-3 rounded-3 shadow-sm d-flex flex-row justify-content-between align-items-center">
                                 <div>
-                                    <div class="font-bold text-white text-base">
+                                    <div class="fw-bold text-white fs-6">
                                         {{ $review->activity->name ?? 'ไม่พบชื่อภาพยนตร์' }}
                                     </div>
-                                    <div class="text-xs text-amber-400 mt-1 font-semibold flex items-center gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                        {{ $review->rating }} / 10 ดาว
-                                        <span class="text-slate-500 ml-2 font-normal">({{ $review->created_at->diffForHumans() }})</span>
+                                    <div class="small text-warning fw-semibold mt-1 d-flex align-items-center gap-1">
+                                        <i class="bi bi-star-fill"></i>
+                                        <span>{{ $review->rating }} / 10 ดาว</span>
+                                        <span class="text-secondary fw-normal ms-2">({{ $review->created_at->diffForHumans() }})</span>
                                     </div>
                                 </div>
 
                                 @if($review->activity)
-                                    <a href="{{ route('activities.show', $review->activity_id) }}"
-                                       class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white transition">
+                                    <a href="{{ route('activities.show', $review->activity_id) }}" class="btn btn-outline-primary btn-sm py-1 px-3 fw-semibold">
                                         ดูหนัง →
                                     </a>
                                 @endif
@@ -87,112 +105,107 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-slate-500 text-sm py-4">คุณยังไม่เคยเขียนรีวิวภาพยนตร์</p>
+                    <p class="text-secondary small mb-0">คุณยังไม่เคยเขียนรีวิวภาพยนตร์</p>
                 @endif
             </div>
 
-
-            {{-- ==========================================
-                 Tier List ของฉัน
-            ========================================== --}}
-            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
-                <h2 class="text-xl font-bold text-white mb-5 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+            <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
+                <h2 class="h5 fw-bold text-white mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-card-list text-primary"></i>
                     Tier List ของฉัน ({{ $collections->count() }})
                 </h2>
 
                 @if($collections->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
                         @foreach($collections as $collection)
-                            <a href="{{ route('collections.show', $collection->id) }}"
-                               class="block p-5 rounded-2xl bg-slate-950/70 border border-slate-800/90 hover:border-indigo-500/50 hover:shadow-lg transition group">
-                                <div class="font-bold text-white text-base group-hover:text-indigo-400 transition">
-                                    {{ $collection->name }}
-                                </div>
-                                <div class="text-xs text-slate-400 mt-2 flex items-center justify-between">
-                                    <span>อัปเดต: {{ $collection->updated_at->diffForHumans() }}</span>
-                                    <span class="text-indigo-400 font-semibold group-hover:translate-x-1 transition">เปิดดู →</span>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-slate-500 text-sm py-4">คุณยังไม่มีกระดานจัดอันดับ Tier List</p>
-                @endif
-            </div>
-
-
-            {{-- ==========================================
-                 หนังที่ฉันเสนอเข้าระบบ
-            ========================================== --}}
-            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
-                <h2 class="text-xl font-bold text-white mb-5 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    หนังที่ฉันเสนอเข้าระบบ ({{ $submittedMovies->count() }})
-                </h2>
-
-                @if($submittedMovies->count() > 0)
-                    <div class="space-y-3">
-                        @foreach($submittedMovies as $movie)
-                            <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-950/70 border border-slate-800/90">
-                                <div>
-                                    <div class="font-bold text-white text-base">
-                                        {{ $movie->name }}
+                            <div class="col">
+                                <a href="{{ route('collections.show', $collection->id) }}" class="card bg-black border-secondary p-4 rounded-3 text-decoration-none shadow-sm h-100">
+                                    <div class="fw-bold text-white fs-6 text-truncate mb-2">
+                                        {{ $collection->name }}
                                     </div>
-                                    <div class="text-xs text-slate-400 mt-0.5">
-                                        ปี {{ $movie->year }} • {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
+                                    <div class="small text-secondary d-flex justify-content-between align-items-center">
+                                        <span>อัปเดต: {{ $collection->updated_at->diffForHumans() }}</span>
+                                        <span class="text-primary fw-semibold">เปิดดู →</span>
                                     </div>
-                                </div>
-
-                                
-                                @if($movie->status === 'approved')
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold whitespace-nowrap">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                                        อนุมัติแล้ว
-                                    </span>
-                                @elseif($movie->status === 'rejected')
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold whitespace-nowrap">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                        ปฏิเสธแล้ว
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold whitespace-nowrap">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                        รอตรวจสอบ
-                                    </span>
-                                @endif
+                                </a>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-slate-500 text-sm py-4">คุณยังไม่มีภาพยนตร์ที่เสนอเข้าระบบ</p>
+                    <p class="text-secondary small mb-0">คุณยังไม่มีกระดานจัดอันดับ Tier List</p>
                 @endif
             </div>
 
+            <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
+                <h2 class="h5 fw-bold text-white mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-film text-success"></i>
+                    หนังที่ฉันเสนอเข้าระบบ ({{ $submittedMovies->count() }})
+                </h2>
 
-            {{-- ==========================================
-                 ตั้งค่า Profile บัญชี
-            ========================================== --}}
-            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
-                <div class="max-w-xl">
+                @if($submittedMovies->count() > 0)
+                    <div class="d-flex flex-column gap-3">
+                        @foreach($submittedMovies as $movie)
+                            <div class="card bg-black border-secondary p-3 rounded-3 shadow-sm d-flex flex-row justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold text-white fs-6">
+                                        {{ $movie->name }}
+                                    </div>
+                                    <small class="text-secondary">
+                                        ปี {{ $movie->year }} • {{ $movie->type ? $movie->type->name : 'ทั่วไป' }}
+                                    </small>
+                                </div>
+
+                                <div>
+                                    @if($movie->status === 'approved')
+                                        <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-1.5 rounded-pill small">
+                                            <i class="bi bi-check-circle-fill me-1"></i>อนุมัติแล้ว
+                                        </span>
+                                    @elseif($movie->status === 'rejected')
+                                        <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-3 py-1.5 rounded-pill small">
+                                            <i class="bi bi-x-circle-fill me-1"></i>ปฏิเสธแล้ว
+                                        </span>
+                                    @else
+                                        <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-50 px-3 py-1.5 rounded-pill small">
+                                            <i class="bi bi-clock-fill me-1"></i>รอตรวจสอบ
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-secondary small mb-0">คุณยังไม่มีภาพยนตร์ที่เสนอเข้าระบบ</p>
+                @endif
+            </div>
+
+            <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
+                <div style="max-width: 640px;">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
 
-            
-            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
-                <div class="max-w-xl">
+            <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
+                <div style="max-width: 640px;">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
 
-            
-            <div class="p-6 md:p-8 bg-slate-900/60 border border-slate-800/90 rounded-3xl shadow-xl backdrop-blur-sm">
-                <div class="max-w-xl">
+            <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
+                <div style="max-width: 640px;">
                     @include('profile.partials.delete-user-form')
                 </div>
             </div>
 
         </div>
     </div>
-</x-app-layout>
+    </main>
+
+    <footer class="border-top border-secondary bg-dark py-4 mt-auto">
+        <div class="container text-center text-secondary small">
+            <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

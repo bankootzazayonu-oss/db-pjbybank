@@ -1,0 +1,136 @@
+-- ===================================================
+-- MySQL DDL Schema according to Entity-Relationship Diagram
+-- Database: db_pjbybank
+-- ===================================================
+
+CREATE TABLE IF NOT EXISTS `users` (
+    `User_ID` CHAR(5) NOT NULL,
+    `Username` VARCHAR(50) NOT NULL,
+    `Email` VARCHAR(100) NOT NULL UNIQUE,
+    `Password` VARCHAR(255) NOT NULL,
+    `Role` VARCHAR(10) NOT NULL DEFAULT 'user',
+    `email_verified_at` TIMESTAMP NULL DEFAULT NULL,
+    `remember_token` VARCHAR(100) NULL DEFAULT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`User_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `types` (
+    `Genre_ID` CHAR(3) NOT NULL,
+    `Genre_Name` VARCHAR(50) NOT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`Genre_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `platforms` (
+    `Platform_ID` CHAR(4) NOT NULL,
+    `Platform_Name` VARCHAR(50) NOT NULL,
+    `Logo` VARCHAR(255) NULL DEFAULT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`Platform_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `activities` (
+    `Movie_ID` CHAR(6) NOT NULL,
+    `Title` VARCHAR(150) NOT NULL,
+    `Original_Title` VARCHAR(150) NULL DEFAULT NULL,
+    `Release_Year` INT NOT NULL,
+    `Duration_Hours` DECIMAL(3,1) NOT NULL DEFAULT 0.0,
+    `TMDB_ID` INT NULL DEFAULT NULL,
+    `Genre_ID` CHAR(3) NULL DEFAULT NULL,
+    `Submitted_By` CHAR(5) NOT NULL,
+    `Approval_Status` VARCHAR(20) NOT NULL DEFAULT 'pending',
+    `Poster` VARCHAR(255) NULL DEFAULT NULL,
+    `Description` TEXT NULL,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`Movie_ID`),
+    CONSTRAINT `fk_activities_genre` FOREIGN KEY (`Genre_ID`) REFERENCES `types` (`Genre_ID`) ON DELETE SET NULL,
+    CONSTRAINT `fk_activities_user` FOREIGN KEY (`Submitted_By`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `activity_platform` (
+    `Movie_ID` CHAR(6) NOT NULL,
+    `Platform_ID` CHAR(4) NOT NULL,
+    PRIMARY KEY (`Movie_ID`, `Platform_ID`),
+    CONSTRAINT `fk_ap_movie` FOREIGN KEY (`Movie_ID`) REFERENCES `activities` (`Movie_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_ap_platform` FOREIGN KEY (`Platform_ID`) REFERENCES `platforms` (`Platform_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `reviews` (
+    `Review_ID` CHAR(10) NOT NULL,
+    `User_ID` CHAR(5) NOT NULL,
+    `Movie_ID` CHAR(6) NOT NULL,
+    `Review_Text` TEXT NOT NULL,
+    `Score` DECIMAL(3,1) NOT NULL DEFAULT 0.0,
+    `Spoiler` TINYINT(1) NOT NULL DEFAULT 0,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`Review_ID`),
+    CONSTRAINT `fk_reviews_user` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_reviews_movie` FOREIGN KEY (`Movie_ID`) REFERENCES `activities` (`Movie_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `review_replies` (
+    `Reply_ID` CHAR(10) NOT NULL,
+    `Review_ID` CHAR(10) NOT NULL,
+    `User_ID` CHAR(5) NOT NULL,
+    `Message` TEXT NOT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`Reply_ID`),
+    CONSTRAINT `fk_replies_review` FOREIGN KEY (`Review_ID`) REFERENCES `reviews` (`Review_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_replies_user` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `comment_reports` (
+    `Report_ID` CHAR(10) NOT NULL,
+    `Review_ID` CHAR(10) NOT NULL,
+    `User_ID` CHAR(5) NOT NULL,
+    `Reason` VARCHAR(255) NOT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`Report_ID`),
+    CONSTRAINT `fk_reports_review` FOREIGN KEY (`Review_ID`) REFERENCES `reviews` (`Review_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_reports_user` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `collections` (
+    `Tier_ID` CHAR(10) NOT NULL,
+    `User_ID` CHAR(5) NOT NULL,
+    `Tier_Title` VARCHAR(100) NOT NULL,
+    `Tier_Labels` JSON NULL DEFAULT NULL,
+    `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`Tier_ID`),
+    CONSTRAINT `fk_collections_user` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `collection_items` (
+    `Tier_ID` CHAR(10) NOT NULL,
+    `Movie_ID` CHAR(6) NOT NULL,
+    `Tier_Level` CHAR(2) NOT NULL DEFAULT 'B',
+    PRIMARY KEY (`Tier_ID`, `Movie_ID`),
+    CONSTRAINT `fk_ci_tier` FOREIGN KEY (`Tier_ID`) REFERENCES `collections` (`Tier_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_ci_movie` FOREIGN KEY (`Movie_ID`) REFERENCES `activities` (`Movie_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `favorite_reviews` (
+    `User_ID` CHAR(5) NOT NULL,
+    `Review_ID` CHAR(10) NOT NULL,
+    `Saved_At` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`User_ID`, `Review_ID`),
+    CONSTRAINT `fk_fav_user` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_fav_review` FOREIGN KEY (`Review_ID`) REFERENCES `reviews` (`Review_ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

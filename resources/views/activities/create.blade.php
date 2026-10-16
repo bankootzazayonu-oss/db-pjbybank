@@ -1,282 +1,300 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-             เสนอภาพยนตร์ใหม่เข้าระบบ
-        </h2>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <div class="py-12 max-w-3xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
-            
-            <div class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4 mb-6 flex items-start gap-3">
-                <span class="text-2xl"></span>
-                <div>
-                    <h4 class="font-bold text-indigo-800 dark:text-indigo-300">ฟีเจอร์ผู้ช่วยอัจฉริยะ (Auto-Fill)</h4>
-                    <p class="text-indigo-600 dark:text-indigo-400 text-sm mt-1">พิมพ์ชื่อภาพยนตร์ภาษาอังกฤษ แล้วกดปุ่ม "ดึงข้อมูลจาก TMDB" ระบบจะค้นหาและเติมข้อมูลให้คุณอัตโนมัติ!</p>
+    <title>เสนอภาพยนตร์ใหม่ - {{ config('app.name', 'CineReview') }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-dark text-light min-vh-100 d-flex flex-column">
+
+    @include('layouts.navigation')
+
+    <main class="flex-grow-1 py-5">
+        <div class="container" style="max-width: 800px;">
+            <div class="card bg-dark border-secondary shadow-lg p-4 p-md-5 rounded-4">
+                
+                <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom border-secondary">
+                    <h2 class="h4 fw-bold text-white mb-0">
+                        🎬 เสนอภาพยนตร์ใหม่เข้าระบบ
+                    </h2>
+                    <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>กลับแดชบอร์ด
+                    </a>
                 </div>
-            </div>
 
-            @if($errors->any())
-                <div class="bg-red-500 text-white p-4 rounded-lg mb-6 text-sm shadow-md">
-                    <ul class="list-disc pl-5 font-bold">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form action="{{ route('activities.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-
-                <input type="hidden" id="tmdb_id" name="tmdb_id">
-                <input type="hidden" id="original_title" name="original_title">
-
-                <div class="mb-5">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ชื่อภาพยนตร์/ซีรีส์ <span class="text-red-500">*</span></label>
-                    <div class="flex gap-2">
-                        <input type="text" id="movie_name" name="name" value="{{ old('name') }}" required 
-                               placeholder="เช่น Inception, Avatar..."
-                               class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                        
-                        <button type="button" onclick="fetchTMDB()" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold px-4 py-2 rounded-md shadow transition flex items-center gap-2">
-                            <span> ดึงข้อมูล</span>
-                        </button>
+                <div class="alert alert-info d-flex align-items-start gap-3 mb-4 bg-primary bg-opacity-10 border-primary border-opacity-25 text-light">
+                    <i class="bi bi-robot fs-3 text-primary"></i>
+                    <div>
+                        <h5 class="fw-bold text-primary mb-1">ฟีเจอร์ผู้ช่วยอัจฉริยะ (Auto-Fill)</h5>
+                        <p class="small text-secondary mb-0">พิมพ์ชื่อภาพยนตร์ภาษาอังกฤษ แล้วกดปุ่ม "ดึงข้อมูลจาก TMDB" ระบบจะค้นหาและเติมข้อมูลให้คุณอัตโนมัติ!</p>
                     </div>
                 </div>
-                <div id="tmdb_results" class="hidden mb-6">
-    <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-3">
-         เลือกภาพยนตร์ที่ต้องการ
-    </h4>
 
-    <div id="tmdb_results_list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    </div>
-</div>
-
-
-                
-
-                <div class="mb-5">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">หมวดหมู่ <span class="text-red-500">*</span></label>
-                    <select name="type_id" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">-- เลือกหมวดหมู่ --</option>
-                        @foreach ($types as $type)
-                            <option value="{{ $type->id }}" {{ old('type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                
-                @php
-                    $selectedPlatforms = array_map('strval', old('platforms', []));
-                @endphp
-                <div class="mb-6" x-data="{ selected: {{ json_encode($selectedPlatforms) }} }">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
-                        <span class="flex items-center gap-1.5">
-                            <span></span> ช่องทางการรับชม (Streaming Platforms)
-                        </span>
-                        <span class="text-xs text-indigo-400 font-normal">คลิกเลือกเพื่อเปิด/ปิด</span>
-                    </label>
-
-                    @if($platforms->isNotEmpty())
-                        <div class="flex flex-wrap gap-2.5 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700">
-                            @foreach($platforms as $platform)
-                                <label class="cursor-pointer select-none">
-                                    <input type="checkbox" 
-                                           name="platforms[]" 
-                                           value="{{ $platform->id }}"
-                                           x-model="selected"
-                                           class="sr-only">
-                                    <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition duration-150 border shadow-sm cursor-pointer select-none"
-                                          :class="selected.includes('{{ $platform->id }}') 
-                                            ? 'bg-indigo-600 text-white border-indigo-500 shadow-indigo-950/50 scale-[1.02]' 
-                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'">
-                                        <span class="w-4 h-4 rounded flex items-center justify-center text-[10px] font-black transition"
-                                              :class="selected.includes('{{ $platform->id }}') ? 'bg-white text-indigo-600' : 'bg-gray-200 dark:bg-gray-700 text-transparent'">
-                                            ✓
-                                        </span>
-                                        <span>{{ $platform->name }}</span>
-                                    </span>
-                                </label>
+                @if($errors->any())
+                    <div class="alert alert-danger shadow-sm mb-4">
+                        <ul class="mb-0 ps-3 fw-medium small">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
                             @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('activities.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+
+                    <input type="hidden" id="tmdb_id" name="tmdb_id">
+                    <input type="hidden" id="original_title" name="original_title">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-light small">ชื่อภาพยนตร์/ซีรีส์ <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="movie_name" name="name" value="{{ old('name') }}" required 
+                                   placeholder="เช่น Inception, Avatar..."
+                                   class="form-control bg-dark border-secondary text-light">
+                            
+                            <button type="button" onclick="fetchTMDB()" class="btn btn-primary d-flex align-items-center gap-1.5 fw-semibold px-4">
+                                <i class="bi bi-cloud-arrow-down"></i>
+                                <span>ดึงข้อมูล</span>
+                            </button>
                         </div>
-                    @else
-                        <p class="text-xs text-gray-400 mt-1">ยังไม่มีรายการแพลตฟอร์มในระบบ (สามารถเพิ่มได้ในหน้าแอดมิน)</p>
-                    @endif
-                </div>
-
-                <div class="mb-5">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ปีที่เข้าฉาย (ค.ศ.) <span class="text-red-500">*</span></label>
-                    <input type="number" id="movie_year" name="year" value="{{ old('year', date('Y')) }}" required 
-                           class="w-full md:w-1/2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">เรื่องย่อ / คำอธิบาย <span class="text-red-500">*</span></label>
-                    <textarea id="movie_review" name="review" rows="5" required 
-                              placeholder="พิมพ์เรื่องย่อ หรือกดดึงข้อมูลจาก TMDB..."
-                              class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-indigo-500 focus:border-indigo-500">{{ old('review') }}</textarea>
-                </div>
-
-                <div class="mb-8">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">โปสเตอร์ภาพยนตร์ <span class="text-gray-400 font-normal">(อัปโหลดเอง หรือใช้จาก API)</span></label>
-                    
-                    <input type="hidden" id="api_image" name="api_image">
-                    
-                    <div id="poster_preview_container" class="hidden mb-3">
-                        <p class="text-xs text-green-500 font-bold mb-1"> ดึงรูปภาพจาก TMDB สำเร็จ</p>
-                        <img id="poster_preview_img" src="" class="h-40 rounded shadow-md border border-gray-600">
                     </div>
 
-                    <input type="file" name="image" accept="image/*"
-                           class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300">
-                </div>
+                    <div id="tmdb_results" class="d-none mb-4">
+                        <h5 class="fw-bold text-light small mb-3">
+                            🎬 เลือกภาพยนตร์ที่ต้องการ
+                        </h5>
 
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md shadow transition">
-                    ส่งข้อมูลให้แอดมินตรวจสอบ
-                </button>
-            </form>
+                        <div id="tmdb_results_list" class="row row-cols-1 row-cols-md-2 g-3">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-light small">หมวดหมู่ <span class="text-danger">*</span></label>
+                        <select name="type_id" required class="form-select bg-dark border-secondary text-light">
+                            <option value="">-- เลือกหมวดหมู่ --</option>
+                            @foreach ($types as $type)
+                                <option value="{{ $type->id }}" {{ old('type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    @php
+                        $selectedPlatforms = array_map('strval', old('platforms', []));
+                    @endphp
+                    <div class="mb-4" x-data="{ selected: {{ json_encode($selectedPlatforms) }} }">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label fw-bold text-light small mb-0">
+                                📺 ช่องทางการรับชม (Streaming Platforms)
+                            </label>
+                            <small class="text-secondary">คลิกเลือกเพื่อเปิด/ปิด</small>
+                        </div>
+
+                        @if($platforms->isNotEmpty())
+                            <div class="p-3 rounded-3 bg-black border border-secondary d-flex flex-wrap gap-2">
+                                @foreach($platforms as $platform)
+                                    <label class="user-select-none cursor-pointer mb-0">
+                                        <input type="checkbox" 
+                                               name="platforms[]" 
+                                               value="{{ $platform->id }}"
+                                               x-model="selected"
+                                               class="d-none">
+                                        <span class="btn btn-sm d-inline-flex align-items-center gap-1.5 rounded-pill"
+                                              :class="selected.includes('{{ $platform->id }}') 
+                                                ? 'btn-primary text-white fw-bold shadow-sm' 
+                                                : 'btn-outline-secondary text-light'">
+                                            <i class="bi" :class="selected.includes('{{ $platform->id }}') ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+                                            <span>{{ $platform->name }}</span>
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @else
+                            <small class="text-secondary d-block">ยังไม่มีรายการแพลตฟอร์มในระบบ (สามารถเพิ่มได้ในหน้าแอดมิน)</small>
+                        @endif
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-light small">ปีที่เข้าฉาย (ค.ศ.) <span class="text-danger">*</span></label>
+                        <input type="number" id="movie_year" name="year" value="{{ old('year', date('Y')) }}" required 
+                               class="form-control bg-dark border-secondary text-light" style="max-width: 240px;">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-light small">เรื่องย่อ / คำอธิบาย <span class="text-danger">*</span></label>
+                        <textarea id="movie_review" name="review" rows="5" required 
+                                  placeholder="พิมพ์เรื่องย่อ หรือกดดึงข้อมูลจาก TMDB..."
+                                  class="form-control bg-dark border-secondary text-light">{{ old('review') }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-light small">โปสเตอร์ภาพยนตร์ <span class="text-secondary fw-normal">(อัปโหลดเอง หรือใช้จาก API)</span></label>
+                        
+                        <input type="hidden" id="api_image" name="api_image">
+                        
+                        <div id="poster_preview_container" class="d-none mb-3">
+                            <p class="text-success small fw-bold mb-1"><i class="bi bi-check-circle-fill me-1"></i>ดึงรูปภาพจาก TMDB สำเร็จ</p>
+                            <img id="poster_preview_img" src="" class="rounded shadow border border-secondary" style="height: 160px; object-fit: cover;">
+                        </div>
+
+                        <input type="file" name="image" accept="image/*" class="form-control bg-dark border-secondary text-light">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow">
+                        ส่งข้อมูลให้แอดมินตรวจสอบ
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
+    </main>
 
-    
+    <footer class="border-top border-secondary bg-dark py-4 mt-auto">
+        <div class="container text-center text-secondary small">
+            <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         async function fetchTMDB() {
-    const query = document.getElementById('movie_name').value.trim();
+            const query = document.getElementById('movie_name').value.trim();
 
-    if (!query) {
-        alert('กรุณาพิมพ์ชื่อภาพยนตร์ก่อนค้นหา');
-        return;
-    }
+            if (!query) {
+                alert('กรุณาพิมพ์ชื่อภาพยนตร์ก่อนค้นหา');
+                return;
+            }
 
-    const resultsContainer = document.getElementById('tmdb_results');
-    const resultsList = document.getElementById('tmdb_results_list');
+            const resultsContainer = document.getElementById('tmdb_results');
+            const resultsList = document.getElementById('tmdb_results_list');
 
-    resultsContainer.classList.remove('hidden');
+            resultsContainer.classList.remove('d-none');
 
-    resultsList.innerHTML = `
-        <div class="col-span-full text-center text-gray-500 dark:text-gray-400 py-6">
-             กำลังค้นหาจาก TMDB...
-        </div>
-    `;
-
-    try {
-        const response = await fetch(
-            `{{ route('activities.tmdb_search') }}?query=${encodeURIComponent(query)}`
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || 'ไม่สามารถค้นหา TMDB ได้');
-        }
-
-        if (!data.results || data.results.length === 0) {
             resultsList.innerHTML = `
-                <div class="col-span-full text-center text-red-500 py-6">
-                     ไม่พบภาพยนตร์ที่ค้นหา
+                <div class="col-12 text-center text-secondary py-4">
+                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                    กำลังค้นหาจาก TMDB...
                 </div>
             `;
-            return;
+
+            try {
+                const response = await fetch(
+                    `{{ route('activities.tmdb_search') }}?query=${encodeURIComponent(query)}`
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'ไม่สามารถค้นหา TMDB ได้');
+                }
+
+                if (!data.results || data.results.length === 0) {
+                    resultsList.innerHTML = `
+                        <div class="col-12 text-center text-danger py-4">
+                            ไม่พบภาพยนตร์ที่ค้นหา
+                        </div>
+                    `;
+                    return;
+                }
+
+                resultsList.innerHTML = '';
+
+                data.results.slice(0, 8).forEach(movie => {
+                    const year = movie.release_date
+                        ? movie.release_date.substring(0, 4)
+                        : 'ไม่ทราบปี';
+
+                    const poster = movie.poster_path
+                        ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+                        : 'https://via.placeholder.com/300x450?text=No+Poster';
+
+                    const col = document.createElement('div');
+                    col.className = 'col';
+
+                    col.innerHTML = `
+                        <div class="card bg-dark border-secondary p-3 h-100 d-flex flex-row gap-3">
+                            <img
+                                src="${poster}"
+                                class="rounded object-fit-cover flex-shrink-0"
+                                style="width: 70px; height: 100px;"
+                                alt="${escapeHtml(movie.title || 'Poster')}"
+                            >
+
+                            <div class="flex-grow-1 d-flex flex-column justify-content-between">
+                                <div>
+                                    <h6 class="fw-bold text-white mb-1">
+                                        ${escapeHtml(movie.title || 'ไม่ทราบชื่อ')}
+                                    </h6>
+
+                                    <small class="text-secondary d-block">
+                                        ปี: ${year}
+                                    </small>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary btn-sm fw-semibold mt-2 align-self-start"
+                                    onclick='selectTMDBMovie(${JSON.stringify(movie).replace(/'/g, "&#39;")})'
+                                >
+                                    เลือกเรื่องนี้
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    resultsList.appendChild(col);
+                });
+
+            } catch (error) {
+                console.error(error);
+
+                resultsList.innerHTML = `
+                    <div class="col-12 text-center text-danger py-4">
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+            }
         }
 
-        resultsList.innerHTML = '';
-
-        data.results.slice(0, 8).forEach(movie => {
+        function selectTMDBMovie(movie) {
             const year = movie.release_date
                 ? movie.release_date.substring(0, 4)
-                : 'ไม่ทราบปี';
+                : '';
 
-            const poster = movie.poster_path
-                ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-                : 'https://via.placeholder.com/300x450?text=No+Poster';
+            document.getElementById('tmdb_id').value = movie.id || '';
+            document.getElementById('original_title').value = movie.original_title || '';
+            document.getElementById('movie_name').value = movie.title || '';
+            document.getElementById('movie_year').value = year;
+            document.getElementById('movie_review').value = movie.overview || 'ไม่มีเรื่องย่อสำหรับภาพยนตร์เรื่องนี้';
 
-            const card = document.createElement('div');
+            if (movie.poster_path) {
+                const imgUrl = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
+                document.getElementById('api_image').value = imgUrl;
+                document.getElementById('poster_preview_img').src = imgUrl;
+                document.getElementById('poster_preview_container').classList.remove('d-none');
+            }
 
-            card.className =
-                'border border-gray-300 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 flex gap-3';
+            document.getElementById('tmdb_results').classList.add('d-none');
 
-            card.innerHTML = `
-                <img
-                    src="${poster}"
-                    class="w-20 h-28 object-cover rounded"
-                    alt="${escapeHtml(movie.title || 'Poster')}"
-                >
+            alert(`เลือก "${movie.title}" เรียบร้อยแล้ว\nกรุณาตรวจสอบข้อมูลก่อนส่ง`);
+        }
 
-                <div class="flex-1">
-                    <h5 class="font-bold text-gray-900 dark:text-white">
-                        ${escapeHtml(movie.title || 'ไม่ทราบชื่อ')}
-                    </h5>
-
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        ปี: ${year}
-                    </p>
-
-                    <button
-                        type="button"
-                        class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-3 py-2 rounded"
-                        onclick='selectTMDBMovie(${JSON.stringify(movie).replace(/'/g, "&#39;")})'
-                    >
-                        เลือกเรื่องนี้
-                    </button>
-                </div>
-            `;
-
-            resultsList.appendChild(card);
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        resultsList.innerHTML = `
-            <div class="col-span-full text-center text-red-500 py-6">
-                 ${escapeHtml(error.message)}
-            </div>
-        `;
-    }
-}
-function selectTMDBMovie(movie) {
-    const year = movie.release_date
-        ? movie.release_date.substring(0, 4)
-        : '';
-
-    document.getElementById('tmdb_id').value = movie.id || '';
-
-    document.getElementById('original_title').value = movie.original_title || '';
-
-    document.getElementById('movie_name').value =
-        movie.title || '';
-
-    document.getElementById('movie_year').value =
-        year;
-
-    document.getElementById('movie_review').value =
-        movie.overview || 'ไม่มีเรื่องย่อสำหรับภาพยนตร์เรื่องนี้';
-
-    if (movie.poster_path) {
-        const imgUrl =
-            'https://image.tmdb.org/t/p/w500' + movie.poster_path;
-
-        document.getElementById('api_image').value = imgUrl;
-
-        document.getElementById('poster_preview_img').src = imgUrl;
-
-        document
-            .getElementById('poster_preview_container')
-            .classList.remove('hidden');
-    }
-
-    document.getElementById('tmdb_results').classList.add('hidden');
-
-    alert(
-        `เลือก "${movie.title}" เรียบร้อยแล้ว\nกรุณาตรวจสอบข้อมูลก่อนส่ง`
-    );
-}
-
-function escapeHtml(value) {
-    const div = document.createElement('div');
-    div.textContent = value ?? '';
-    return div.innerHTML;
-}
+        function escapeHtml(value) {
+            const div = document.createElement('div');
+            div.textContent = value ?? '';
+            return div.innerHTML;
+        }
     </script>
-</x-app-layout>
+</body>
+</html>

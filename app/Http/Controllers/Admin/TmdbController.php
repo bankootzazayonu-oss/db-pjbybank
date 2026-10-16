@@ -33,13 +33,12 @@ class TmdbController extends Controller
     }
 
 
-        $types = Type::orderBy('name')->get();
-        $platforms = Platform::orderBy('name')->get();
+        $types = Type::orderBy('Genre_Name')->get();
+        $platforms = Platform::orderBy('Platform_Name')->get();
 
-
-        $existingTmdbIds = Activity::whereNotNull('tmdb_id')->pluck('tmdb_id')->toArray();
-        $existingNames = Activity::pluck('name')
-            ->concat(Activity::whereNotNull('original_title')->pluck('original_title'))
+        $existingTmdbIds = Activity::whereNotNull('TMDB_ID')->pluck('TMDB_ID')->toArray();
+        $existingNames = Activity::pluck('Title')
+            ->concat(Activity::whereNotNull('Original_Title')->pluck('Original_Title'))
             ->map(fn($n) => strtolower(trim($n)))
             ->unique()
             ->toArray();
@@ -50,88 +49,86 @@ class TmdbController extends Controller
         );
     }
 
-
     public function import(Request $request)
-{
-    $request->validate([
-        'tmdb_id' => 'required|integer',
-        'title' => 'required|string|max:255',
-        'original_title' => 'nullable|string|max:255',
-        'year' => 'required|integer',
-        'overview' => 'nullable|string',
-        'poster_path' => 'nullable|string',
-        'type_id' => 'required|exists:types,id',
-        'platforms' => 'nullable|array',
-        'platforms.*' => 'exists:platforms,id',
-    ]);
+    {
+        $request->validate([
+            'tmdb_id' => 'required|integer',
+            'title' => 'required|string|max:255',
+            'original_title' => 'nullable|string|max:255',
+            'year' => 'required|integer',
+            'overview' => 'nullable|string',
+            'poster_path' => 'nullable|string',
+            'type_id' => 'required|exists:types,Genre_ID',
+            'platforms' => 'nullable|array',
+            'platforms.*' => 'exists:platforms,Platform_ID',
+        ]);
 
-    $isTmdbDuplicate = Activity::where(
-        'tmdb_id',
-        $request->tmdb_id
-    )->exists();
+        $isTmdbDuplicate = Activity::where(
+            'TMDB_ID',
+            $request->tmdb_id
+        )->exists();
 
-    if ($isTmdbDuplicate) {
+        if ($isTmdbDuplicate) {
+            return back()->with(
+                'error',
+                '️ หนังเรื่อง "' .
+                $request->title .
+                '" มีอยู่ในระบบแล้ว (TMDB ID ซ้ำ)'
+            );
+        }
+
+        $isDuplicate = Activity::where(function($query) use ($request) {
+                $query->whereRaw('LOWER(Title) = ?', [strtolower($request->title)])
+                      ->orWhere(function($sub) use ($request) {
+                          if ($request->filled('original_title')) {
+                              $sub->whereRaw('LOWER(Original_Title) = ?', [strtolower($request->original_title)]);
+                          }
+                      });
+            })
+            ->where('Release_Year', $request->year)
+            ->exists();
+
+        if ($isDuplicate) {
+            return back()->with(
+                'error',
+                '️ หนังเรื่อง "' .
+                $request->title .
+                '" ปี ' .
+                $request->year .
+                ' มีอยู่ในระบบแล้ว'
+            );
+        }
+
+        $imagePath = null;
+
+        if ($request->filled('poster_path')) {
+            $imagePath =
+                'https://image.tmdb.org/t/p/w500' .
+                $request->poster_path;
+        }
+
+        $activity = Activity::create([
+            'Title' => $request->title,
+            'Original_Title' => $request->original_title ?: null,
+            'Release_Year' => $request->year,
+            'Description' => $request->overview ?: '',
+            'Poster' => $imagePath,
+            'Duration_Hours' => 2.0,
+            'Genre_ID' => $request->type_id,
+            'TMDB_ID' => $request->tmdb_id,
+            'Approval_Status' => 'approved',
+            'Submitted_By' => auth()->id(),
+        ]);
+
+        if ($request->filled('platforms')) {
+            $activity->platforms()->sync($request->platforms);
+        }
+
         return back()->with(
-            'error',
-            '️ หนังเรื่อง "' .
+            'success',
+            ' นำเข้า "' .
             $request->title .
-            '" มีอยู่ในระบบแล้ว (TMDB ID ซ้ำ)'
+            '" เข้าสู่คลังภาพยนตร์สำเร็จ!'
         );
     }
-
-    $isDuplicate = Activity::where(function($query) use ($request) {
-            $query->whereRaw('LOWER(name) = ?', [strtolower($request->title)])
-                  ->orWhere(function($sub) use ($request) {
-                      if ($request->filled('original_title')) {
-                          $sub->whereRaw('LOWER(original_title) = ?', [strtolower($request->original_title)]);
-                      }
-                  });
-        })
-        ->where('year', $request->year)
-        ->exists();
-
-    if ($isDuplicate) {
-        return back()->with(
-            'error',
-            '️ หนังเรื่อง "' .
-            $request->title .
-            '" ปี ' .
-            $request->year .
-            ' มีอยู่ในระบบแล้ว'
-        );
-    }
-
-    $imagePath = null;
-
-    if ($request->filled('poster_path')) {
-        $imagePath =
-            'https://image.tmdb.org/t/p/w500' .
-            $request->poster_path;
-    }
-
-    $activity = Activity::create([
-        'name' => $request->title,
-        'original_title' => $request->original_title ?: null,
-        'year' => $request->year,
-        'review' => $request->overview,
-        'image' => $imagePath,
-        'hours' => 2.0,
-        'type_id' => $request->type_id,
-        'tmdb_id' => $request->tmdb_id,
-        'is_approved' => 1,
-        'status' => 'approved',
-        'user_id' => auth()->id(),
-    ]);
-
-    if ($request->filled('platforms')) {
-        $activity->platforms()->sync($request->platforms);
-    }
-
-    return back()->with(
-        'success',
-        ' นำเข้า "' .
-        $request->title .
-        '" เข้าสู่คลังภาพยนตร์สำเร็จ!'
-    );
-}
 }

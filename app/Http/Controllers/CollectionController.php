@@ -11,98 +11,100 @@ class CollectionController extends Controller
 
     public function index()
     {
-        $collections = Collection::where('user_id', auth()->id())->latest()->get();
+        $collections = Collection::where('User_ID', auth()->id())->latest('CreatedAt')->get();
         return view('collections.index', compact('collections'));
     }
-
 
     public function store(Request $request)
     {
         $request->validate(['name' => 'required|string|max:255']);
         Collection::create([
-            'user_id' => auth()->id(),
-            'name' => $request->name
+            'User_ID' => auth()->id(),
+            'Tier_Title' => $request->name
         ]);
         return back()->with('success', ' สร้างกระดานใหม่สำเร็จ!');
     }
 
-
     public function show($id)
     {
-        $collection = Collection::where('user_id', auth()->id())->findOrFail($id);
+        $collection = Collection::where('User_ID', auth()->id())->findOrFail($id);
         
-
         $items = $collection->items()->with('movie')->get()->groupBy('tier_rank');
         
-
-        $allMovies = Activity::where('status', 'approved')->orderBy('name')->get();
+        $allMovies = Activity::where('Approval_Status', 'approved')->orderBy('Title')->get();
 
         return view('collections.show', compact('collection', 'items', 'allMovies'));
     }
 
-
     public function addMovie(Request $request, $id)
-{
-    $request->validate([
-        'activity_id' => 'required|exists:activities,id',
-        'tier_rank' => 'required|in:S,A,B,C,D'
-    ]);
+    {
+        $request->validate([
+            'activity_id' => 'required|exists:activities,Movie_ID',
+            'tier_rank' => 'required|in:S,A,B,C,D'
+        ]);
 
+        $collection = Collection::where('Tier_ID', $id)
+            ->where('User_ID', auth()->id())
+            ->firstOrFail();
 
-    $collection = Collection::where('id', $id)
-        ->where('user_id', auth()->id())
-        ->firstOrFail();
+        $exists = CollectionItem::where('Tier_ID', $collection->Tier_ID)
+            ->where('Movie_ID', $request->activity_id)
+            ->first();
 
-    $exists = CollectionItem::where('collection_id', $collection->id)
-        ->where('activity_id', $request->activity_id)
-        ->first();
+        if ($exists) {
+            return back()->with('error', ' หนังเรื่องนี้อยู่ในกระดานแล้ว!');
+        }
 
-    if ($exists) {
-        return back()->with('error', ' หนังเรื่องนี้อยู่ในกระดานแล้ว!');
+        CollectionItem::create([
+            'Tier_ID' => $collection->Tier_ID,
+            'Movie_ID' => $request->activity_id,
+            'Tier_Level' => $request->tier_rank
+        ]);
+
+        return back()->with('success', ' เพิ่มหนังลงกระดานสำเร็จ!');
     }
 
-    CollectionItem::create([
-        'collection_id' => $collection->id,
-        'activity_id' => $request->activity_id,
-        'tier_rank' => $request->tier_rank
-    ]);
+    public function updateRank(Request $request, $id)
+    {
+        $request->validate([
+            'tier_rank' => 'required|in:S,A,B,C,D'
+        ]);
 
-    return back()->with('success', ' เพิ่มหนังลงกระดานสำเร็จ!');
-}
+        $parts = explode('_', $id);
+        if (count($parts) === 2) {
+            $item = CollectionItem::where('Tier_ID', $parts[0])->where('Movie_ID', $parts[1])->firstOrFail();
+        } else {
+            $item = CollectionItem::where('Movie_ID', $id)->firstOrFail();
+        }
 
+        Collection::where('Tier_ID', $item->Tier_ID)
+            ->where('User_ID', auth()->id())
+            ->firstOrFail();
 
-  public function updateRank(Request $request, $id)
-{
-    $request->validate([
-        'tier_rank' => 'required|in:S,A,B,C,D'
-    ]);
+        CollectionItem::where('Tier_ID', $item->Tier_ID)->where('Movie_ID', $item->Movie_ID)->update([
+            'Tier_Level' => $request->tier_rank
+        ]);
 
-    $item = CollectionItem::findOrFail($id);
+        return back()->with('success', ' เปลี่ยนระดับสำเร็จ!');
+    }
 
-    Collection::where('id', $item->collection_id)
-        ->where('user_id', auth()->id())
-        ->firstOrFail();
+    public function destroyItem($id)
+    {
+        $parts = explode('_', $id);
+        if (count($parts) === 2) {
+            $item = CollectionItem::where('Tier_ID', $parts[0])->where('Movie_ID', $parts[1])->firstOrFail();
+        } else {
+            $item = CollectionItem::where('Movie_ID', $id)->firstOrFail();
+        }
 
-    $item->update([
-        'tier_rank' => $request->tier_rank
-    ]);
+        Collection::where('Tier_ID', $item->Tier_ID)
+            ->where('User_ID', auth()->id())
+            ->firstOrFail();
 
-    return back()->with('success', ' เปลี่ยนระดับสำเร็จ!');
-}
+        CollectionItem::where('Tier_ID', $item->Tier_ID)->where('Movie_ID', $item->Movie_ID)->delete();
 
-  public function destroyItem($id)
-{
-    $item = CollectionItem::findOrFail($id);
-
-    Collection::where('id', $item->collection_id)
-        ->where('user_id', auth()->id())
-        ->firstOrFail();
-
-    $item->delete();
-
-    return back()->with('success', '️ ลบหนังออกจากกระดานสำเร็จ!');
-}
-
+        return back()->with('success', '️ ลบหนังออกจากกระดานสำเร็จ!');
+    }
 
     public function update(Request $request, $id)
     {
@@ -114,47 +116,39 @@ class CollectionController extends Controller
         
         $collection = Collection::findOrFail($id);
 
-
-        if ($collection->user_id !== auth()->id()) {
+        if ($collection->User_ID !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์แก้ไขกระดานนี้');
         }
 
-        $collection->update(['name' => $request->name]);
+        $collection->update(['Tier_Title' => $request->name]);
 
         return back()->with('success', ' แก้ไขชื่อกระดานเรียบร้อยแล้ว');
     }
-
 
     public function destroy($id)
     {
         $collection = Collection::findOrFail($id);
 
-
-        if ($collection->user_id !== auth()->id()) {
+        if ($collection->User_ID !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์ลบกระดานนี้');
         }
 
-
-        CollectionItem::where('collection_id', $collection->id)->delete();
-        
-
+        CollectionItem::where('Tier_ID', $collection->Tier_ID)->delete();
         $collection->delete();
 
         return redirect()->route('collections.index')->with('success', '️ ลบกระดานจัดอันดับเรียบร้อยแล้ว');
     }
 
-
     public function updateLabels(Request $request, $id)
     {
         $collection = Collection::findOrFail($id);
 
-        if ($collection->user_id !== auth()->id()) {
+        if ($collection->User_ID !== auth()->id()) {
             abort(403, 'คุณไม่มีสิทธิ์แก้ไขกระดานนี้');
         }
 
-
         $collection->update([
-            'tier_labels' => [
+            'Tier_Labels' => [
                 'S' => $request->input('s_label', 'S'),
                 'A' => $request->input('a_label', 'A'),
                 'B' => $request->input('b_label', 'B'),
@@ -166,12 +160,10 @@ class CollectionController extends Controller
         return back()->with('success', ' อัปเดตชื่อระดับเรียบร้อยแล้ว!');
     }
 
-
     public function searchTmdb(Request $request)
     {
         $query = $request->input('query');
         if (!$query) return response()->json([]);
-
 
         $response = Http::get('https://api.themoviedb.org/3/search/movie', [
             'api_key' => env('TMDB_API_KEY'), 
@@ -183,7 +175,6 @@ class CollectionController extends Controller
         return response()->json($response->json('results') ?? []);
     }
 
-
     public function storeFromTmdb(Request $request, $id)
     {
         $request->validate([
@@ -192,14 +183,10 @@ class CollectionController extends Controller
         ]);
 
         $collection = Collection::findOrFail($id);
-        if ($collection->user_id !== auth()->id()) abort(403);
+        if ($collection->User_ID !== auth()->id()) abort(403);
 
         $tmdbId = $request->tmdb_id;
-        
-
-
-        $movie = Activity::where('tmdb_id', $tmdbId)->first();
-
+        $movie = Activity::where('TMDB_ID', $tmdbId)->first();
 
         if (!$movie) {
             $response = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}", [
@@ -211,58 +198,55 @@ class CollectionController extends Controller
             $tmdbData = $response->json();
             
             $movie = Activity::create([
-    'name' => $tmdbData['title'] ?? $tmdbData['original_title'],
-    'year' => isset($tmdbData['release_date'])
-        ? substr($tmdbData['release_date'], 0, 4)
-        : date('Y'),
-    'review' => $tmdbData['overview'] ?? 'ไม่มีเรื่องย่อ',
-    'hours' => isset($tmdbData['runtime'])
-        ? round($tmdbData['runtime'] / 60, 1)
-        : 2,
-    'image' => $tmdbData['poster_path']
-        ? 'https://image.tmdb.org/t/p/w500' . $tmdbData['poster_path']
-        : null,
-    'user_id' => auth()->id(),
-    'is_approved' => 1,
-    'status' => 'approved',
-    'type_id' => null,
-    'tmdb_id' => $tmdbId,
-]);
+                'Title' => $tmdbData['title'] ?? $tmdbData['original_title'],
+                'Release_Year' => isset($tmdbData['release_date'])
+                    ? intval(substr($tmdbData['release_date'], 0, 4))
+                    : intval(date('Y')),
+                'Description' => $tmdbData['overview'] ?? 'ไม่มีเรื่องย่อ',
+                'Duration_Hours' => isset($tmdbData['runtime'])
+                    ? round($tmdbData['runtime'] / 60, 1)
+                    : 2,
+                'Poster' => $tmdbData['poster_path']
+                    ? 'https://image.tmdb.org/t/p/w500' . $tmdbData['poster_path']
+                    : null,
+                'Submitted_By' => auth()->id(),
+                'Approval_Status' => 'approved',
+                'Genre_ID' => null,
+                'TMDB_ID' => $tmdbId,
+            ]);
         }
 
-
-        $exists = CollectionItem::where('collection_id', $collection->id)->where('activity_id', $movie->id)->exists();
+        $exists = CollectionItem::where('Tier_ID', $collection->Tier_ID)->where('Movie_ID', $movie->Movie_ID)->exists();
         if ($exists) {
             return back()->with('error', '️ หนังเรื่องนี้อยู่ในกระดานของคุณแล้ว!');
         }
 
-       CollectionItem::create([
-    'collection_id' => $collection->id,
-    'activity_id' => $movie->id,
-    'tier_rank' => $request->tier_rank
-]);
+        CollectionItem::create([
+            'Tier_ID' => $collection->Tier_ID,
+            'Movie_ID' => $movie->Movie_ID,
+            'Tier_Level' => $request->tier_rank
+        ]);
 
-        return back()->with('success', " นำเข้าหนัง '{$movie->name}' ลงกระดานเรียบร้อย!");
+        return back()->with('success', " นำเข้าหนัง '{$movie->Title}' ลงกระดานเรียบร้อย!");
     }
-
 
     public function trash()
     {
-        $collections = Collection::onlyTrashed()->where('user_id', auth()->id())->latest()->get();
+        $collections = Collection::onlyTrashed()->where('User_ID', auth()->id())->latest('CreatedAt')->get();
         return view('collections.trash', compact('collections'));
     }
 
     public function restore($id)
     {
-        $collection = Collection::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+        $collection = Collection::onlyTrashed()->where('User_ID', auth()->id())->findOrFail($id);
         $collection->restore();
-        return back()->with('success', 'กู้คืนกระดาน ' . $collection->name . ' สำเร็จ!');
+        return back()->with('success', 'กู้คืนกระดาน ' . $collection->Tier_Title . ' สำเร็จ!');
     }
 
     public function forceDelete($id)
     {
-        $collection = Collection::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+        $collection = Collection::onlyTrashed()->where('User_ID', auth()->id())->findOrFail($id);
         $collection->forceDelete();
-        return back()->with('success', 'ลบกระดาน ' . $collection->name . ' ถาวรสำเร็จ!');
+        return back()->with('success', 'ลบกระดาน ' . $collection->Tier_Title . ' ถาวรสำเร็จ!');
     }
 }

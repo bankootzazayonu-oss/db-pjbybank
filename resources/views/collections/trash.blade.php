@@ -1,65 +1,96 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h1 class="font-bold text-xl text-white flex items-center gap-2.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-rose-400"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>ถังขยะของฉัน - {{ config('app.name', 'CineReview') }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-dark text-light min-vh-100 d-flex flex-column">
+
+    @include('layouts.navigation')
+
+    <div class="bg-dark bg-opacity-75 border-bottom border-secondary py-3">
+        <div class="container d-flex align-items-center justify-content-between">
+            <h1 class="h5 fw-bold text-white d-flex align-items-center gap-2 mb-0">
+                <i class="bi bi-trash-fill text-danger"></i>
                 ถังขยะของฉัน (My Trash)
             </h1>
-            <a href="{{ route('collections.index') }}" class="text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white py-1.5 px-3.5 rounded-lg transition">
+            <a href="{{ route('collections.index') }}" class="btn btn-outline-secondary btn-sm text-light">
                 ← กลับหน้า Tier Lists
             </a>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="py-10 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-        @if(session('success'))
-            <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-2xl font-medium shadow-lg">
-                {{ session('success') }}
-            </div>
-        @endif
+    <main class="flex-grow-1 py-5">
+        <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success d-flex align-items-center gap-2 mb-4 shadow-sm">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>{{ session('success') }}</div>
+                </div>
+            @endif
 
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-xl">
-            <p class="text-slate-400 text-sm mb-6 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                กระดานจัดอันดับที่ถูกลบไปแล้ว หากลบถาวรจะไม่สามารถกู้คืนได้อีก
-            </p>
+            <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
+                <p class="text-secondary small mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-info-circle-fill text-warning"></i>
+                    กระดานจัดอันดับที่ถูกลบไปแล้ว หากลบถาวรจะไม่สามารถกู้คืนได้อีก
+                </p>
 
-            <div class="space-y-4">
-                @forelse($collections as $collection)
-                    <div class="bg-slate-950/80 border border-slate-800/80 p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-slate-700 transition">
-                        <div>
-                            <h3 class="text-lg font-bold text-white mb-1">{{ $collection->name }}</h3>
-                            <p class="text-xs text-slate-500">
-                                ลบเมื่อ: {{ $collection->deleted_at->format('d/m/Y H:i') }}
-                            </p>
+                <div class="d-flex flex-column gap-3">
+                    @forelse($collections as $collection)
+                        <div class="card bg-black border-secondary p-3 rounded-3 shadow-sm d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                            <div>
+                                <h3 class="h6 fw-bold text-white mb-1">{{ $collection->name }}</h3>
+                                <small class="text-secondary">
+                                    ลบเมื่อ: {{ $collection->deleted_at->format('d/m/Y H:i') }}
+                                </small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <form action="{{ route('collections.restore', $collection->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-success btn-sm d-flex align-items-center gap-1.5 fw-semibold">
+                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                        <span>กู้คืน</span>
+                                    </button>
+                                </form>
+                                <form action="{{ route('collections.forceDelete', $collection->id) }}" method="POST" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบกระดานนี้ถาวร? (ไม่สามารถกู้คืนได้อีก)');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1.5 fw-semibold">
+                                        <i class="bi bi-trash"></i>
+                                        <span>ลบถาวร</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="flex gap-2 w-full sm:w-auto">
-                            <form action="{{ route('collections.restore', $collection->id) }}" method="POST" class="flex-1 sm:flex-none">
-                                @csrf
-                                <button type="submit" class="w-full justify-center px-4 py-2 bg-emerald-600/20 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-xl text-sm font-semibold transition border border-emerald-500/30 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                                    กู้คืน
-                                </button>
-                            </form>
-                            <form action="{{ route('collections.forceDelete', $collection->id) }}" method="POST" class="flex-1 sm:flex-none" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบกระดานนี้ถาวร? (ไม่สามารถกู้คืนได้อีก)');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="w-full justify-center px-4 py-2 bg-rose-600/20 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl text-sm font-semibold transition border border-rose-500/30 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                                    ลบถาวร
-                                </button>
-                            </form>
+                    @empty
+                        <div class="text-center py-5 border border-secondary border-dashed rounded-3">
+                            <i class="bi bi-trash fs-1 text-secondary mb-2 d-block"></i>
+                            <p class="text-secondary mb-0">ไม่มีข้อมูลในถังขยะ</p>
                         </div>
-                    </div>
-                @empty
-                    <div class="text-center py-12 px-4 border-2 border-dashed border-slate-800 rounded-2xl">
-                        <div class="mx-auto w-16 h-16 mb-4 bg-slate-900 rounded-full flex items-center justify-center border border-slate-800">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                        </div>
-                        <p class="text-slate-400 font-medium">ไม่มีข้อมูลในถังขยะ</p>
-                    </div>
-                @endforelse
+                    @endforelse
+                </div>
             </div>
         </div>
-    </div>
-</x-app-layout>
+    </main>
+
+    <footer class="border-top border-secondary bg-dark py-4 mt-auto">
+        <div class="container text-center text-secondary small">
+            <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
