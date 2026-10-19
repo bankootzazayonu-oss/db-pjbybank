@@ -71,7 +71,7 @@ class TmdbController extends Controller
         if ($isTmdbDuplicate) {
             return back()->with(
                 'error',
-                '️ หนังเรื่อง "' .
+                'ภาพยนตร์เรื่อง "' .
                 $request->title .
                 '" มีอยู่ในระบบแล้ว (TMDB ID ซ้ำ)'
             );
@@ -91,7 +91,7 @@ class TmdbController extends Controller
         if ($isDuplicate) {
             return back()->with(
                 'error',
-                '️ หนังเรื่อง "' .
+                'ภาพยนตร์เรื่อง "' .
                 $request->title .
                 '" ปี ' .
                 $request->year .
@@ -126,9 +126,9 @@ class TmdbController extends Controller
 
         return back()->with(
             'success',
-            ' นำเข้า "' .
+            'นำเข้าภาพยนตร์เรื่อง "' .
             $request->title .
-            '" เข้าสู่คลังภาพยนตร์สำเร็จ!'
+            '" เข้าสู่คลังภาพยนตร์สำเร็จ'
         );
     }
 }

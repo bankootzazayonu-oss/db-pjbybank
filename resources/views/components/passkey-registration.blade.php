@@ -71,46 +71,53 @@
 
     <template x-if="supported && !showForm">
         <div>
-            <flux:button
-                variant="primary"
-                icon="plus"
+            <button
+                type="button"
+                class="btn btn-primary d-inline-flex align-items-center gap-1.5"
                 x-on:click="showForm = true"
             >
-                {{ __('Add passkey') }}
-            </flux:button>
+                <i class="bi bi-plus-lg"></i>
+                <span>{{ __('Add passkey') }}</span>
+            </button>
         </div>
     </template>
 
     <template x-if="supported && showForm">
-        <div class="card bg-body-tertiary p-3 mb-3 border">
+        <div class="card bg-dark border-secondary p-3 mb-3">
             <div class="d-flex flex-column gap-2">
-                <flux:input
-                    label="{{ __('Passkey name') }}"
-                    x-model="name"
-                    placeholder="{{ __('e.g., MacBook Pro, iPhone') }}"
-                    x-on:keydown.enter.prevent="register()"
-                    x-ref="passkeyNameInput"
-                    x-init="$nextTick(() => $refs.passkeyNameInput?.focus())"
-                />
+                <div>
+                    <label class="form-label text-light small fw-bold mb-1">{{ __('Passkey name') }}</label>
+                    <input
+                        type="text"
+                        class="form-control bg-dark border-secondary text-light"
+                        x-model="name"
+                        placeholder="{{ __('e.g., MacBook Pro, iPhone') }}"
+                        x-on:keydown.enter.prevent="register()"
+                        x-ref="passkeyNameInput"
+                        x-init="$nextTick(() => $refs.passkeyNameInput?.focus())"
+                    />
+                </div>
                 <div class="small text-secondary">{{ __('Give this passkey a name to help you identify it later.') }}</div>
 
                 <p x-show="error" x-text="error" x-cloak class="small text-danger mb-0"></p>
 
                 <div class="d-flex gap-2 mt-2">
-                    <flux:button
-                        variant="primary"
+                    <button
+                        type="button"
+                        class="btn btn-primary"
                         x-on:click="register()"
                         x-bind:disabled="loading || !name.trim()"
                     >
                         <span x-show="!loading">{{ __('Register passkey') }}</span>
                         <span x-show="loading" x-cloak>{{ __('Registering...') }}</span>
-                    </flux:button>
-                    <flux:button
-                        variant="ghost"
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
                         x-on:click="cancel()"
                     >
                         {{ __('Cancel') }}
-                    </flux:button>
+                    </button>
                 </div>
             </div>
         </div>

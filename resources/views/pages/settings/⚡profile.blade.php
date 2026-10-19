@@ -4,7 +4,6 @@ use App\Concerns\ProfileValidationRules;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Computed;
@@ -37,7 +36,7 @@ new #[Title('Profile settings')] class extends Component {
 
         $user->save();
 
-        Flux::toast(variant: 'success', text: __('Profile updated.'));
+        Session::flash('status', 'profile-updated');
     }
 
     public function resendVerificationNotification(): void
@@ -73,14 +72,25 @@ new #[Title('Profile settings')] class extends Component {
 <section class="w-100">
     @include('partials.settings-heading')
 
-    <flux:heading level="2" class="visually-hidden">{{ __('Profile settings') }}</flux:heading>
+    <h2 class="visually-hidden">{{ __('Profile settings') }}</h2>
 
     <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+        @if (session('status') === 'profile-updated')
+            <div class="alert alert-success alert-dismissible fade show small mb-3" role="alert">
+                <i class="bi bi-check-circle me-1"></i> {{ __('Profile updated.') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <form wire:submit="updateProfileInformation" class="my-4 w-100 d-flex flex-column gap-3">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <div>
+                <label class="form-label text-light small fw-bold mb-1">{{ __('Name') }}</label>
+                <input wire:model="name" type="text" required autofocus autocomplete="name" class="form-control bg-dark border-secondary text-light">
+            </div>
 
             <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+                <label class="form-label text-light small fw-bold mb-1">{{ __('Email') }}</label>
+                <input wire:model="email" type="email" required autocomplete="email" class="form-control bg-dark border-secondary text-light">
 
                 @if ($this->hasUnverifiedEmail)
                     <div>
@@ -101,12 +111,10 @@ new #[Title('Profile settings')] class extends Component {
                 @endif
             </div>
 
-            <div class="d-flex align-items-center gap-3">
-                <div class="d-flex align-items-center justify-content-end">
-                    <flux:button variant="primary" type="submit" class="w-100" data-test="update-profile-button">
-                        {{ __('Save') }}
-                    </flux:button>
-                </div>
+            <div class="d-flex align-items-center justify-content-end mt-2">
+                <button type="submit" class="btn btn-primary px-4 py-2" data-test="update-profile-button">
+                    {{ __('Save') }}
+                </button>
             </div>
         </form>
 
@@ -115,4 +123,3 @@ new #[Title('Profile settings')] class extends Component {
         @endif
     </x-pages::settings.layout>
 </section>
-

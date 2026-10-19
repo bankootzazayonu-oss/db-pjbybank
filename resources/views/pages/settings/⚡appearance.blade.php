@@ -10,13 +10,18 @@ new #[Title('Appearance settings')] class extends Component {
 <section class="w-100">
     @include('partials.settings-heading')
 
-    <flux:heading level="2" class="visually-hidden">{{ __('Appearance settings') }}</flux:heading>
+    <h2 class="visually-hidden">{{ __('Appearance settings') }}</h2>
 
     <x-pages::settings.layout :heading="__('Appearance')" :subheading="__('Update the appearance settings for your account')">
-        <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
-            <flux:radio value="light" icon="sun">{{ __('Light') }}</flux:radio>
-            <flux:radio value="dark" icon="moon">{{ __('Dark') }}</flux:radio>
-            <flux:radio value="system" icon="computer-desktop">{{ __('System') }}</flux:radio>
-        </flux:radio.group>
+        <div class="btn-group w-100" role="group">
+            <input type="radio" class="btn-check" name="appearance" id="app-light" autocomplete="off" value="light">
+            <label class="btn btn-outline-secondary" for="app-light"><i class="bi bi-sun me-1"></i>{{ __('Light') }}</label>
+
+            <input type="radio" class="btn-check" name="appearance" id="app-dark" autocomplete="off" value="dark" checked>
+            <label class="btn btn-outline-secondary" for="app-dark"><i class="bi bi-moon me-1"></i>{{ __('Dark') }}</label>
+
+            <input type="radio" class="btn-check" name="appearance" id="app-system" autocomplete="off" value="system">
+            <label class="btn btn-outline-secondary" for="app-system"><i class="bi bi-display me-1"></i>{{ __('System') }}</label>
+        </div>
     </x-pages::settings.layout>
 </section>

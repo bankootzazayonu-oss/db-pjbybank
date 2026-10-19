@@ -22,27 +22,35 @@ new class extends Component {
     }
 }; ?>
 
-<flux:modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable>
-    <form method="POST" wire:submit="deleteUser" class="d-flex flex-column gap-3">
-        <div>
-            <flux:heading size="lg">{{ __('Are you sure you want to delete your account?') }}</flux:heading>
-
-            <flux:subheading>
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
-            </flux:subheading>
+<div class="modal fade" id="confirmUserDeletionModal" tabindex="-1" aria-labelledby="confirmUserDeletionModalLabel" aria-hidden="true" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary border-opacity-25">
+                <h5 class="modal-title text-light fw-bold" id="confirmUserDeletionModalLabel">
+                    <i class="bi bi-exclamation-triangle text-danger me-2"></i>{{ __('Are you sure you want to delete your account?') }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" wire:submit="deleteUser">
+                <div class="modal-body text-light">
+                    <p class="text-secondary small mb-3">
+                        {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+                    </p>
+                    <div class="mb-3">
+                        <label for="delete_password" class="form-label small fw-semibold text-light">{{ __('Password') }}</label>
+                        <input type="password" id="delete_password" wire:model="password" class="form-control bg-dark text-light border-secondary @error('password') is-invalid @enderror" placeholder="••••••••" required />
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary border-opacity-25">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger" data-test="confirm-delete-user-button">
+                        <i class="bi bi-trash3 me-1"></i> {{ __('Delete account') }}
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <flux:input wire:model="password" :label="__('Password')" type="password" viewable />
-
-        <div class="d-flex justify-content-end gap-2">
-            <flux:modal.close>
-                <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
-            </flux:modal.close>
-
-            <flux:button variant="danger" type="submit" data-test="confirm-delete-user-button">
-                {{ __('Delete account') }}
-            </flux:button>
-        </div>
-    </form>
-</flux:modal>
-
+    </div>
+</div>

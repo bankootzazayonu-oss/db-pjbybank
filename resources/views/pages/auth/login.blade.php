@@ -9,47 +9,62 @@
         <form method="POST" action="{{ route('login.store') }}" class="d-flex flex-column gap-3">
             @csrf
 
-            <flux:input
-                name="email"
-                :label="__('Email address')"
-                :value="old('email')"
-                type="email"
-                required
-                autofocus
-                autocomplete="email"
-                placeholder="email@example.com"
-            />
+            <div>
+                <label for="email" class="form-label small fw-semibold text-light">{{ __('Email address') }}</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    class="form-control bg-dark text-light border-secondary @error('email') is-invalid @enderror"
+                    value="{{ old('email') }}"
+                    required
+                    autofocus
+                    autocomplete="email"
+                    placeholder="email@example.com"
+                />
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
             <div class="position-relative">
-                <flux:input
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="password" class="form-label small fw-semibold text-light mb-0">{{ __('Password') }}</label>
+                    @if (Route::has('password.request'))
+                        <a class="small text-decoration-none text-info" href="{{ route('password.request') }}" wire:navigate>
+                            {{ __('Forgot your password?') }}
+                        </a>
+                    @endif
+                </div>
+                <input
+                    id="password"
                     name="password"
-                    :label="__('Password')"
                     type="password"
+                    class="form-control bg-dark text-light border-secondary @error('password') is-invalid @enderror"
                     required
                     autocomplete="current-password"
-                    :placeholder="__('Password')"
-                    viewable
+                    placeholder="••••••••"
                 />
-
-                @if (Route::has('password.request'))
-                    <flux:link class="position-absolute top-0 end-0 small" :href="route('password.request')" wire:navigate>
-                        {{ __('Forgot your password?') }}
-                    </flux:link>
-                @endif
+                @error('password')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
-            <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
-
-            <div class="d-flex align-items-center justify-content-end">
-                <flux:button variant="primary" type="submit" class="w-100" data-test="login-button">
-                    {{ __('Log in') }}
-                </flux:button>
+            <div class="form-check">
+                <input class="form-check-input bg-dark border-secondary" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                <label class="form-check-label small text-secondary" for="remember">
+                    {{ __('Remember me') }}
+                </label>
             </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" data-test="login-button">
+                <i class="bi bi-box-arrow-in-right me-1"></i> {{ __('Log in') }}
+            </button>
         </form>
 
         <div class="text-center small text-secondary">
             <span>{{ __('Don\'t have an account?') }}</span>
-            <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
+            <a href="{{ route('register') }}" class="text-info text-decoration-none fw-semibold ms-1" wire:navigate>{{ __('Sign up') }}</a>
         </div>
     </div>
 </x-layouts::auth>

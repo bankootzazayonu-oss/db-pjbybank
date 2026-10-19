@@ -46,10 +46,10 @@
 
                     @if(Auth::user()->role === 'admin')
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle btn btn-outline-secondary btn-sm text-light border-secondary px-2 ms-lg-2 mt-2 mt-lg-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="nav-link dropdown-toggle btn btn-outline-secondary btn-sm text-light border-secondary px-2 ms-lg-2 mt-2 mt-lg-0" type="button" id="adminMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-gear-fill text-warning me-1"></i>จัดการระบบ
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark border-secondary shadow">
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark border-secondary shadow" aria-labelledby="adminMenuDropdown">
                                 <li><h6 class="dropdown-header text-uppercase text-secondary small">ตรวจสอบข้อมูล</h6></li>
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('admin.movies.pending') }}">
@@ -87,16 +87,16 @@
             <ul class="navbar-nav align-items-lg-center gap-2">
                 @auth
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-light p-1 rounded" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="rounded-circle bg-primary bg-opacity-25 border border-primary text-primary d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px;">
+                        <button class="nav-link dropdown-toggle btn btn-link text-decoration-none d-flex align-items-center gap-2 text-light p-1 rounded border-0" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="rounded-circle bg-primary bg-opacity-25 border border-primary text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 34px; height: 34px; pointer-events: none;">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </div>
-                            <div class="d-flex flex-column text-start d-none d-sm-inline">
+                            <div class="d-flex flex-column text-start d-none d-sm-inline" style="pointer-events: none;">
                                 <span class="small fw-semibold text-white">{{ Auth::user()->name }}</span>
                                 <span class="text-secondary" style="font-size: 0.75rem;">{{ Auth::user()->role === 'admin' ? 'ผู้ดูแลระบบ' : 'สมาชิก' }}</span>
                             </div>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-secondary shadow">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-secondary shadow" aria-labelledby="userMenuDropdown">
                             <li>
                                 <div class="px-3 py-2 border-bottom border-secondary">
                                     <div class="small fw-bold text-white">{{ Auth::user()->name }}</div>

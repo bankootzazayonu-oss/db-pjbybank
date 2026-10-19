@@ -56,7 +56,7 @@ class ActivityController extends Controller
             if ($isTmdbDuplicate) {
                 return back()->with(
                     'error',
-                    ' ไม่สามารถอนุมัติได้ เพราะภาพยนตร์เรื่อง "' .
+                    'ไม่สามารถอนุมัติได้ เนื่องจากภาพยนตร์เรื่อง "' .
                     $movie->Title .
                     '" มี TMDB ID ซ้ำกับภาพยนตร์ในระบบแล้ว'
                 );
@@ -74,7 +74,7 @@ class ActivityController extends Controller
         if ($isDuplicate) {
             return back()->with(
                 'error',
-                ' ไม่สามารถอนุมัติได้ เพราะภาพยนตร์เรื่อง "' .
+                'ไม่สามารถอนุมัติได้ เนื่องจากภาพยนตร์เรื่อง "' .
                 $movie->Title .
                 '" ปี ' .
                 $movie->Release_Year .
@@ -88,7 +88,7 @@ class ActivityController extends Controller
 
         return back()->with(
             'success',
-            ' อนุมัติภาพยนตร์เรื่อง "' .
+            'อนุมัติภาพยนตร์เรื่อง "' .
             $movie->Title .
             '" เรียบร้อยแล้ว'
         );
@@ -104,7 +104,7 @@ class ActivityController extends Controller
 
         return back()->with(
             'success',
-            ' ปฏิเสธภาพยนตร์เรื่อง "' .
+            'ปฏิเสธภาพยนตร์เรื่อง "' .
             $movie->Title .
             '" เรียบร้อยแล้ว'
         );
@@ -219,7 +219,7 @@ class ActivityController extends Controller
                 $activity->Submitted_By !== auth()->id()
                 || $activity->Approval_Status === 'approved'
             ) {
-                return redirect()->route('my.movies')->with('error', ' คุณไม่มีสิทธิ์แก้ไข หรือภาพยนตร์ถูกอนุมัติไปแล้ว');
+                return redirect()->route('my.movies')->with('error', 'คุณไม่มีสิทธิ์แก้ไข หรือภาพยนตร์ถูกอนุมัติไปแล้ว');
             }
         }
 
@@ -245,7 +245,7 @@ class ActivityController extends Controller
                 || $activity->Approval_Status === 'approved'
             )
         ) {
-            return redirect()->route('my.movies')->with('error', ' ไม่อนุญาตให้แก้ไขข้อมูล');
+            return redirect()->route('my.movies')->with('error', 'ไม่อนุญาตให้แก้ไขข้อมูล');
         }
 
         $request->validate([
@@ -265,7 +265,7 @@ class ActivityController extends Controller
             ->exists();
 
         if ($isDuplicate) {
-            return back()->withInput()->withErrors(['name' => ' ไม่สามารถเปลี่ยนชื่อเป็นเรื่องนี้ได้ เพราะมีอยู่ในคลังแล้วครับ!']);
+            return back()->withInput()->withErrors(['name' => 'ไม่สามารถเปลี่ยนชื่อเป็นเรื่องนี้ได้ เนื่องจากมีอยู่ในระบบแล้ว']);
         }
 
         $updateData = [
@@ -289,7 +289,7 @@ class ActivityController extends Controller
 
         $activity->platforms()->sync($request->platforms ?? []);
 
-        return redirect()->route('my.movies')->with('success', ' อัปเดตข้อมูลภาพยนตร์เรียบร้อยแล้ว');
+        return redirect()->route('my.movies')->with('success', 'อัปเดตข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }
 
     public function destroy($id)
@@ -297,16 +297,16 @@ class ActivityController extends Controller
         $movie = Activity::withTrashed()->findOrFail($id);
 
         if ((auth()->user()->Role !== 'admin' && auth()->user()->role !== 'admin') && $movie->Submitted_By !== auth()->id()) {
-            return back()->with('error', ' คุณไม่มีสิทธิ์ลบรายการนี้');
+            return back()->with('error', 'คุณไม่มีสิทธิ์ลบรายการนี้');
         }
 
         $movie->delete();
 
         $previousUrl = url()->previous();
         if (str_contains($previousUrl, '/movies/' . $id)) {
-            return redirect()->route('dashboard')->with('success', '️ ลบภาพยนตร์เข้าถังขยะเรียบร้อยแล้ว');
+            return redirect()->route('dashboard')->with('success', 'ลบภาพยนตร์เรียบร้อยแล้ว');
         }
-        return back()->with('success', '️ ลบ/ปัดตกข้อมูลภาพยนตร์เรียบร้อยแล้ว');
+        return back()->with('success', 'ลบข้อมูลภาพยนตร์เรียบร้อยแล้ว');
     }
 
     public function tmdbSearch(Request $request)

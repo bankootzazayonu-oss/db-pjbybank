@@ -9,42 +9,58 @@
 
             <input type="hidden" name="token" value="{{ request()->route('token') }}">
 
-            <flux:input
-                name="email"
-                value="{{ request('email') }}"
-                :label="__('Email')"
-                type="email"
-                required
-                autocomplete="email"
-            />
-
-            <flux:input
-                name="password"
-                :label="__('Password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Password')"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
-                viewable
-            />
-
-            <flux:input
-                name="password_confirmation"
-                :label="__('Confirm password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Confirm password')"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
-                viewable
-            />
-
-            <div class="d-flex align-items-center justify-content-end">
-                <flux:button type="submit" variant="primary" class="w-100" data-test="reset-password-button">
-                    {{ __('Reset password') }}
-                </flux:button>
+            <div>
+                <label for="email" class="form-label small fw-semibold text-light">{{ __('Email') }}</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    class="form-control bg-dark text-light border-secondary @error('email') is-invalid @enderror"
+                    value="{{ request('email') }}"
+                    required
+                    autocomplete="email"
+                    placeholder="email@example.com"
+                />
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
+
+            <div>
+                <label for="password" class="form-label small fw-semibold text-light">{{ __('Password') }}</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    class="form-control bg-dark text-light border-secondary @error('password') is-invalid @enderror"
+                    required
+                    autocomplete="new-password"
+                    placeholder="••••••••"
+                />
+                @error('password')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div>
+                <label for="password_confirmation" class="form-label small fw-semibold text-light">{{ __('Confirm password') }}</label>
+                <input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type="password"
+                    class="form-control bg-dark text-light border-secondary @error('password_confirmation') is-invalid @enderror"
+                    required
+                    autocomplete="new-password"
+                    placeholder="••••••••"
+                />
+                @error('password_confirmation')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" data-test="reset-password-button">
+                <i class="bi bi-arrow-repeat me-1"></i> {{ __('Reset password') }}
+            </button>
         </form>
     </div>
 </x-layouts::auth>

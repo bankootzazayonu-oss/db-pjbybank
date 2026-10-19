@@ -7,59 +7,81 @@
         <form method="POST" action="{{ route('register.store') }}" class="d-flex flex-column gap-3">
             @csrf
             
-            <flux:input
-                name="name"
-                :label="__('Name')"
-                :value="old('name')"
-                type="text"
-                required
-                autofocus
-                autocomplete="name"
-                :placeholder="__('Full name')"
-            />
-
-            <flux:input
-                name="email"
-                :label="__('Email address')"
-                :value="old('email')"
-                type="email"
-                required
-                autocomplete="email"
-                placeholder="email@example.com"
-            />
-
-            <flux:input
-                name="password"
-                :label="__('Password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Password')"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
-                viewable
-            />
-
-            <flux:input
-                name="password_confirmation"
-                :label="__('Confirm password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Confirm password')"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
-                viewable
-            />
-
-            <div class="d-flex align-items-center justify-content-end">
-                <flux:button type="submit" variant="primary" class="w-100" data-test="register-user-button">
-                    {{ __('Create account') }}
-                </flux:button>
+            <div>
+                <label for="name" class="form-label small fw-semibold text-light">{{ __('Name') }}</label>
+                <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    class="form-control bg-dark text-light border-secondary @error('name') is-invalid @enderror"
+                    value="{{ old('name') }}"
+                    required
+                    autofocus
+                    autocomplete="name"
+                    placeholder="{{ __('Full name') }}"
+                />
+                @error('name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
+
+            <div>
+                <label for="email" class="form-label small fw-semibold text-light">{{ __('Email address') }}</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    class="form-control bg-dark text-light border-secondary @error('email') is-invalid @enderror"
+                    value="{{ old('email') }}"
+                    required
+                    autocomplete="email"
+                    placeholder="email@example.com"
+                />
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div>
+                <label for="password" class="form-label small fw-semibold text-light">{{ __('Password') }}</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    class="form-control bg-dark text-light border-secondary @error('password') is-invalid @enderror"
+                    required
+                    autocomplete="new-password"
+                    placeholder="••••••••"
+                />
+                @error('password')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div>
+                <label for="password_confirmation" class="form-label small fw-semibold text-light">{{ __('Confirm password') }}</label>
+                <input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type="password"
+                    class="form-control bg-dark text-light border-secondary @error('password_confirmation') is-invalid @enderror"
+                    required
+                    autocomplete="new-password"
+                    placeholder="••••••••"
+                />
+                @error('password_confirmation')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" data-test="register-user-button">
+                <i class="bi bi-person-plus me-1"></i> {{ __('Create account') }}
+            </button>
         </form>
 
         <div class="text-center small text-secondary">
             <span>{{ __('Already have an account?') }}</span>
-            <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
+            <a href="{{ route('login') }}" class="text-info text-decoration-none fw-semibold ms-1" wire:navigate>{{ __('Log in') }}</a>
         </div>
     </div>
 </x-layouts::auth>

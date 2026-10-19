@@ -37,55 +37,53 @@ new class extends Component {
 }; ?>
 
 <div
-    class="card p-4 my-3"
+    class="card bg-dark border-secondary p-4 my-3"
     wire:cloak
     x-data="{ showRecoveryCodes: false }"
 >
     <div class="d-flex flex-column gap-2 mb-3">
         <div class="d-flex align-items-center gap-2">
-            <flux:icon.lock-closed variant="outline" class="size-4"/>
-            <flux:heading size="lg" level="3">{{ __('2FA recovery codes') }}</flux:heading>
+            <i class="bi bi-shield-lock text-info fs-5"></i>
+            <h5 class="fw-bold text-light mb-0">{{ __('2FA recovery codes') }}</h5>
         </div>
-        <div class="text-secondary small">
+        <p class="text-secondary small mb-0">
             {{ __('Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.') }}
-        </div>
+        </p>
     </div>
 
     <div>
         <div class="d-flex flex-column flex-sm-row gap-2 align-items-sm-center justify-content-between">
-            <flux:button
+            <button
+                type="button"
+                class="btn btn-primary btn-sm"
                 x-show="!showRecoveryCodes"
-                icon="eye"
-                icon:variant="outline"
-                variant="primary"
                 @click="showRecoveryCodes = true;"
                 aria-expanded="false"
                 aria-controls="recovery-codes-section"
             >
-                {{ __('View recovery codes') }}
-            </flux:button>
+                <i class="bi bi-eye me-1"></i> {{ __('View recovery codes') }}
+            </button>
 
-            <flux:button
+            <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
                 x-show="showRecoveryCodes"
-                icon="eye-slash"
-                icon:variant="outline"
-                variant="primary"
                 @click="showRecoveryCodes = false"
                 aria-expanded="true"
                 aria-controls="recovery-codes-section"
             >
-                {{ __('Hide recovery codes') }}
-            </flux:button>
+                <i class="bi bi-eye-slash me-1"></i> {{ __('Hide recovery codes') }}
+            </button>
 
             @if (filled($recoveryCodes))
-                <flux:button
+                <button
+                    type="button"
+                    class="btn btn-outline-info btn-sm"
                     x-show="showRecoveryCodes"
-                    icon="arrow-path"
-                    variant="filled"
                     wire:click="regenerateRecoveryCodes"
                 >
-                    {{ __('Regenerate codes') }}
-                </flux:button>
+                    <i class="bi bi-arrow-repeat me-1"></i> {{ __('Regenerate codes') }}
+                </button>
             @endif
         </div>
 
@@ -98,19 +96,21 @@ new class extends Component {
         >
             <div class="mt-3 d-flex flex-column gap-3">
                 @error('recoveryCodes')
-                    <flux:callout variant="danger" icon="x-circle" heading="{{$message}}"/>
+                    <div class="alert alert-danger small mb-0">
+                        <i class="bi bi-exclamation-triangle me-1"></i> {{ $message }}
+                    </div>
                 @enderror
 
                 @if (filled($recoveryCodes))
                     <div
-                        class="p-3 font-monospace small rounded bg-body-tertiary d-flex flex-column gap-1"
+                        class="p-3 font-monospace small rounded bg-body-tertiary border border-secondary border-opacity-25 d-flex flex-column gap-1"
                         role="list"
                         aria-label="{{ __('Recovery codes') }}"
                     >
                         @foreach($recoveryCodes as $code)
                             <div
                                 role="listitem"
-                                class="user-select-all"
+                                class="user-select-all text-light"
                                 wire:loading.class="opacity-50"
                             >
                                 {{ $code }}
@@ -125,4 +125,3 @@ new class extends Component {
         </div>
     </div>
 </div>
-
