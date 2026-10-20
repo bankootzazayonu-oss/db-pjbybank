@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
 <head>
     <meta charset="utf-8">
@@ -33,7 +33,7 @@
                     ← กลับไป Tier Lists
                 </a>
 
-                <button x-data @click="$dispatch('open-settings-modal')" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1.5 fw-semibold">
+                <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1.5 fw-semibold" data-bs-toggle="modal" data-bs-target="#settingsModal">
                     <i class="bi bi-sliders"></i>
                     <span>ตั้งค่าชื่อระดับ</span>
                 </button>
@@ -203,27 +203,18 @@
             @endforeach
         </div>
 
-        <div x-data="{ showSettingsModal: false }" 
-             @open-settings-modal.window="showSettingsModal = true"
-             x-show="showSettingsModal" 
-             style="display: none;" 
-             class="modal fade show d-block" 
-             style="background-color: rgba(0,0,0,0.7);"
-             tabindex="-1"
-             role="dialog" 
-             aria-modal="true">
-             
+        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-dark text-light border-secondary shadow-lg rounded-4 overflow-hidden">
                     <form action="{{ route('collections.updateLabels', $collection->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="modal-header border-secondary">
-                            <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2">
+                            <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2" id="settingsModalLabel">
                                 <i class="bi bi-sliders text-primary"></i>
                                 ตั้งค่าชื่อระดับ (Custom Tier Names)
                             </h5>
-                            <button type="button" @click="showSettingsModal = false" class="btn-close btn-close-white" aria-label="Close"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body p-4">
                             <p class="small text-secondary mb-3">เปลี่ยนชื่อระดับแต่ละขั้นให้เป็นสไตล์ของคุณเอง (แนะนำไม่เกิน 15 ตัวอักษร)</p>
@@ -252,7 +243,7 @@
                             </div>
                         </div>
                         <div class="modal-footer border-secondary">
-                            <button type="button" @click="showSettingsModal = false" class="btn btn-secondary btn-sm px-3">
+                            <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">
                                 ยกเลิก
                             </button>
                             <button type="submit" class="btn btn-primary btn-sm px-3 fw-semibold">
@@ -314,6 +305,8 @@ document.addEventListener('alpine:init', () => {
             <div>&copy; {{ date('Y') }} CineReview. บันทึกและรีวิวภาพยนตร์</div>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 
