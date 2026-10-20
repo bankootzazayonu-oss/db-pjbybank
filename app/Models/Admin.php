@@ -93,4 +93,9 @@ class Admin extends Authenticatable
     {
         return $this->belongsTo(User::class, 'Email', 'Email');
     }
+
+    public function approvedActivities()
+    {
+        return $this->hasMany(Activity::class, 'Approved_By', 'Admin_ID');
+    }
 }

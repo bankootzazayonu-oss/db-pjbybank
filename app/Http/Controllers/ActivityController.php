@@ -82,8 +82,12 @@ class ActivityController extends Controller
             );
         }
 
+        $adminRecord = \App\Models\Admin::where('Email', auth()->user()?->Email ?? auth()->user()?->email)->first();
+        $adminId = $adminRecord?->Admin_ID ?? 'A0001';
+
         $movie->update([
             'Approval_Status' => 'approved',
+            'Approved_By' => $adminId,
         ]);
 
         return back()->with(

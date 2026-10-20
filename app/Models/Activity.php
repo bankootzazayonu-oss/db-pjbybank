@@ -29,6 +29,7 @@ class Activity extends Model
         'Genre_ID',
         'Submitted_By',
         'Approval_Status',
+        'Approved_By',
         'Poster',
         'Description',
     ];
@@ -93,5 +94,10 @@ class Activity extends Model
     public function collectionItems()
     {
         return $this->hasMany(CollectionItem::class, 'Movie_ID', 'Movie_ID');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(Admin::class, 'Approved_By', 'Admin_ID');
     }
 }

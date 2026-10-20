@@ -215,6 +215,10 @@ class MovieAndReviewSeeder extends Seeder
             $platforms = $data['platforms'] ?? [];
             unset($data['platforms']);
 
+            if (($data['Approval_Status'] ?? '') === 'approved') {
+                $data['Approved_By'] = $adminEntity->Admin_ID;
+            }
+
             $movie = Activity::firstOrCreate(['Movie_ID' => $data['Movie_ID']], $data);
             if (!empty($platforms)) {
                 $movie->platforms()->syncWithoutDetaching($platforms);

@@ -107,6 +107,9 @@ class TmdbController extends Controller
                 $request->poster_path;
         }
 
+        $adminRecord = \App\Models\Admin::where('Email', auth()->user()?->Email ?? auth()->user()?->email)->first();
+        $adminId = $adminRecord?->Admin_ID ?? 'A0001';
+
         $activity = Activity::create([
             'Title' => $request->title,
             'Original_Title' => $request->original_title ?: null,
@@ -117,6 +120,7 @@ class TmdbController extends Controller
             'Genre_ID' => $request->type_id,
             'TMDB_ID' => $request->tmdb_id,
             'Approval_Status' => 'approved',
+            'Approved_By' => $adminId,
             'Submitted_By' => auth()->id(),
         ]);
 

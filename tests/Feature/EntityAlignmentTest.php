@@ -190,5 +190,24 @@ class EntityAlignmentTest extends TestCase
         ]);
         $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticated();
+
+        // Test Foreign Key relationship with Activity (Approved_By -> Admin_ID)
+        $user = \App\Models\User::firstOrCreate(
+            ['Email' => 'submitter@example.com'],
+            ['Username' => 'submitter', 'Password' => bcrypt('password'), 'Role' => 'user']
+        );
+
+        $movie = Activity::create([
+            'Title' => 'Admin Approved Movie',
+            'Release_Year' => 2026,
+            'Duration_Hours' => 2.0,
+            'Submitted_By' => $user->User_ID,
+            'Approval_Status' => 'approved',
+            'Approved_By' => $admin->Admin_ID,
+        ]);
+
+        $this->assertEquals($admin->Admin_ID, $movie->Approved_By);
+        $this->assertEquals($admin->Admin_ID, $movie->approver->Admin_ID);
+        $this->assertTrue($admin->approvedActivities->contains($movie));
     }
 }

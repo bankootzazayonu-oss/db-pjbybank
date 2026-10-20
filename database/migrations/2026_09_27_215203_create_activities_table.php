@@ -18,6 +18,7 @@ return new class extends Migration
             $table->char('Genre_ID', 3)->nullable();
             $table->char('Submitted_By', 5);
             $table->string('Approval_Status', 20)->default('pending');
+            $table->char('Approved_By', 5)->nullable();
             $table->string('Poster', 255)->nullable();
             $table->text('Description')->nullable();
             $table->softDeletes('DeletedAt');
@@ -26,6 +27,7 @@ return new class extends Migration
 
             $table->foreign('Genre_ID')->references('Genre_ID')->on('types')->nullOnDelete();
             $table->foreign('Submitted_By')->references('User_ID')->on('users')->cascadeOnDelete();
+            $table->foreign('Approved_By')->references('Admin_ID')->on('admins')->nullOnDelete();
         });
     }
 

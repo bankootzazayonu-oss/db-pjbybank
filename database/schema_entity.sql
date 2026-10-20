@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
     `Genre_ID` CHAR(3) NULL DEFAULT NULL,
     `Submitted_By` CHAR(5) NOT NULL,
     `Approval_Status` VARCHAR(20) NOT NULL DEFAULT 'pending',
+    `Approved_By` CHAR(5) NULL DEFAULT NULL,
     `Poster` VARCHAR(255) NULL DEFAULT NULL,
     `Description` TEXT NULL,
     `DeletedAt` TIMESTAMP NULL DEFAULT NULL,
@@ -64,7 +65,8 @@ CREATE TABLE IF NOT EXISTS `activities` (
     `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`Movie_ID`),
     CONSTRAINT `fk_activities_genre` FOREIGN KEY (`Genre_ID`) REFERENCES `types` (`Genre_ID`) ON DELETE SET NULL,
-    CONSTRAINT `fk_activities_user` FOREIGN KEY (`Submitted_By`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE
+    CONSTRAINT `fk_activities_user` FOREIGN KEY (`Submitted_By`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE,
+    CONSTRAINT `fk_activities_admin` FOREIGN KEY (`Approved_By`) REFERENCES `admins` (`Admin_ID`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `activity_platform` (
