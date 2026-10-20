@@ -112,6 +112,10 @@ class ActivityController extends Controller
 
     public function create()
     {
+        if (auth()->check() && (auth()->user()->Role === 'admin' || auth()->user()->role === 'admin')) {
+            return redirect()->route('admin.movies.search')->with('info', 'ผู้ดูแลระบบสามารถนำเข้าและจัดการภาพยนตร์ผ่านระบบ TMDB ได้โดยตรง');
+        }
+
         $types = Type::orderBy('Genre_Name')->get(); 
         $platforms = Platform::orderBy('Platform_Name')->get();
 
@@ -120,6 +124,10 @@ class ActivityController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->check() && (auth()->user()->Role === 'admin' || auth()->user()->role === 'admin')) {
+            return redirect()->route('admin.movies.search')->with('info', 'ผู้ดูแลระบบสามารถนำเข้าและจัดการภาพยนตร์ผ่านระบบ TMDB ได้โดยตรง');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'original_title' => 'nullable|string|max:255',
@@ -206,6 +214,10 @@ class ActivityController extends Controller
 
     public function myMovies()
     {
+        if (auth()->check() && (auth()->user()->Role === 'admin' || auth()->user()->role === 'admin')) {
+            return redirect()->route('admin.movies.pending');
+        }
+
         $movies = Activity::where('Submitted_By', auth()->id())->latest('CreatedAt')->get();
         return view('activities.my_movies', compact('movies'));
     }

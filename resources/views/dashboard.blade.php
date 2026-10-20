@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
 <head>
     <meta charset="utf-8">
@@ -35,10 +35,17 @@
                     </div>
 
                     <div>
-                        <a href="{{ route('activities.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 fw-semibold shadow-sm">
-                            <i class="bi bi-plus-circle"></i>
-                            <span>เสนอภาพยนตร์ใหม่</span>
-                        </a>
+                        @if(Auth::user()->role === 'admin' || Auth::user()->Role === 'admin')
+                            <a href="{{ route('admin.movies.search') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 fw-semibold shadow-sm">
+                                <i class="bi bi-cloud-arrow-down"></i>
+                                <span>นำเข้าภาพยนตร์ (TMDB)</span>
+                            </a>
+                        @else
+                            <a href="{{ route('activities.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 fw-semibold shadow-sm">
+                                <i class="bi bi-plus-circle"></i>
+                                <span>เสนอภาพยนตร์ใหม่</span>
+                            </a>
+                        @endif
                     </div>
                 </div>
 

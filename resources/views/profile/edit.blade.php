@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
 <head>
     <meta charset="utf-8">
@@ -32,9 +32,13 @@
     <main class="flex-grow-1">
 
     <div class="container py-5">
+        @php
+            $currentUser = $user ?? Auth::user();
+            $isAdmin = strtolower($currentUser->Role ?? $currentUser->role ?? '') === 'admin';
+        @endphp
         <div class="d-flex flex-column gap-5">
 
-            <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="row row-cols-1 {{ $isAdmin ? 'row-cols-md-2' : 'row-cols-md-3' }} g-4">
                 <div class="col">
                     <div class="card bg-dark border-secondary rounded-4 p-4 shadow-sm h-100 d-flex flex-row align-items-center justify-content-between">
                         <div>
@@ -61,18 +65,20 @@
                     </div>
                 </div>
 
-                <div class="col">
-                    <div class="card bg-dark border-secondary rounded-4 p-4 shadow-sm h-100 d-flex flex-row align-items-center justify-content-between">
-                        <div>
-                            <small class="text-uppercase text-secondary fw-semibold">หนังที่เสนอเข้าระบบ</small>
-                            <div class="h2 fw-bold text-white my-1">{{ $submittedMovies->count() }}</div>
-                            <small class="text-success fw-semibold">คำขอเสนอหนัง</small>
-                        </div>
-                        <div class="rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 text-success d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                            <i class="bi bi-film fs-4"></i>
+                @if(!$isAdmin)
+                    <div class="col">
+                        <div class="card bg-dark border-secondary rounded-4 p-4 shadow-sm h-100 d-flex flex-row align-items-center justify-content-between">
+                            <div>
+                                <small class="text-uppercase text-secondary fw-semibold">หนังที่เสนอเข้าระบบ</small>
+                                <div class="h2 fw-bold text-white my-1">{{ $submittedMovies->count() }}</div>
+                                <small class="text-success fw-semibold">คำขอเสนอหนัง</small>
+                            </div>
+                            <div class="rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 text-success d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-film fs-4"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
 
             <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
@@ -136,6 +142,7 @@
                 @endif
             </div>
 
+            @if(!$isAdmin)
             <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
                 <h2 class="h5 fw-bold text-white mb-4 d-flex align-items-center gap-2">
                     <i class="bi bi-film text-success"></i>
@@ -177,6 +184,7 @@
                     <p class="text-secondary small mb-0">คุณยังไม่มีภาพยนตร์ที่เสนอเข้าระบบ</p>
                 @endif
             </div>
+            @endif
 
             <div class="card bg-dark border-secondary rounded-4 p-4 p-md-5 shadow-lg">
                 <div style="max-width: 640px;">

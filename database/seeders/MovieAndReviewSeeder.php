@@ -8,6 +8,7 @@ use App\Models\Type;
 use App\Models\Activity;
 use App\Models\Review;
 use App\Models\User;
+use App\Models\Admin;
 use App\Models\Platform;
 use App\Models\Collection;
 use App\Models\CollectionItem;
@@ -16,6 +17,15 @@ class MovieAndReviewSeeder extends Seeder
 {
     public function run(): void
     {
+        $adminEntity = Admin::firstOrCreate(
+            ['Admin_ID' => 'A0001'],
+            [
+                'Username' => 'admin',
+                'Email' => 'admin@admin.com',
+                'Password' => Hash::make('password'),
+            ]
+        );
+
         $admin = User::firstOrCreate(
             ['User_ID' => 'U0001'],
             [

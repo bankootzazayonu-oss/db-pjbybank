@@ -25,7 +25,7 @@
                 </li>
 
                 @auth
-                    @if(Auth::user()->role !== 'admin')
+                    @if(Auth::user()->role !== 'admin' && Auth::user()->Role !== 'admin')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('activities.create') ? 'active text-primary fw-semibold' : 'text-light' }}" href="{{ route('activities.create') }}">
                                 <i class="bi bi-plus-circle me-1"></i>เสนอหนังใหม่
@@ -44,7 +44,7 @@
                         </a>
                     </li>
 
-                    @if(Auth::user()->role === 'admin')
+                    @if(Auth::user()->role === 'admin' || Auth::user()->Role === 'admin')
                         <li class="nav-item dropdown">
                             <button class="nav-link dropdown-toggle btn btn-outline-secondary btn-sm text-light border-secondary px-2 ms-lg-2 mt-2 mt-lg-0" type="button" id="adminMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-gear-fill text-warning me-1"></i>จัดการระบบ

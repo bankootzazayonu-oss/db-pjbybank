@@ -119,4 +119,76 @@ class EntityAlignmentTest extends TestCase
         $colResponse->assertStatus(200);
         $colResponse->assertSee('Top Sci-Fi Picks');
     }
+
+    public function test_admin_does_not_have_submit_movie_option(): void
+    {
+        $admin = User::create([
+            'Username' => 'adminuser',
+            'Email' => 'adminuser@example.com',
+            'Password' => bcrypt('password'),
+            'Role' => 'admin',
+        ]);
+
+        $normalUser = User::create([
+            'Username' => 'normaluser',
+            'Email' => 'normaluser@example.com',
+            'Password' => bcrypt('password'),
+            'Role' => 'user',
+        ]);
+
+        // 1. Admin accessing create page is redirected to TMDB search
+        $adminCreate = $this->actingAs($admin)->get(route('activities.create'));
+        $adminCreate->assertRedirect(route('admin.movies.search'));
+
+        // 2. Normal user can access movie proposal page
+        $userCreate = $this->actingAs($normalUser)->get(route('activities.create'));
+        $userCreate->assertStatus(200);
+
+        // 3. Admin dashboard should not show 'เสนอภาพยนตร์ใหม่' but shows 'นำเข้าภาพยนตร์ (TMDB)'
+        $adminDash = $this->actingAs($admin)->get(route('dashboard'));
+        $adminDash->assertDontSee('เสนอภาพยนตร์ใหม่');
+        $adminDash->assertSee('นำเข้าภาพยนตร์ (TMDB)');
+
+        // 4. Normal user dashboard shows 'เสนอภาพยนตร์ใหม่'
+        $userDash = $this->actingAs($normalUser)->get(route('dashboard'));
+        $userDash->assertSee('เสนอภาพยนตร์ใหม่');
+
+        // 5. Admin accessing my-movies is redirected to admin pending movies
+        $adminMyMovies = $this->actingAs($admin)->get(route('my.movies'));
+        $adminMyMovies->assertRedirect(route('admin.movies.pending'));
+
+        // 6. Admin profile does not show submitted movies sections
+        $adminProfile = $this->actingAs($admin)->get(route('profile.edit'));
+        $adminProfile->assertStatus(200);
+        $adminProfile->assertDontSee('หนังที่ฉันเสนอเข้าระบบ');
+        $adminProfile->assertDontSee('หนังที่เสนอเข้าระบบ');
+
+        // 7. Normal user profile shows submitted movies sections
+        $userProfile = $this->actingAs($normalUser)->get(route('profile.edit'));
+        $userProfile->assertStatus(200);
+        $userProfile->assertSee('หนังที่ฉันเสนอเข้าระบบ');
+    }
+
+    public function test_admin_entity_and_model_work_independently(): void
+    {
+        $admin = \App\Models\Admin::create([
+            'Username' => 'superadmin',
+            'Email' => 'superadmin@example.com',
+            'Password' => bcrypt('password123'),
+        ]);
+
+        $this->assertMatchesRegularExpression('/^A\d{4}$/', $admin->Admin_ID);
+        $this->assertDatabaseHas('admins', [
+            'Admin_ID' => $admin->Admin_ID,
+            'Email' => 'superadmin@example.com',
+        ]);
+
+        // Login as newly created Admin via Login form
+        $response = $this->post(route('login'), [
+            'email' => 'superadmin@example.com',
+            'password' => 'password123',
+        ]);
+        $response->assertRedirect(route('dashboard'));
+        $this->assertAuthenticated();
+    }
 }

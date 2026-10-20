@@ -31,6 +31,22 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            $admin = \App\Models\Admin::where('Email', $this->email)->first();
+            if ($admin && \Illuminate\Support\Facades\Hash::check($this->password, $admin->Password)) {
+                $user = \App\Models\User::firstOrCreate(
+                    ['Email' => $admin->Email],
+                    [
+                        'Username' => $admin->Username,
+                        'Password' => $admin->Password,
+                        'Role' => 'admin',
+                    ]
+                );
+                Auth::login($user, $this->boolean('remember'));
+                Auth::guard('admin')->login($admin, $this->boolean('remember'));
+                RateLimiter::clear($this->throttleKey());
+                return;
+            }
+
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

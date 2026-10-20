@@ -105,4 +105,5 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     public function collections() { return $this->hasMany(Collection::class, 'User_ID', 'User_ID'); }
     public function favoriteReviews() { return $this->belongsToMany(Review::class, 'favorite_reviews', 'User_ID', 'Review_ID'); }
     public function passkeys(): \Illuminate\Database\Eloquent\Relations\HasMany { return $this->hasMany(\Laravel\Passkeys\Passkeys::passkeyModel(), 'user_id', 'User_ID'); }
+    public function admin() { return $this->hasOne(Admin::class, 'Email', 'Email'); }
 }
