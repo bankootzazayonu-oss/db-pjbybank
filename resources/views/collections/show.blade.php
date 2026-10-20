@@ -68,21 +68,24 @@
             $labels = array_merge($defaultLabels, is_array($collection->tier_labels) ? $collection->tier_labels : []);
         @endphp
 
-        <div class="card bg-dark border-secondary rounded-4 p-4 shadow-lg mb-5 position-relative z-3">
-            <form action="{{ route('collections.store_tmdb', $collection->id) }}" method="POST" class="row g-3 align-items-end">
+        <div class="card bg-dark border-secondary rounded-4 p-4 shadow-lg mb-5 position-relative z-3" x-data="tmdbSearch()">
+            <form action="{{ route('collections.store_tmdb', $collection->id) }}" method="POST" @submit="if(!selectedId) { alert('กรุณาคลิกเลือกภาพยนตร์จากรายการค้นหา'); $event.preventDefault(); }" class="row g-3 align-items-end">
                 @csrf
                 
-                <div x-data="tmdbSearch()" class="col-md-7 position-relative">
+                <div class="col-md-7 position-relative">
                     <label class="form-label text-light small fw-bold text-uppercase mb-1">ค้นหาภาพยนตร์จาก TMDB ทั่วโลก</label>
                     <div class="input-group">
                         <span class="input-group-text bg-dark border-secondary text-secondary">
                             <i class="bi bi-search"></i>
                         </span>
-                        <input type="text" x-model="query" @input.debounce.500ms="search()" autocomplete="off" placeholder="พิมพ์ชื่อหนังภาษาไทย หรืออังกฤษ..." 
+                        <input type="text" x-model="query" @input.debounce.500ms="selectedId = ''; search()" autocomplete="off" placeholder="พิมพ์ชื่อหนังภาษาไทย หรืออังกฤษ..." 
                                class="form-control bg-dark border-secondary text-light">
+                        <button x-show="query.length > 0" @click="query = ''; selectedId = ''; results = []" type="button" class="btn btn-outline-secondary border-secondary text-secondary" style="display: none;">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
                     </div>
 
-                    <div x-show="results.length > 0 && !selected" @click.away="results = []" style="display: none;" class="position-absolute z-3 w-100 mt-1 dropdown-menu show bg-dark border-secondary shadow-lg overflow-hidden p-0">
+                    <div x-show="results.length > 0 && !selectedId" @click.away="results = []" style="display: none;" class="position-absolute z-3 w-100 mt-1 dropdown-menu show bg-dark border-secondary shadow-lg overflow-hidden p-0">
                         <template x-for="movie in results" :key="movie.id">
                             <div @click="selectMovie(movie)" class="d-flex align-items-center gap-3 p-2 border-bottom border-secondary dropdown-item text-light cursor-pointer">
                                 <img :src="movie.poster_path ? 'https://image.tmdb.org/t/p/w92' + movie.poster_path : 'https://via.placeholder.com/45x68/0f172a/64748b?text=No+Img'" class="rounded border border-secondary object-fit-cover" style="width: 40px; height: 56px;">
@@ -94,20 +97,6 @@
                         </template>
                     </div>
 
-                    <div x-show="selected" style="display: none;" class="mt-2 p-2 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-2">
-                            <img :src="selectedPoster" class="rounded border border-secondary object-fit-cover" style="width: 36px; height: 50px;">
-                            <div>
-                                <small class="text-success fw-bold d-block text-uppercase" style="font-size: 10px;">
-                                    <i class="bi bi-check-circle-fill me-1"></i>เลือกเรื่องนี้แล้ว
-                                </small>
-                                <span class="fw-bold text-white small text-truncate d-block" x-text="selectedTitle"></span>
-                            </div>
-                        </div>
-                        <button type="button" @click="clearSelection()" class="btn btn-outline-danger btn-sm py-1 px-2.5 small">
-                            เปลี่ยนเรื่อง
-                        </button>
-                    </div>
                     <input type="hidden" name="tmdb_id" :value="selectedId" required>
                 </div>
 
@@ -262,10 +251,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('tmdbSearch', () => ({
         query: '',
         results: [],
-        selected: false,
         selectedId: '',
-        selectedTitle: '',
-        selectedPoster: '',
 
         async search() {
             if (this.query.length < 2) {
@@ -282,19 +268,9 @@ document.addEventListener('alpine:init', () => {
         },
 
         selectMovie(movie) {
-            this.selected = true;
             this.selectedId = movie.id;
-            this.selectedTitle = movie.title;
-            this.selectedPoster = movie.poster_path ? 'https://image.tmdb.org/t/p/w92' + movie.poster_path : 'https://via.placeholder.com/45x68/0f172a/64748b?text=No+Img';
-            this.results = []; 
-            this.query = '';
-        },
-
-        clearSelection() {
-            this.selected = false;
-            this.selectedId = '';
-            this.selectedTitle = '';
-            this.selectedPoster = '';
+            this.query = movie.title + (movie.release_date ? ' (' + movie.release_date.substring(0, 4) + ')' : '');
+            this.results = [];
         }
     }))
 })
